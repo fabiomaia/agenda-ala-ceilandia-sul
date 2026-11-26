@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calendário da Ala Ceilândia Sul 2027</title>
 <meta name="description" content="Atividades de 2027 da Ala Ceilândia Sul com data definida.">
@@ -15,9 +16,13 @@
    PICTURE: month cards with a small calendar marking the days, and the activity list under it.
    COLOUR and TYPE: pine band, white paper, the six organization colours as the only accents; Inter.
    LAYOUT: pine header with next activities, filter chips, then a responsive grid of 12 months. */
-:root{color-scheme:light dark;--bg:light-dark(#f3f5f5,#0c1214);--paper:light-dark(#fff,#151e21);--ink:light-dark(#17211f,#e5ecea);--mute:light-dark(#62716e,#98aaa6);
---line:light-dark(#e1e6e5,#243237);--pine:#163f3a;--pri:light-dark(#163f3a,#5fb3a2);--field:light-dark(#f7f9f9,#10181a);
---o-primaria:light-dark(#c98f00,#f0c040);--o-socorro:light-dark(#8a4fa3,#c79be0);--o-elderes:light-dark(#2d62b3,#7fa8ec);--o-rapazes:light-dark(#2b8452,#6fcf97);--o-mocas:light-dark(#c8436f,#f08bb0);--o-escola:light-dark(#c25a24,#f19a66)}
+:root{color-scheme:light dark;
+--pine:#163f3a;
+}
+:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--pri:#163f3a;--field:#f7f9f9;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2;--field:#10181a;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66}}
+:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2;--field:#10181a;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66}
+
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
 h1,h2,h3{margin:0}
