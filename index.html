@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendário de Atividades Ala Ceilândia Sul 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* VOICE: calm admin panel for a ward clerk — friendly, tidy, quick to scan.
+   IDEA: the ward's planning desk: a month calendar on the table, the agenda and tally beside it.
+   PICTURE: the month grid itself, days carrying coloured activity pills per organization.
+   COLOUR and TYPE: pine sidebar, light grey desk, white cards; six organization colours as the accents; Inter throughout.
+   LAYOUT: sidebar | header + month grid + legend | agenda and summary column; stacks on phones. */
+:root{color-scheme:light dark;
+--bg:light-dark(#f3f5f5,#0c1214);--paper:light-dark(#fff,#151e21);--ink:light-dark(#17211f,#e5ecea);--mute:light-dark(#62716e,#98aaa6);
+--line:light-dark(#e1e6e5,#243237);--side:light-dark(#163f3a,#0d2724);--sideink:#eaf3f1;--pri:light-dark(#163f3a,#5fb3a2);--priink:light-dark(#fff,#08201c);
+--field:light-dark(#f7f9f9,#10181a);--dim:light-dark(#f7f8f8,#11191b);
+--o-primaria:light-dark(#c98f00,#f0c040);--o-socorro:light-dark(#8a4fa3,#c79be0);--o-elderes:light-dark(#2d62b3,#7fa8ec);
+--o-rapazes:light-dark(#2b8452,#6fcf97);--o-mocas:light-dark(#c8436f,#f08bb0);--o-escola:light-dark(#c25a24,#f19a66)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--o-elderes);outline-offset:2px}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+aside{background:var(--side);color:var(--sideink);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;white-space:nowrap;padding:0 8px;letter-spacing:-.01em}
+.logo svg{flex:none}
+nav{display:grid;gap:4px}
+nav a{white-space:nowrap;flex:none;display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:10px;color:inherit;text-decoration:none;font-weight:500;opacity:.85}
+nav a:hover{background:rgba(255,255,255,.07);opacity:1}
+nav a[aria-current=page]{background:rgba(255,255,255,.14);opacity:1;font-weight:600}
+.sidefoot{margin-top:auto;font-size:13px;opacity:.8;padding:0 8px;display:grid;gap:6px}
+.status{display:flex;align-items:center;gap:8px}.status i{width:8px;height:8px;border-radius:50%;background:#7fd1a8;flex:none}.status.off i{background:#f0c040}
+.main{padding:20px clamp(16px,2.4vw,32px) 48px;display:grid;gap:18px;align-content:start}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sel{min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font-weight:600;min-width:240px;max-width:340px}
+.head{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:end;justify-content:space-between}
+.head h1{font-size:clamp(24px,3vw,30px);line-height:1.1;font-weight:800;letter-spacing:-.015em}
+.head p{margin:6px 0 0;color:var(--mute)}
+.acts{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-weight:600;white-space:nowrap}
+.btn.pri{background:var(--pri);color:var(--priink);border-color:transparent}
+.btn.danger{color:#c0392b}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px}
+.mnav{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.mnav .btn{padding:0;width:44px;justify-content:center}
+.mnav b{min-height:44px;display:grid;place-items:center;padding:0 20px;border:1px solid var(--line);border-radius:10px;background:var(--paper);min-width:220px;font-weight:700}
+.cal{overflow:hidden}
+.wk,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.wk span{text-align:center;padding:10px 0;font-size:13px;font-weight:600;color:var(--mute);border-bottom:1px solid var(--line)}
+.cell{position:relative;min-height:96px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px;display:flex;flex-direction:column;gap:3px}
+.cell:nth-child(7n){border-right:0}
+.cell.out{background:var(--dim)}
+.cell.has{background:color-mix(in srgb,var(--pri) 5%,var(--paper))}
+.dn{position:absolute;inset:0;border:0;background:transparent;text-align:left;padding:6px 8px;font-weight:600;color:var(--ink);display:flex;justify-content:space-between;align-items:flex-start}
+.dn:hover{background:color-mix(in srgb,var(--pri) 6%,transparent)}
+.dn .plus{opacity:0;font-weight:500;color:var(--mute);font-size:18px;line-height:1}
+.dn:hover .plus,.dn:focus-visible .plus{opacity:1}
+.today .dn .d{background:var(--pri);color:var(--priink);border-radius:50%;width:26px;height:26px;display:grid;place-items:center;margin:-3px 0 0 -4px}
+.pills{position:relative;z-index:1;margin-top:26px;display:grid;gap:3px;pointer-events:none}
+.pill{pointer-events:auto;display:flex;align-items:center;gap:5px;width:100%;text-align:left;font-size:12.5px;font-weight:600;line-height:1.25;padding:3px 6px;border-radius:6px;border:0;background:color-mix(in srgb,var(--c) 16%,var(--paper));color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pill::before,.dot::before,.leg i{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.pill span{overflow:hidden;text-overflow:ellipsis}
+.more{font-size:12px;color:var(--mute);padding-left:6px}
+.o-primaria{--c:var(--o-primaria)}.o-socorro{--c:var(--o-socorro)}.o-elderes{--c:var(--o-elderes)}.o-rapazes{--c:var(--o-rapazes)}.o-mocas{--c:var(--o-mocas)}.o-escola{--c:var(--o-escola)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:14px;font-size:13px}
+.leg{display:flex;align-items:center;gap:8px;font-weight:500}.leg i{width:12px;height:12px}
+.panel{padding:16px 16px 14px}
+.panel h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.col{display:grid;gap:14px}
+.ag{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ag button{width:100%;display:grid;grid-template-columns:48px minmax(0,1fr) 12px;gap:12px;align-items:center;text-align:left;background:transparent;border:0;border-radius:10px;padding:6px}
+.ag button:hover{background:var(--field)}
+.badge{width:48px;height:48px;border-radius:10px;background:var(--pri);color:var(--priink);display:grid;place-content:center;text-align:center;line-height:1.05}
+.badge b{font-size:18px}.badge small{font-size:11px;opacity:.85}
+.badge.nd{background:var(--field);color:var(--mute);border:1px dashed var(--line)}
+.ag .t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.dot{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
+.chev{color:var(--mute)}
+.empty{color:var(--mute);font-size:14px;padding:6px 2px 4px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:10px}
+.tile b{display:block;font-size:24px;font-weight:800;line-height:1.1}.tile span{font-size:12.5px;color:var(--mute);font-weight:500}
+.tile.g{background:color-mix(in srgb,var(--o-rapazes) 12%,var(--paper));border-color:color-mix(in srgb,var(--o-rapazes) 35%,var(--line))}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:14px 0 8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--o-rapazes);border-radius:4px}
+.small{font-size:13px;color:var(--mute);margin:0}
+.miss{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.miss span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;display:inline-flex;align-items:center;gap:6px}
+.miss span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.year{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px}
+.year .card{padding:14px 16px}
+.year h3{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;margin-bottom:8px}
+.year h3 button{border:0;background:none;font-weight:700;padding:0;font-size:17px}
+.year h3 small{font-size:13px;color:var(--mute);font-weight:500}
+.year li button{grid-template-columns:36px minmax(0,1fr)}.year .badge{width:36px;height:36px}.year .badge b{font-size:14px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:12.5px;color:var(--mute);font-weight:600}
+td.z{color:var(--line)}td b{font-weight:700}
+.overlay{position:fixed;inset:0;background:rgba(10,20,20,.45);display:none;place-items:center;padding:16px;z-index:20}
+.overlay.on{display:grid}
+.modal{width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:22px;display:grid;gap:14px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
+.modal h2{font-size:20px;font-weight:800}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:6px}
+input,select,textarea{width:100%;font-size:16px;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field)}
+textarea{resize:vertical}
+fieldset{border:0;padding:0;margin:0}
+.orgs{display:flex;flex-wrap:wrap;gap:8px}
+.org{position:relative}.org input{position:absolute;opacity:0;width:1px;height:1px}
+.org span{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-weight:500;background:var(--field);font-size:14px}
+.org span::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c)}
+.org input:checked+span{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--paper));font-weight:600}
+.org input:focus-visible+span{outline:3px solid var(--o-elderes);outline-offset:2px}
+.mfoot{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.mfoot .sp{flex:1}
+.err{color:#c0392b;font-size:14px;font-weight:600;min-height:1em}
+.who{font-size:13px;color:var(--mute)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 12px 10px 16px;border-radius:12px;display:none;align-items:center;gap:12px;font-size:14px;z-index:30;max-width:calc(100vw - 32px)}
+#toast button{min-height:36px;background:transparent;color:inherit;border:1px solid currentColor;border-radius:8px;padding:0 12px}
+.pop{animation:pop .7s ease}@keyframes pop{from{transform:scale(.96);opacity:.4}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.pop{animation:none}}
+@media(max-width:1100px){.layout{grid-template-columns:minmax(0,1fr)}.col{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}}
+@media(max-width:820px){.app{grid-template-columns:minmax(0,1fr)}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 14px;gap:10px}
+ nav{display:flex;width:100%;gap:4px;overflow-x:auto}nav svg{flex:none}nav a{padding:0 10px;font-size:14px}.sidefoot{display:none}}
+@media(max-width:600px){.cell{min-height:58px;padding:4px}.dn{padding:4px 6px;font-size:13px}.pills{margin-top:22px;display:flex;flex-wrap:wrap;gap:3px}
+ .pill{width:10px;height:10px;padding:0;border-radius:50%;background:var(--c);pointer-events:none}.pill::before,.pill span{display:none}.more{display:none}
+ .two{grid-template-columns:minmax(0,1fr)}.sel{min-width:0;width:100%}.mnav b{min-width:0;flex:1}.head .acts{width:100%}.head .acts .btn{flex:1;justify-content:center}}
+.wait{border:1.5px dashed transparent;border-radius:14px}
+.wait.drop,.cell.drop{outline:2.5px dashed var(--pri);outline-offset:-3px;background:color-mix(in srgb,var(--pri) 10%,var(--paper))}
+[draggable=true]{cursor:grab}
+.hint{font-size:13px;color:var(--mute);margin:-4px 0 10px}
+.role{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.12);width:max-content}
+.badge.wt{background:color-mix(in srgb,var(--o-primaria) 16%,var(--paper));color:var(--ink);border:1px dashed color-mix(in srgb,var(--o-primaria) 60%,var(--line))}
+.pk{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.pk button{width:100%;display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);text-align:left;font-weight:600}
+.pk button:hover{border-color:var(--pri)}
+.pk .x{margin-left:auto;font-size:13px;color:#c0392b;font-weight:600;white-space:nowrap}
+.pk .o{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.sub{font-size:13px;font-weight:700;color:var(--mute);margin:6px 0 -4px}
+.aviso{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:14px;border:1px solid color-mix(in srgb,var(--o-primaria) 45%,var(--line));background:color-mix(in srgb,var(--o-primaria) 12%,var(--paper))}
+.aviso.ok{border-color:color-mix(in srgb,var(--o-rapazes) 40%,var(--line));background:color-mix(in srgb,var(--o-rapazes) 10%,var(--paper))}
+.aviso.no{border-color:color-mix(in srgb,#c0392b 40%,var(--line));background:color-mix(in srgb,#c0392b 8%,var(--paper))}
+.aviso p{margin:0}
+.cnt{margin-left:auto;background:#f0c040;color:#1d1a0b;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px}
+.cad{max-width:640px;padding:22px;display:grid;gap:16px}
+.cad h2,.memh{font-size:20px;font-weight:800}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink);font-weight:500}
+.chk input{width:20px;height:20px;min-height:0;margin-top:2px;flex:none}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;background:color-mix(in srgb,var(--o-primaria) 20%,var(--paper))}
+.st.ok{background:color-mix(in srgb,var(--o-rapazes) 18%,var(--paper))}.st.no{background:color-mix(in srgb,#c0392b 14%,var(--paper))}
+.mems{display:grid;gap:10px;margin:12px 0 26px}
+.mem{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px 16px;align-items:center;padding:14px 16px}
+.mem b{display:block;font-size:16px}
+.mem .small a{color:var(--pri);font-weight:600}
+.mem .ctl{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;align-items:center}
+.mem select{min-width:190px;width:auto}
+@media(max-width:760px){.mem{grid-template-columns:minmax(0,1fr)}.mem .ctl{justify-content:flex-start}.mem select{width:100%}}
+.org input:disabled+span{opacity:.4;cursor:not-allowed}
+a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
+.mem .small a{white-space:nowrap}
+.auth{position:fixed;inset:0;z-index:40;background:var(--side);display:grid;place-items:center;padding:20px;overflow:auto}
+.auth[hidden]{display:none!important}
+.authcard{width:min(440px,100%);padding:28px;display:grid;gap:14px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.alogo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--pri)}
+.authcard h1{font-size:24px;line-height:1.15;font-weight:800;letter-spacing:-.01em}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.tabs button{min-height:40px;border:0;border-radius:9px;background:transparent;font-weight:600;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.google{justify-content:center;width:100%}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+#aform{display:grid;gap:12px}#aform .btn{width:100%;justify-content:center}
+.lnk{border:0;background:none;color:var(--pri);font-weight:600;min-height:36px;padding:0;justify-self:center;text-decoration:underline}
+.okmsg{color:var(--o-rapazes);font-size:14px;font-weight:600;margin:0}
+.me{display:grid;gap:6px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15)}
+.me span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me button{justify-self:start;min-height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.35);background:transparent;color:inherit;padding:0 12px;font-weight:600}
+@media(max-width:820px){aside .sidefoot{display:block;width:100%;margin:0;padding:0}.sidefoot .role,.sidefoot .status{display:none}.me{display:flex;align-items:center;gap:10px;border:0;padding:0}.me span{flex:1;font-size:13px;opacity:.85}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="auth" id="auth" hidden>
+  <div class="card authcard">
+    <div class="alogo"><svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 12h24M10 2v6M20 2v6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="11" cy="19" r="2.2" fill="#f0c040"/><circle cx="19" cy="19" r="2.2" fill="#6fcf97"/></svg>Agenda da Ala</div>
+    <h1>Calendário de Atividades Ala Ceilândia Sul 2027</h1>
+    <p class="small" id="atop">Entre para ver e marcar as atividades da sua organização.</p>
+    <div id="abody">
+      <div class="tabs" role="tablist" id="atabs"><button type="button" role="tab" data-tab="entrar" aria-selected="true">Entrar</button><button type="button" role="tab" data-tab="criar" aria-selected="false">Criar conta</button></div>
+      <div style="display:grid;gap:14px;margin-top:14px" id="agoogw">
+        <button class="btn google" type="button" id="agoogle">Continuar com Google</button>
+        <div class="or"><span>ou com e-mail</span></div>
+      </div>
+      <form id="aform" novalidate>
+        <div id="aemailw"><label for="aemail">E-mail</label><input id="aemail" type="email" autocomplete="email" inputmode="email"></div>
+        <div id="asenhaw"><label for="asenha">Senha</label><input id="asenha" type="password" autocomplete="current-password"></div>
+        <div class="err" id="aerr" role="alert"></div>
+        <p class="okmsg" id="aok" role="status"></p>
+        <button class="btn pri" type="submit" id="asubmit">Entrar</button>
+        <button type="button" class="lnk" id="aesqueci">Esqueci minha senha</button>
+      </form>
+    </div>
+    <p class="small" style="margin:4px 0 0;border-top:1px solid var(--line);padding-top:14px">Site voluntário da Ala Ceilândia Sul: os líderes das organizações propõem as atividades de 2027 e o administrador define os dias. <a href="privacidade.html" style="color:var(--pri);font-weight:600">Política de privacidade</a></p>
+  </div>
+</div>
+<div class="app">
+  <aside>
+    <div class="logo"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 12h24M10 2v6M20 2v6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="11" cy="19" r="2.2" fill="#f0c040"/><circle cx="19" cy="19" r="2.2" fill="#6fcf97"/></svg>Agenda da Ala</div>
+    <nav aria-label="Seções">
+      <a href="#calendario" data-v="calendario"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendário</a>
+      <a href="#ano" data-v="ano"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Ano inteiro</a>
+      <a href="#organizacoes" data-v="organizacoes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Por organização</a>
+      <a href="#cadastro" data-v="cadastro" id="navcad" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Meu cadastro</a>
+      <a href="#membros" data-v="membros" id="navmem" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .7 3 2.2 3.5 5"/></svg>Membros<span class="cnt" id="memcnt" hidden></span></a>
+    </nav>
+    <div class="sidefoot"><span class="role" id="role">…</span><div class="status" id="status"><i></i><span>Carregando…</span></div><div class="me"><span id="meemail"></span><button type="button" id="sair">Sair</button></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <select class="sel" id="filtro" aria-label="Filtrar por organização"></select>
+      <div class="status" id="status2" hidden></div>
+    </div>
+    <div class="head">
+      <div><h1 id="titulo">Calendário de Atividades Ala Ceilândia Sul 2027</h1><p id="sub">Líderes escolhem o mês e a atividade; o administrador define o dia.</p></div>
+      <div class="acts">
+        <button class="btn" type="button" id="copiar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M4 16V5a2 2 0 0 1 2-2h11"/></svg>Copiar lista</button>
+        <button class="btn pri" type="button" id="novo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Adicionar atividade</button>
+      </div>
+    </div>
+    <div class="aviso" id="aviso" hidden></div>
+    <div id="view"></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov">
+  <form class="card modal" id="form" novalidate role="dialog" aria-modal="true" aria-labelledby="mt">
+    <h2 id="mt">Nova atividade</h2>
+    <div class="two" id="fdatas">
+      <div><label for="fmes">Mês</label><select id="fmes"></select></div>
+      <div id="fdiaw"><label for="fdia">Dia <small>(só administrador)</small></label><select id="fdia"></select></div>
+    </div>
+    <p class="small" id="fdianote"></p>
+    <div><label for="fnome">Nome da atividade</label><input id="fnome" maxlength="120" autocomplete="off" placeholder="Ex.: Noite de talentos da ala"></div>
+    <fieldset><legend class="lbl">Organização</legend><div class="orgs" id="forgs"></div></fieldset>
+    <div><label for="fdet">Detalhes (opcional)</label><textarea id="fdet" rows="2" maxlength="400" placeholder="Local, horário, responsável…"></textarea></div>
+    <div class="who" id="fwho"></div>
+    <div class="err" id="ferr" role="alert"></div>
+    <div class="mfoot">
+      <button class="btn danger" type="button" id="fdel" hidden>Excluir</button><span class="sp"></span>
+      <button class="btn" type="button" id="fcancel">Cancelar</button>
+      <button class="btn pri" type="submit" id="fsave">Salvar</button>
+    </div>
+  </form>
+</div>
+<div class="overlay" id="pov">
+  <div class="card modal" role="dialog" aria-modal="true" aria-labelledby="pt">
+    <h2 id="pt">Definir dia</h2>
+    <div id="pbody"></div>
+    <div class="mfoot"><span class="sp"></span><button class="btn" type="button" id="pclose">Fechar</button></div>
+  </div>
+</div>
+<div id="toast" role="status"><span id="tmsg"></span><button type="button" id="tbtn" hidden>Desfazer</button></div>
+
+<script>
+{
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const AB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
+const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
+const ANO=2027,LSM='atividades-ala-2027-mes';
+const VIEWS=['calendario','ano','organizacoes','cadastro','membros'];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dim=m=>new Date(ANO,m+1,0).getDate();
+const plural=(n,a,b)=>n===1?`1 ${a}`:`${n} ${b}`;
+const orgOpts=sel=>ORGS.map(o=>`<option value="${o.k}"${o.k===sel?' selected':''}>${o.n}</option>`).join('');
+const CFG=window.AGENDA_CONFIG||{};
+const configurado=typeof CFG.SUPABASE_URL==='string'&&/^https:\/\/.+\.supabase\.co\/?$/.test(CFG.SUPABASE_URL)&&typeof CFG.SUPABASE_KEY==='string'&&CFG.SUPABASE_KEY.length>20;
+const sb=configurado&&window.supabase?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_KEY):null;
+const VOLTA=location.origin+location.pathname;
+
+let sessao=null,myId=null,meEmail='',meNome='',acts=[],items=[],carregado=false;
+let adminIds=[],isAdmin=false,isDono=false,meuCad=undefined,minhaAprov=undefined,membros={},aprovs={};
+let view='calendario',filtro='todas',editId=null,undoItem=null,flash=null,toastT=0,busy=false,pickDia=0,autoCad=false,canal=null,recT=0;
+let mes=0;try{const s=Number(localStorage.getItem(LSM));if(Number.isInteger(s)&&s>=0&&s<12)mes=s}catch(e){}
+const now=new Date();if(now.getFullYear()===ANO)mes=now.getMonth();
+
+$('#filtro').innerHTML='<option value="todas">Todas as organizações</option>'+orgOpts('');
+$('#fmes').innerHTML=MESES.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+$('#forgs').innerHTML=ORGS.map(o=>`<label class="org o-${o.k}"><input type="radio" name="org" value="${o.k}"><span>${o.n}</span></label>`).join('');
+
+/* ================= LOGIN ================= */
+let amodo='entrar';
+function authModo(m){
+  amodo=m;$('#aerr').textContent='';$('#aok').textContent='';
+  document.querySelectorAll('#atabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===m)));
+  $('#atabs').hidden=m==='esqueci'||m==='nova';$('#agoogw').hidden=m==='esqueci'||m==='nova';
+  $('#aemailw').hidden=m==='nova';$('#asenhaw').hidden=m==='esqueci';
+  $('#asenha').autocomplete=m==='entrar'?'current-password':'new-password';
+  $('#asenha').previousElementSibling.textContent=m==='nova'?'Nova senha (mínimo 6 caracteres)':m==='criar'?'Crie uma senha (mínimo 6 caracteres)':'Senha';
+  $('#asubmit').textContent={entrar:'Entrar',criar:'Criar conta',esqueci:'Enviar link para redefinir',nova:'Salvar nova senha'}[m];
+  $('#aesqueci').textContent=m==='esqueci'?'Voltar para entrar':'Esqueci minha senha';$('#aesqueci').hidden=m==='nova'||m==='criar';
+  $('#atop').textContent={entrar:'Entre para ver e marcar as atividades da sua organização.',criar:'Crie sua conta. Depois você preenche o cadastro de líder.',esqueci:'Informe seu e-mail e enviaremos um link para criar uma nova senha.',nova:'Escolha uma nova senha para sua conta.'}[m];
+}
+function traduz(e){
+  const m=String(e&&e.message||e||'');
+  if(/Invalid login credentials/i.test(m))return 'E-mail ou senha incorretos.';
+  if(/already registered|already exists/i.test(m))return 'Este e-mail já tem conta. Use “Entrar”.';
+  if(/Email not confirmed/i.test(m))return 'Confirme seu e-mail pelo link que enviamos antes de entrar.';
+  if(/Password should be at least|weak/i.test(m))return 'A senha precisa ter pelo menos 6 caracteres.';
+  if(/rate limit|security purposes/i.test(m))return 'Muitas tentativas. Aguarde um minuto e tente de novo.';
+  if(/provider is not enabled/i.test(m))return 'O login com Google ainda não foi ativado no Supabase.';
+  if(/row-level security|42501/i.test(m))return 'Você não tem permissão para fazer isso.';
+  if(/não existe nesse mês/i.test(m))return m;
+  if(/Failed to fetch|NetworkError/i.test(m))return 'Sem conexão com o servidor. Verifique a internet.';
+  return 'Algo deu errado: '+m;
+}
+$('#atabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)authModo(b.dataset.tab)});
+$('#aesqueci').addEventListener('click',()=>authModo(amodo==='esqueci'?'entrar':'esqueci'));
+$('#agoogle').addEventListener('click',async()=>{
+  $('#aerr').textContent='';const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:VOLTA}});
+  if(error)$('#aerr').textContent=traduz(error);
+});
+$('#aform').addEventListener('submit',async ev=>{
+  ev.preventDefault();if(busy)return;
+  const email=$('#aemail').value.trim(),senha=$('#asenha').value,err=$('#aerr'),ok=$('#aok');err.textContent='';ok.textContent='';
+  if(amodo!=='nova'&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent='Digite um e-mail válido.';$('#aemail').focus();return}
+  if(amodo!=='esqueci'&&senha.length<6){err.textContent='A senha precisa ter pelo menos 6 caracteres.';$('#asenha').focus();return}
+  busy=true;$('#asubmit').disabled=true;let r;
+  try{
+    if(amodo==='entrar')r=await sb.auth.signInWithPassword({email,password:senha});
+    else if(amodo==='criar'){r=await sb.auth.signUp({email,password:senha,options:{emailRedirectTo:VOLTA}});
+      if(!r.error&&!r.data.session){ok.textContent='Conta criada! Enviamos um link de confirmação para '+email+'. Abra o e-mail e clique no link para entrar.';$('#asenha').value=''}}
+    else if(amodo==='esqueci'){r=await sb.auth.resetPasswordForEmail(email,{redirectTo:VOLTA});if(!r.error)ok.textContent='Se existir uma conta com esse e-mail, o link para nova senha já foi enviado.'}
+    else{r=await sb.auth.updateUser({password:senha});if(!r.error){toast('Senha alterada');$('#asenha').value='';const ss=sessao;sessao=null;authModo('entrar');if(ss)entrou(ss);else mostrarApp()}}
+    if(r&&r.error)err.textContent=traduz(r.error);
+  }catch(e){err.textContent=traduz(e)}
+  busy=false;$('#asubmit').disabled=false;
+});
+$('#sair').addEventListener('click',async()=>{await sb.auth.signOut()});
+function mostrarLogin(){$('#auth').hidden=false;document.querySelector('.app').inert=true}
+function mostrarApp(){$('#auth').hidden=true;document.querySelector('.app').inert=false}
+
+/* ================= DADOS ================= */
+function clean(r){
+  if(!r)return null;const m=Number(r.mes),org=ORG[r.org],nome=String(r.nome??'').trim().slice(0,140);
+  if(!Number.isInteger(m)||m<0||m>11||!org||!nome)return null;
+  let dia=Number(r.dia);if(!Number.isInteger(dia)||dia<1||dia>dim(m))dia=0;
+  return{id:String(r.id),mes:m,dia,org:org.k,nome,detalhes:String(r.detalhes??'').slice(0,400),autor:r.autor?String(r.autor):'',autorNome:String(r.autor_nome??'').slice(0,80),criado:Date.parse(r.criado)||0};
+}
+function cleanMembro(r){if(!r)return null;return{nome:String(r.nome??'').slice(0,80),org:ORG[r.org]?r.org:'',whats:String(r.whats??'').replace(/\D/g,'').slice(0,15),email:String(r.email??'').slice(0,120),em:Date.parse(r.criado)||0}}
+function cleanAprov(r){if(!r)return null;const st=r.status==='aprovado'||r.status==='recusado'?r.status:null;return st?{status:st,org:ORG[r.org]?r.org:''}:null}
+async function carregar(){
+  if(!sb||!myId)return;
+  const q=[sb.from('atividades').select('id,mes,nome,org,detalhes,dia,autor,autor_nome,criado').order('criado'),sb.from('admins').select('user_id,dono')];
+  if(!isDono){q.push(sb.from('perfis').select('*').eq('id',myId).maybeSingle(),sb.from('aprovacoes').select('*').eq('user_id',myId).maybeSingle())}
+  const [a,ad,pf,ap]=await Promise.all(q);
+  if(a.error){setStatus('Erro ao carregar',true);toast(traduz(a.error));return}
+  acts=(a.data||[]).map(clean).filter(Boolean);items=acts;
+  const adm=ad.data||[];adminIds=adm.map(r=>String(r.user_id));
+  const eraDono=isDono;isDono=adm.some(r=>String(r.user_id)===myId&&r.dono);isAdmin=adminIds.includes(myId);
+  if(isDono){
+    if(!eraDono){meuCad=null;minhaAprov=null}
+    const [m,p]=await Promise.all([sb.from('perfis').select('*').order('criado'),sb.from('aprovacoes').select('*')]);
+    membros={};(m.data||[]).forEach(r=>{const c=cleanMembro(r);if(c)membros[String(r.id)]=c});
+    aprovs={};(p.data||[]).forEach(r=>{const c=cleanAprov(r);if(c)aprovs[String(r.user_id)]=c});
+  }else{
+    meuCad=pf&&!pf.error?cleanMembro(pf.data):null;minhaAprov=ap&&!ap.error?cleanAprov(ap.data):null;
+    if(!meuCad&&!isAdmin&&!autoCad&&!location.hash){autoCad=true;location.hash='cadastro'}
+  }
+  carregado=true;setStatus('Sincronizado');render();
+}
+function agendar(){clearTimeout(recT);recT=setTimeout(carregar,350)}
+function ouvir(){
+  if(canal)sb.removeChannel(canal);
+  canal=sb.channel('agenda').on('postgres_changes',{event:'*',schema:'public'},agendar).subscribe();
+}
+window.addEventListener('focus',()=>{if(myId)agendar()});
+
+/* ================= PAPÉIS ================= */
+function papel(){
+  if(isAdmin)return 'admin';
+  if(!carregado||meuCad===undefined)return 'carregando';
+  if(!meuCad)return 'sem-cadastro';
+  if(minhaAprov&&minhaAprov.status==='aprovado'&&minhaAprov.org)return 'aprovado';
+  if(minhaAprov&&minhaAprov.status==='recusado')return 'recusado';
+  return 'pendente';
+}
+const minhaOrg=()=>papel()==='aprovado'?minhaAprov.org:'';
+const podeAdicionar=()=>{const p=papel();return p==='admin'||p==='aprovado'};
+const podeEditar=i=>{const p=papel();return p==='admin'||(p==='aprovado'&&i.autor===myId&&i.org===minhaOrg())};
+const ord=(a,b)=>(a.dia||99)-(b.dia||99)||a.criado-b.criado;
+const vis=()=>items.filter(i=>filtro==='todas'||i.org===filtro);
+function normWhats(v){let d=String(v).replace(/\D/g,'');if(d.length===10||d.length===11)d='55'+d;if(/^55\d{10,11}$/.test(d))return d;return String(v).trim().startsWith('+')&&d.length>=11&&d.length<=15?d:null}
+function fmtWhats(d){if(!d)return '';if(d.startsWith('55')&&(d.length===12||d.length===13)){const r=d.slice(4);return `+55 (${d.slice(2,4)}) ${r.slice(0,-4)}-${r.slice(-4)}`}return '+'+d}
+
+function setStatus(t,off){const s=$('#status');s.classList.toggle('off',!!off);s.querySelector('span').textContent=t}
+function toast(msg,undo){$('#tmsg').textContent=msg;$('#tbtn').hidden=!undo;$('#toast').style.display='flex';clearTimeout(toastT);toastT=setTimeout(()=>{$('#toast').style.display='none';undoItem=null},undo?7000:4000)}
+function badge(i){return i.dia?`<span class="badge"><b>${i.dia}</b><small>${AB[i.mes]}</small></span>`:`<span class="badge wt"><small>dia a<br>definir</small></span>`}
+function agRow(i){return `<li><button type="button" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} class="${i.id===flash?'pop':''}">${badge(i)}<span><span class="t">${esc(i.nome)}</span><span class="dot o-${i.org}">${ORG[i.org].n}</span></span><svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>`}
+
+/* ================= TELAS ================= */
+function vCalendario(){
+  const first=new Date(ANO,mes,1).getDay(),n=dim(mes),list=vis().filter(i=>i.mes===mes);
+  const isToday=d=>now.getFullYear()===ANO&&now.getMonth()===mes&&now.getDate()===d;
+  let cells='';
+  for(let i=0;i<first;i++)cells+='<div class="cell out"></div>';
+  for(let d=1;d<=n;d++){
+    const di=list.filter(i=>i.dia===d).sort(ord);
+    const pills=di.slice(0,3).map(i=>`<button type="button" class="pill o-${i.org}" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} title="${esc(i.nome)} · ${ORG[i.org].n}"><span>${esc(i.nome)}</span></button>`).join('')+(di.length>3?`<span class="more">+${di.length-3} mais</span>`:'');
+    const lab=`${d} de ${MESES[mes]}${di.length?', '+plural(di.length,'atividade','atividades'):''}`;
+    cells+=`<div class="cell${di.length?' has':''}${isToday(d)?' today':''}" data-dia="${d}">${isAdmin?`<button type="button" class="dn" data-act="pick" data-d="${d}" aria-label="${lab}. Definir atividade para este dia"><span class="d">${d}</span><span class="plus" aria-hidden="true">+</span></button>`:`<span class="dn" style="pointer-events:none" aria-label="${lab}"><span class="d">${d}</span></span>`}<div class="pills">${pills}</div></div>`;
+  }
+  const tail=(7-(first+n)%7)%7;for(let i=0;i<tail;i++)cells+='<div class="cell out"></div>';
+  const all=items.filter(i=>i.mes===mes),com=all.filter(i=>i.dia),orgsCom=new Set(all.map(i=>i.org)),falta=ORGS.filter(o=>!orgsCom.has(o.k));
+  const pct=all.length?Math.round(com.length/all.length*100):0;
+  const wait=list.filter(i=>!i.dia).sort(ord),dated=list.filter(i=>i.dia).sort(ord),load=!carregado;
+  return `<div class="layout"><div>
+    <div class="mnav"><button class="btn" type="button" data-act="prev" aria-label="Mês anterior"${mes===0?' disabled':''}>‹</button><b>${MESES[mes]} de ${ANO}</b><button class="btn" type="button" data-act="next" aria-label="Próximo mês"${mes===11?' disabled':''}>›</button></div>
+    <div class="card cal"><div class="wk">${SEM.map(s=>`<span>${s}</span>`).join('')}</div><div class="days">${cells}</div></div>
+    <div class="legend">${ORGS.map(o=>`<span class="leg o-${o.k}"><i></i>${o.n}</span>`).join('')}</div>
+  </div>
+  <div class="col">
+    <section class="card panel wait" id="waitbox"><h3>Aguardando data · ${MESES[mes]}</h3>
+      ${isAdmin&&wait.length?'<p class="hint">Arraste uma atividade para um dia do calendário, ou clique no dia.</p>':''}
+      ${wait.length?`<ul class="ag">${wait.map(agRow).join('')}</ul>`:`<p class="empty">${load?'Carregando…':isAdmin&&dated.length?'Tudo com data. Arraste um item do calendário para cá para tirar a data.':'Nenhuma atividade aguardando data.'}</p>`}
+      ${!isAdmin&&wait.length?'<p class="small" style="margin-top:8px">O administrador vai definir o dia destas atividades.</p>':''}
+    </section>
+    <section class="card panel"><h3>Com data definida</h3>${dated.length?`<ul class="ag">${dated.map(agRow).join('')}</ul>`:`<p class="empty">${load?'Carregando…':'Nenhuma atividade com dia definido ainda.'}</p>`}</section>
+    <section class="card panel"><h3>Resumo de ${MESES[mes]} de ${ANO}</h3>
+      <div class="tiles"><div class="tile"><b>${all.length}</b><span>Atividades</span></div><div class="tile g"><b>${com.length}</b><span>Com data</span></div><div class="tile"><b>${all.length-com.length}</b><span>Aguardando</span></div></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <p class="small">${all.length?`${com.length} de ${all.length} atividades já têm dia definido (${pct}%).`:'Nenhuma atividade marcada neste mês.'}</p>
+      ${falta.length&&falta.length<ORGS.length?`<p class="small" style="margin-top:10px">Ainda sem atividade neste mês:</p><div class="miss">${falta.map(o=>`<span class="o-${o.k}">${o.n}</span>`).join('')}</div>`:''}
+    </section>
+  </div></div>`;
+}
+function vAno(){
+  const v=vis();
+  return `<div class="year">${MESES.map((m,mi)=>{const l=v.filter(i=>i.mes===mi).sort(ord);
+    return `<section class="card"><h3><button type="button" data-act="goto" data-m="${mi}">${m}</button><small>${plural(l.length,'atividade','atividades')}</small></h3>${l.length?`<ul class="ag">${l.map(agRow).join('')}</ul>`:`<p class="empty">Nada marcado.</p>`}</section>`}).join('')}</div>`;
+}
+function vOrg(){
+  const tot=ORGS.map(o=>items.filter(i=>i.org===o.k).length);
+  return `<div class="card panel"><h3>Atividades por organização em ${ANO}</h3><div class="scroll"><table><thead><tr><th>Organização</th>${AB.map(a=>`<th>${a}</th>`).join('')}<th>Total</th></tr></thead><tbody>${ORGS.map((o,oi)=>`<tr><td><span class="dot o-${o.k}" style="color:var(--ink);font-size:14px">${o.n}</span></td>${MESES.map((_,mi)=>{const c=items.filter(i=>i.org===o.k&&i.mes===mi).length;return `<td class="${c?'':'z'}">${c||'·'}</td>`}).join('')}<td><b>${tot[oi]}</b></td></tr>`).join('')}</tbody></table></div>
+  <p class="small" style="margin-top:12px">Meses com “·” ainda não têm atividade daquela organização.</p></div>`;
+}
+function stPill(){const p=papel();return p==='aprovado'?`<span class="st ok">Aprovado · ${ORG[minhaOrg()].n}</span>`:p==='recusado'?'<span class="st no">Cadastro recusado</span>':p==='pendente'?'<span class="st">Aguardando aprovação</span>':''}
+function vCadastro(){
+  const p=papel();
+  if(p==='admin')return `<div class="card cad"><h2>Cadastro</h2><p class="small">Você é administrador e não precisa de cadastro.${isDono?' Os pedidos dos líderes aparecem em <a href="#membros">Membros</a>.':''}</p></div>`;
+  if(p==='carregando')return `<div class="card cad"><p class="empty">Carregando…</p></div>`;
+  const c=meuCad||{nome:meNome,org:'',whats:''};
+  const mudou=p==='aprovado'&&c.org&&c.org!==minhaOrg();
+  return `<form class="card cad" id="cadform" novalidate>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between"><h2>${meuCad?'Meu cadastro':'Cadastro de líder'}</h2>${stPill()}</div>
+    <p class="small">${meuCad?(p==='aprovado'?'Você já pode marcar atividades da sua organização.':p==='recusado'?'O administrador recusou este cadastro. Corrija os dados e envie de novo, ou fale com ele.':'O administrador vai conferir seus dados e liberar seu acesso.'):'Preencha uma vez. Depois que o administrador aprovar, você poderá marcar atividades da sua organização.'}</p>
+    <div><label for="cnome">Nome completo</label><input id="cnome" maxlength="80" autocomplete="name" value="${esc(c.nome)}"></div>
+    <div><label for="corg">Organização que você lidera</label><select id="corg"><option value="">Escolha…</option>${orgOpts(c.org)}</select>${mudou?`<p class="small" style="margin-top:6px">Pedido de mudança para ${ORG[c.org].n} enviado. Até o administrador aceitar, você continua em ${ORG[minhaOrg()].n}.</p>`:''}</div>
+    <div><label for="cwhats">WhatsApp</label><input id="cwhats" type="tel" inputmode="tel" autocomplete="tel" placeholder="(61) 99999-9999" value="${esc(c.whats?fmtWhats(c.whats):'')}"><p class="small" style="margin-top:6px">Use o número com DDD. Para número de outro país, comece com + e o código do país.</p></div>
+    <label class="chk"><input type="checkbox" id="cok"${meuCad?' checked':''}><span>Autorizo que o administrador da ala veja meu nome, e-mail e WhatsApp para falar comigo sobre as atividades.</span></label>
+    <div class="err" id="cerr" role="alert"></div>
+    <div><button class="btn pri" type="submit" id="csave">${meuCad?'Salvar alterações':'Enviar cadastro'}</button></div>
+  </form>`;
+}
+function vMembros(){
+  if(!isDono)return `<div class="card cad"><p class="small">Só o dono vê esta tela.</p></div>`;
+  const ids=Object.keys(membros);
+  const pend=ids.filter(id=>!aprovs[id]);
+  const mud=ids.filter(id=>aprovs[id]&&aprovs[id].status==='aprovado'&&membros[id].org&&membros[id].org!==aprovs[id].org);
+  const apr=ids.filter(id=>aprovs[id]&&aprovs[id].status==='aprovado').sort((a,b)=>ORGS.findIndex(o=>o.k===aprovs[a].org)-ORGS.findIndex(o=>o.k===aprovs[b].org));
+  const rec=ids.filter(id=>aprovs[id]&&aprovs[id].status==='recusado');
+  const info=id=>{const m=membros[id];return `<div><b>${esc(m.nome||'Sem nome')}${adminIds.includes(id)?' <span class="st ok" style="margin-left:6px">Administrador</span>':''}</b><p class="small">${m.email?esc(m.email)+' · ':''}${m.whats?`<a href="https://wa.me/${esc(m.whats)}" target="_blank" rel="noopener">WhatsApp ${esc(fmtWhats(m.whats))}</a>`:'sem WhatsApp'}</p></div>`};
+  const sec=(t,arr,f,vazio)=>`<h3 class="memh" style="font-size:17px;margin-top:6px">${t} <span class="small">(${arr.length})</span></h3><div class="mems">${arr.length?arr.map(f).join(''):`<p class="empty">${vazio}</p>`}</div>`;
+  return sec('Aguardando aprovação',pend,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Pediu: <b style="display:inline;font-size:14px">${membros[id].org?ORG[membros[id].org].n:'—'}</b></div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(membros[id].org)}</select><button class="btn" type="button" data-mem="recusar">Recusar</button><button class="btn pri" type="button" data-mem="aprovar">Aprovar</button></div></div>`,'Nenhum pedido novo.')
+   +(mud.length?sec('Pedidos de mudança de organização',mud,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">De ${ORG[aprovs[id].org].n} para <b style="display:inline;font-size:14px">${ORG[membros[id].org].n}</b></div><div class="ctl"><button class="btn pri" type="button" data-mem="mudar">Aceitar mudança</button></div></div>`,''):'')
+   +sec('Líderes aprovados',apr,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div><span class="dot o-${aprovs[id].org}" style="color:var(--ink);font-size:14px">${ORG[aprovs[id].org].n}</span></div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(aprovs[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Salvar</button><button class="btn" type="button" data-mem="${adminIds.includes(id)?'desadmin':'admin'}">${adminIds.includes(id)?'Tirar de administrador':'Tornar administrador'}</button><button class="btn danger" type="button" data-mem="remover">Remover</button></div></div>`,'Ninguém aprovado ainda.')
+   +(rec.length?sec('Recusados',rec,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Pediu: ${membros[id].org?ORG[membros[id].org].n:'—'}</div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(membros[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Aprovar</button><button class="btn danger" type="button" data-mem="remover">Apagar</button></div></div>`,''):'')
+   +`<p class="small">Administradores definem os dias e editam qualquer atividade; só você aprova cadastros e vê os contatos. “Remover” apaga o cadastro e a aprovação: a pessoa continua com a conta de login, mas precisa se cadastrar de novo e ser aprovada para marcar atividades.</p>`;
+}
+function aviso(){
+  const p=papel(),a=$('#aviso');let h='',cls='';
+  if(['calendario','ano','organizacoes'].includes(view)){
+    if(p==='sem-cadastro')h=`<p><b>Faça seu cadastro</b> para marcar atividades da sua organização.</p><a class="btn pri" href="#cadastro">Fazer cadastro</a>`;
+    else if(p==='pendente')h=`<p><b>Cadastro enviado.</b> Aguarde o administrador aprovar para marcar atividades.</p><a class="btn" href="#cadastro">Ver cadastro</a>`;
+    else if(p==='recusado'){cls='no';h=`<p><b>Seu cadastro foi recusado.</b> Revise os dados ou fale com o administrador.</p><a class="btn" href="#cadastro">Revisar</a>`}
+    else if(isDono){const n=Object.keys(membros).filter(id=>!aprovs[id]).length;if(n)h=`<p><b>${plural(n,'líder aguarda','líderes aguardam')} aprovação.</b></p><a class="btn pri" href="#membros">Ver pedidos</a>`}
+  }
+  a.className='aviso'+(cls?' '+cls:'');a.hidden=!h;a.innerHTML=h;
+}
+function render(){
+  const p=papel();
+  $('#navcad').hidden=isAdmin;$('#navmem').hidden=!isDono;
+  const n=Object.keys(membros).filter(id=>!aprovs[id]).length;$('#memcnt').hidden=!n||!isDono;$('#memcnt').textContent=n;
+  if(view==='membros'&&!isDono&&carregado)view='calendario';
+  document.querySelectorAll('nav a').forEach(a=>{if(a.dataset.v===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  $('#titulo').textContent={calendario:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:`Atividades de ${ANO}`,organizacoes:'Resumo por organização',cadastro:'Meu cadastro',membros:'Membros e aprovações'}[view];
+  $('#filtro').hidden=!['calendario','ano'].includes(view);
+  $('#role').textContent=p==='admin'?(isDono?'Administrador (dono)':'Administrador'):p==='aprovado'?'Líder · '+ORG[minhaOrg()].n:p==='carregando'?'…':'Líder (sem aprovação)';
+  $('#sub').textContent=p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades da ${ORG[minhaOrg()].n}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
+  $('#novo').disabled=!podeAdicionar();
+  $('#meemail').textContent=meEmail;
+  aviso();
+  const keep=view==='cadastro'&&document.activeElement&&document.activeElement.closest('#cadform');
+  if(!keep)$('#view').innerHTML=view==='ano'?vAno():view==='organizacoes'?vOrg():view==='cadastro'?vCadastro():view==='membros'?vMembros():vCalendario();
+  flash=null;
+  if($('#pov').classList.contains('on'))renderPick();
+}
+function route(){const h=location.hash.slice(1);view=VIEWS.includes(h)?h:'calendario';render()}
+
+/* ================= ESCRITA ================= */
+async function exec(promise,msgErro){
+  try{const r=await promise;if(r&&r.error){const t=traduz(r.error);$('#ferr').textContent=t;toast(msgErro||t);return null}return r||{}}
+  catch(e){const t=traduz(e);$('#ferr').textContent=t;toast(t);return null}
+}
+async function setDia(id,dia){if(!isAdmin)return false;return !!await exec(sb.from('atividades').update({dia:dia||null}).eq('id',id))}
+async function moverPara(id,dia){
+  const it=items.find(i=>i.id===id);if(!it)return;
+  if((dia||0)===it.dia)return;
+  it.dia=dia||0;render();
+  if(await setDia(id,dia)){flash=id;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}`:`“${it.nome}” voltou para aguardando data`)}
+  agendar();
+}
+
+/* ---- formulário de atividade ---- */
+function diaOpts(m,sel){$('#fdia').innerHTML='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1;return `<option value="${d}">${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}</option>`}).join('');$('#fdia').value=String(sel<=dim(m)?sel:0)}
+function openForm(it){
+  if(!it&&!podeAdicionar())return;
+  const pode=!it||podeEditar(it),mo=minhaOrg();
+  editId=it?it.id:null;$('#ferr').textContent='';
+  $('#mt').textContent=!it?'Nova atividade':pode?'Editar atividade':'Atividade';
+  const mm=it?it.mes:mes;$('#fmes').value=String(mm);diaOpts(mm,it?it.dia:0);
+  $('#fdiaw').hidden=!isAdmin;$('#fdatas').style.gridTemplateColumns=isAdmin?'':'minmax(0,1fr)';
+  $('#fdianote').textContent=isAdmin?'':it&&it.dia?`Dia definido pelo administrador: ${it.dia} de ${MESES[it.mes]}. Se mudar o mês, o dia volta a ficar a definir.`:'O dia será definido pelo administrador.';
+  $('#fnome').value=it?it.nome:'';$('#fdet').value=it?it.detalhes:'';
+  document.querySelectorAll('#form input,#form select,#form textarea').forEach(e=>e.disabled=!pode);
+  document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(mo&&pode&&!isAdmin)r.disabled=r.value!==mo});
+  $('#fdel').hidden=!it||!pode;$('#fsave').hidden=!pode;
+  $('#fwho').textContent=it?(it.autor===myId?'Marcada por você':it.autorNome?'Marcada por '+it.autorNome:''):'';
+  $('#ov').classList.add('on');setTimeout(()=>$(pode?'#fnome':'#fcancel').focus(),30);
+}
+function closeForm(){$('#ov').classList.remove('on');editId=null}
+$('#fmes').addEventListener('change',()=>diaOpts(Number($('#fmes').value),Number($('#fdia').value)));
+$('#form').addEventListener('submit',async ev=>{
+  ev.preventDefault();if(busy)return;$('#ferr').textContent='';
+  const nome=$('#fnome').value.trim(),m=Number($('#fmes').value),org=(document.querySelector('input[name=org]:checked')||{}).value,detalhes=$('#fdet').value.trim();
+  const dia=isAdmin?Number($('#fdia').value)||0:null;
+  if(!nome){$('#ferr').textContent='Dê um nome à atividade.';$('#fnome').focus();return}
+  if(!org){$('#ferr').textContent='Escolha a organização.';(document.querySelector('input[name=org]:not(:disabled)')||$('#fnome')).focus();return}
+  if(!isAdmin&&org!==minhaOrg()){$('#ferr').textContent='Você só pode marcar atividades da sua organização.';return}
+  const row={mes:m,nome,org,detalhes};if(isAdmin)row.dia=dia||null;
+  busy=true;$('#fsave').disabled=true;const era=editId;let r;
+  if(era)r=await exec(sb.from('atividades').update(row).eq('id',era).select('id'));
+  else r=await exec(sb.from('atividades').insert(row).select('id').single());
+  busy=false;$('#fsave').disabled=false;
+  if(r){const id=era||(r.data&&r.data.id);if(era&&Array.isArray(r.data)&&!r.data.length){$('#ferr').textContent='Você não tem permissão para editar esta atividade.';return}
+    flash=id;toast(era?'Atividade atualizada':`Marcada em ${MESES[m]}`+(isAdmin&&dia?` (dia ${dia})`:' — aguardando data'));closeForm();if(view==='calendario')mes=m;persistMes();carregar()}
+});
+$('#fdel').addEventListener('click',async()=>{
+  const it=items.find(a=>a.id===editId);if(!it)return;
+  const r=await exec(sb.from('atividades').delete().eq('id',it.id).select('id'));
+  if(!r)return;if(Array.isArray(r.data)&&!r.data.length){$('#ferr').textContent='Você não tem permissão para excluir esta atividade.';return}
+  closeForm();undoItem=it;toast(`“${it.nome}” excluída`,true);carregar();
+});
+$('#tbtn').addEventListener('click',async()=>{if(!undoItem)return;const it=undoItem;undoItem=null;$('#toast').style.display='none';
+  const row={id:it.id,mes:it.mes,nome:it.nome,org:it.org,detalhes:it.detalhes};if(isAdmin&&it.dia)row.dia=it.dia;
+  if(await exec(sb.from('atividades').insert(row)))carregar()});
+$('#fcancel').addEventListener('click',closeForm);
+$('#ov').addEventListener('click',e=>{if(e.target===$('#ov'))closeForm()});
+
+/* ---- cadastro e aprovações ---- */
+$('#view').addEventListener('submit',async ev=>{
+  if(ev.target.id!=='cadform')return;ev.preventDefault();if(busy)return;
+  const nome=$('#cnome').value.trim(),org=$('#corg').value,raw=$('#cwhats').value.trim(),ok=$('#cok').checked,err=$('#cerr');err.textContent='';
+  if(nome.length<3){err.textContent='Escreva seu nome completo.';$('#cnome').focus();return}
+  if(!ORG[org]){err.textContent='Escolha a organização que você lidera.';$('#corg').focus();return}
+  const w=normWhats(raw);if(!w){err.textContent='Confira o WhatsApp: use DDD + número, por exemplo (61) 99999-9999.';$('#cwhats').focus();return}
+  if(!ok){err.textContent='Marque a autorização para enviar o cadastro.';$('#cok').focus();return}
+  busy=true;$('#csave').disabled=true;
+  const r=await exec(sb.from('perfis').upsert({id:myId,nome,org,whats:w}));
+  busy=false;
+  if(r){toast(meuCad?'Cadastro atualizado':'Cadastro enviado — aguarde a aprovação');document.activeElement.blur();meuCad={nome,org,whats:w,email:meEmail,em:Date.now()};render();carregar()}
+  else{err.textContent=$('#ferr').textContent;const b=$('#csave');if(b)b.disabled=false}
+});
+$('#view').addEventListener('input',ev=>{if(ev.target.id!=='cwhats')return;if(ev.target.value.trim().startsWith('+'))return;const d=ev.target.value.replace(/\D/g,'').slice(0,11);let f=d;if(d.length>2)f=`(${d.slice(0,2)}) `+d.slice(2);if(d.length>6)f=`(${d.slice(0,2)}) ${d.slice(2,d.length-4)}-${d.slice(-4)}`;ev.target.value=f});
+async function acaoMembro(btn){
+  const card=btn.closest('[data-uid]'),id=card.dataset.uid,m=btn.dataset.mem,sel=card.querySelector('[data-org]');
+  const nome=(membros[id]&&membros[id].nome)||'Líder';btn.disabled=true;let ok=true;
+  if(m==='aprovar'||m==='mudar'){const org=m==='mudar'?membros[id].org:sel.value;ok=!!await exec(sb.from('aprovacoes').upsert({user_id:id,status:'aprovado',org,por:myId}));if(ok)toast(`${nome} aprovado(a) na ${ORG[org].n}`)}
+  if(m==='recusar'){ok=!!await exec(sb.from('aprovacoes').upsert({user_id:id,status:'recusado',org:null,por:myId}));if(ok)toast(`Cadastro de ${nome} recusado`)}
+  if(m==='admin'){ok=!!await exec(sb.from('admins').insert({user_id:id}));if(ok)toast(`${nome} agora é administrador(a)`)}
+  if(m==='desadmin'){ok=!!await exec(sb.from('admins').delete().eq('user_id',id));if(ok)toast(`${nome} voltou a ser só líder`)}
+  if(m==='remover'){ok=!!await exec(sb.from('admins').delete().eq('user_id',id))&&!!await exec(sb.from('aprovacoes').delete().eq('user_id',id))&&!!await exec(sb.from('perfis').delete().eq('id',id));if(ok)toast(`${nome} removido(a)`)}
+  if(!ok)btn.disabled=false;carregar();
+}
+
+/* ---- seletor de dia (admin) ---- */
+function renderPick(){
+  const d=pickDia,list=items.filter(i=>i.mes===mes);
+  const wait=list.filter(i=>!i.dia).sort(ord),here=list.filter(i=>i.dia===d).sort(ord),other=list.filter(i=>i.dia&&i.dia!==d).sort(ord);
+  const row=(i,act,extra)=>`<li><button type="button" class="o-${i.org}" data-pk="${act}" data-id="${esc(i.id)}"><span class="o"></span><span>${esc(i.nome)}<br><small style="color:var(--mute);font-weight:500">${ORG[i.org].n}${i.dia&&act==='set'?` · hoje no dia ${i.dia}`:''}</small></span>${extra||''}</button></li>`;
+  $('#pt').textContent=`${d} de ${MESES[mes]} (${SEM[new Date(ANO,mes,d).getDay()].toLowerCase()})`;
+  $('#pbody').innerHTML=
+    (here.length?`<p class="sub">Neste dia</p><ul class="pk" style="margin:10px 0 14px">${here.map(i=>row(i,'clear','<span class="x">Tirar data</span>')).join('')}</ul>`:'')+
+    `<p class="sub">Aguardando data</p><ul class="pk" style="margin-top:10px">${wait.length?wait.map(i=>row(i,'set')).join(''):'<li class="empty">Nenhuma atividade aguardando data em '+MESES[mes]+'.</li>'}</ul>`+
+    (other.length?`<details style="margin-top:14px"><summary class="small" style="cursor:pointer">Mover de outro dia (${other.length})</summary><ul class="pk" style="margin-top:10px">${other.map(i=>row(i,'set')).join('')}</ul></details>`:'');
+}
+function openPick(d){pickDia=d;renderPick();$('#pov').classList.add('on');setTimeout(()=>$('#pclose').focus(),30)}
+$('#pbody').addEventListener('click',async e=>{const b=e.target.closest('[data-pk]');if(!b)return;
+  const set=b.dataset.pk==='set';if(set)$('#pov').classList.remove('on');await moverPara(b.dataset.id,set?pickDia:0);if(!set)renderPick()});
+$('#pclose').addEventListener('click',()=>$('#pov').classList.remove('on'));
+$('#pov').addEventListener('click',e=>{if(e.target===$('#pov'))$('#pov').classList.remove('on')});
+
+/* ---- arrastar e soltar (admin) ---- */
+const V=$('#view');let dragId=null;
+V.addEventListener('dragstart',e=>{const el=e.target.closest('[data-drag]');if(!el||!isAdmin)return;dragId=el.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',dragId)}catch(_){}});
+V.addEventListener('dragend',()=>{dragId=null;V.querySelectorAll('.drop').forEach(x=>x.classList.remove('drop'))});
+const alvo=e=>e.target.closest('.cell[data-dia],#waitbox');
+V.addEventListener('dragover',e=>{if(!dragId)return;const t=alvo(e);if(!t)return;e.preventDefault();V.querySelectorAll('.drop').forEach(x=>x!==t&&x.classList.remove('drop'));t.classList.add('drop')});
+V.addEventListener('dragleave',e=>{const t=alvo(e);if(t&&!t.contains(e.relatedTarget))t.classList.remove('drop')});
+V.addEventListener('drop',async e=>{const t=alvo(e);if(!t||!dragId)return;e.preventDefault();const id=dragId;dragId=null;t.classList.remove('drop');
+  const it=items.find(i=>i.id===id);if(!it)return;
+  if(it.mes!==mes&&t.dataset.dia){toast('Essa atividade é de outro mês.');return}
+  await moverPara(id,t.dataset.dia?Number(t.dataset.dia):0)});
+
+/* ---- navegação ---- */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if($('#pov').classList.contains('on'))$('#pov').classList.remove('on');else if($('#ov').classList.contains('on'))closeForm()}
+  if(view==='calendario'&&!document.querySelector('.overlay.on')&&$('#auth').hidden&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key==='ArrowLeft'&&mes>0){mes--;persistMes();render()}if(e.key==='ArrowRight'&&mes<11){mes++;persistMes();render()}}});
+function persistMes(){try{localStorage.setItem(LSM,String(mes))}catch(e){}}
+V.addEventListener('click',e=>{
+  const mb=e.target.closest('[data-mem]');if(mb&&isDono){acaoMembro(mb);return}
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='prev'&&mes>0){mes--;persistMes();render()}
+  if(a==='next'&&mes<11){mes++;persistMes();render()}
+  if(a==='pick'&&isAdmin)openPick(Number(b.dataset.d));
+  if(a==='edit'){const it=items.find(i=>i.id===b.dataset.id);if(it)openForm(it)}
+  if(a==='goto'){mes=Number(b.dataset.m);persistMes();location.hash='calendario'}
+});
+$('#novo').addEventListener('click',()=>openForm(null));
+$('#filtro').addEventListener('change',e=>{filtro=e.target.value;render()});
+$('#copiar').addEventListener('click',async()=>{
+  const txt=`Atividades Ala Ceilândia Sul · ${ANO}`+(filtro!=='todas'?` · ${ORG[filtro].n}`:'')+'\n'+MESES.map((m,mi)=>{const l=vis().filter(i=>i.mes===mi).sort(ord);
+    return `\n${m}\n`+(l.length?l.map(i=>`• ${i.dia?String(i.dia).padStart(2,'0')+'/'+String(mi+1).padStart(2,'0'):'dia a definir'} — ${i.nome} (${ORG[i.org].n})${i.detalhes?' — '+i.detalhes:''}`).join('\n'):'• (nenhuma atividade)')}).join('\n');
+  try{await navigator.clipboard.writeText(txt);toast('Lista copiada — cole no e-mail ou no WhatsApp')}catch(e){toast('Não foi possível copiar neste navegador')}
+});
+window.addEventListener('hashchange',route);
+
+/* ================= INÍCIO ================= */
+function entrou(s){
+  const novo=!sessao||sessao.user.id!==s.user.id;sessao=s;myId=s.user.id;meEmail=s.user.email||'';
+  const md=s.user.user_metadata||{};meNome=String(md.full_name||md.name||'').slice(0,80);
+  mostrarApp();if(novo){carregado=false;meuCad=undefined;minhaAprov=undefined;isDono=false;isAdmin=false;membros={};aprovs={};render();carregar();ouvir()}
+}
+function saiu(){sessao=null;myId=null;acts=[];items=[];carregado=false;isAdmin=false;isDono=false;if(canal){sb.removeChannel(canal);canal=null}authModo('entrar');mostrarLogin()}
+function init(){
+  route();
+  if(!sb){
+    $('#abody').innerHTML=`<p class="err">${window.supabase?'O arquivo config.js ainda não foi preenchido.':'Não foi possível carregar a biblioteca do Supabase. Verifique a internet.'}</p><p class="small">Abra o arquivo <b>config.js</b> e cole a Project URL e a chave publishable do seu projeto Supabase (Settings → API). Veja o passo a passo no README.</p>`;
+    mostrarLogin();return;
+  }
+  authModo('entrar');
+  sb.auth.onAuthStateChange((ev,s)=>{
+    setTimeout(()=>{
+      if(ev==='PASSWORD_RECOVERY'){if(s)sessao=s;mostrarLogin();authModo('nova');return}
+      if(s&&s.user){if(amodo!=='nova')entrou(s)}else saiu();
+    },0);
+  });
+}
+init();
+}
+</script>
+</body>
+</html>
