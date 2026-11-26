@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendário da Ala Ceilândia Sul 2027</title>
+<meta name="description" content="Atividades de 2027 da Ala Ceilândia Sul com data definida.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/config.js"></script>
+<style>
+/* VOICE: a church hallway bulletin — calm, legible, welcoming to anyone.
+   IDEA: the printed year calendar pinned on the ward board, always current.
+   PICTURE: month cards with a small calendar marking the days, and the activity list under it.
+   COLOUR and TYPE: pine band, white paper, the six organization colours as the only accents; Inter.
+   LAYOUT: pine header with next activities, filter chips, then a responsive grid of 12 months. */
+:root{color-scheme:light dark;--bg:light-dark(#f3f5f5,#0c1214);--paper:light-dark(#fff,#151e21);--ink:light-dark(#17211f,#e5ecea);--mute:light-dark(#62716e,#98aaa6);
+--line:light-dark(#e1e6e5,#243237);--pine:#163f3a;--pri:light-dark(#163f3a,#5fb3a2);--field:light-dark(#f7f9f9,#10181a);
+--o-primaria:light-dark(#c98f00,#f0c040);--o-socorro:light-dark(#8a4fa3,#c79be0);--o-elderes:light-dark(#2d62b3,#7fa8ec);--o-rapazes:light-dark(#2b8452,#6fcf97);--o-mocas:light-dark(#c8436f,#f08bb0);--o-escola:light-dark(#c25a24,#f19a66)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+header{background:var(--pine);color:#eef5f3;padding:28px 0 34px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;opacity:.95}
+h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:800;letter-spacing:-.02em;margin:18px 0 8px;text-wrap:balance}
+.lead{margin:0;max-width:64ch;opacity:.85}
+.upd{display:inline-flex;align-items:center;gap:8px;font-size:13px;margin-top:12px;opacity:.85}.upd i{width:8px;height:8px;border-radius:50%;background:#7fd1a8}
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px;margin-top:24px}
+.nx{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:14px;display:flex;gap:14px;align-items:center}
+.nx .b{width:58px;height:58px;border-radius:12px;background:#fff;color:var(--pine);display:grid;place-content:center;text-align:center;line-height:1.05;flex:none}
+.nx .b b{font-size:22px}.nx .b small{font-size:12px;font-weight:600}
+.nx .t{font-weight:700;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.nx .o{font-size:13px;opacity:.85;display:flex;align-items:center;gap:6px}
+.nx .o::before,.dot::before,.chip i,.leg i{content:"";width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.nxh{font-size:13px;font-weight:700;letter-spacing:.01em;margin:26px 0 -12px;opacity:.85}
+.o-primaria{--c:var(--o-primaria)}.o-socorro{--c:var(--o-socorro)}.o-elderes{--c:var(--o-elderes)}.o-rapazes{--c:var(--o-rapazes)}.o-mocas{--c:var(--o-mocas)}.o-escola{--c:var(--o-escola)}
+.nx .o{--c:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;padding:22px 0 18px}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink);font:500 14px Inter,sans-serif;cursor:pointer}
+.chip small{color:var(--mute);font-size:13px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}.chip[aria-pressed=true] small{color:inherit;opacity:.7}
+.chip:focus-visible{outline:3px solid var(--o-elderes);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px;padding-bottom:40px}
+.mes{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.mes.vazio{opacity:.8}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.mh h2{font-size:22px;font-weight:800;color:var(--pri)}.mh span{font-size:13px;color:var(--mute);white-space:nowrap}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center;font-size:12.5px}
+.cal .w{color:var(--mute);font-weight:600;padding-bottom:4px}
+.cal .d{aspect-ratio:1/0.82;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--mute)}
+.cal .d.on{background:color-mix(in srgb,var(--pri) 10%,var(--paper));color:var(--ink);font-weight:700}
+.cal .d.hoje{outline:2px solid var(--pri)}
+.cal .ds{display:flex;gap:2px;height:6px}.cal .ds i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+li{display:grid;grid-template-columns:50px minmax(0,1fr);gap:12px;align-items:start}
+.bd{width:50px;height:50px;border-radius:11px;background:var(--pine);color:#fff;display:grid;place-content:center;text-align:center;line-height:1.05}
+.bd b{font-size:19px}.bd small{font-size:11px;opacity:.85}
+.nm{font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.dot{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
+.dt{margin:2px 0 0;font-size:14px;color:var(--mute);overflow-wrap:anywhere}
+.none{color:var(--mute);font-size:14px;margin:0}
+.msg{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;margin:22px 0;color:var(--mute)}
+footer{border-top:1px solid var(--line);padding:22px 0 40px;font-size:13.5px;color:var(--mute)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px}.leg{display:inline-flex;align-items:center;gap:7px}
+footer a{color:var(--pri);font-weight:600}
+@media(max-width:600px){header{padding:22px 0 26px}.nx{padding:12px}}
+@media(prefers-reduced-motion:no-preference){.mes{animation:in .4s ease both}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 12h24M10 2v6M20 2v6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="11" cy="19" r="2.2" fill="#f0c040"/><circle cx="19" cy="19" r="2.2" fill="#6fcf97"/></svg>Agenda da Ala</div>
+    <h1>Calendário de Atividades Ala Ceilândia Sul 2027</h1>
+    <p class="lead">Atividades das organizações da ala com data já definida. Esta página se atualiza sozinha.</p>
+    <div class="upd" id="upd"><i></i><span>Carregando…</span></div>
+    <div id="nextw"></div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="bar" id="chips" role="group" aria-label="Filtrar por organização"></div>
+  <div id="msg"></div>
+  <div class="grid" id="grid"></div>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="legend" id="legend"></div>
+    <div><a href="/">Área dos líderes</a> · <a href="/privacidade.html">Privacidade</a></div>
+  </div>
+</footer>
+<script>
+{
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const AB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
+const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
+const ANO=2027,$=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dim=m=>new Date(ANO,m+1,0).getDate();
+const plural=(n,a,b)=>n===1?`1 ${a}`:`${n} ${b}`;
+const CFG=window.AGENDA_CONFIG||{};
+const ok=typeof CFG.SUPABASE_URL==='string'&&/^https:\/\/[a-z0-9]{15,}\.supabase\.co\/?$/.test(CFG.SUPABASE_URL)&&typeof CFG.SUPABASE_KEY==='string'&&CFG.SUPABASE_KEY.length>20;
+const sb=ok&&window.supabase?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}):null;
+let acts=[],carregou=false,filtro=new URLSearchParams(location.search).get('org');if(!ORG[filtro])filtro='todas';
+$('#legend').innerHTML=ORGS.map(o=>`<span class="leg o-${o.k}"><i></i>${o.n}</span>`).join('');
+
+function clean(r){const m=Number(r.mes),d=Number(r.dia),org=ORG[r.org],nome=String(r.nome??'').trim().slice(0,140);
+  if(!Number.isInteger(m)||m<0||m>11||!Number.isInteger(d)||d<1||d>dim(m)||!org||!nome)return null;
+  return{id:String(r.id),mes:m,dia:d,org:org.k,nome,detalhes:String(r.detalhes??'').slice(0,400)}}
+const wd=(m,d)=>SEM[new Date(ANO,m,d).getDay()].toLowerCase();
+function render(){
+  const cnt={};acts.forEach(a=>cnt[a.org]=(cnt[a.org]||0)+1);
+  $('#chips').innerHTML=`<button type="button" class="chip" data-f="todas" aria-pressed="${filtro==='todas'}">Todas <small>${acts.length}</small></button>`+
+    ORGS.map(o=>`<button type="button" class="chip o-${o.k}" data-f="${o.k}" aria-pressed="${filtro===o.k}"><i></i>${o.n} <small>${cnt[o.k]||0}</small></button>`).join('');
+  const v=acts.filter(a=>filtro==='todas'||a.org===filtro);
+  const now=new Date(),hoje=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const prox=v.filter(a=>new Date(ANO,a.mes,a.dia)>=hoje).slice(0,3);
+  $('#nextw').innerHTML=prox.length?`<p class="nxh">Próximas atividades${filtro!=='todas'?' · '+ORG[filtro].n:''}</p><div class="next">${prox.map(a=>`<div class="nx"><div class="b"><b>${a.dia}</b><small>${AB[a.mes]} · ${wd(a.mes,a.dia)}</small></div><div><div class="t">${esc(a.nome)}</div><div class="o o-${a.org}" style="--c:var(--o-${a.org})">${ORG[a.org].n}</div></div></div>`).join('')}</div>`:'';
+  if(!carregou){$('#grid').innerHTML='';return}
+  $('#msg').innerHTML=v.length?'':`<div class="msg">${acts.length?'Nenhuma atividade com data para '+ORG[filtro].n+' ainda.':'Nenhuma atividade com data definida ainda. Volte em breve.'}</div>`;
+  $('#grid').innerHTML=MESES.map((nm,m)=>{
+    const l=v.filter(a=>a.mes===m),first=new Date(ANO,m,1).getDay(),n=dim(m);
+    let cal=SEM.map(s=>`<span class="w">${s[0]}</span>`).join('');
+    for(let i=0;i<first;i++)cal+='<span></span>';
+    for(let d=1;d<=n;d++){const di=l.filter(a=>a.dia===d),isH=now.getFullYear()===ANO&&now.getMonth()===m&&now.getDate()===d;
+      cal+=`<span class="d${di.length?' on':''}${isH?' hoje':''}" ${di.length?`title="${esc(di.map(a=>a.nome).join(' · '))}"`:''}>${d}<span class="ds">${di.slice(0,4).map(a=>`<i class="o-${a.org}"></i>`).join('')}</span></span>`}
+    return `<section class="mes${l.length?'':' vazio'}" aria-label="${nm} de ${ANO}"><div class="mh"><h2>${nm}</h2><span>${l.length?plural(l.length,'atividade','atividades'):'sem atividades'}</span></div><div class="cal" aria-hidden="true">${cal}</div>${l.length?`<ul>${l.map(a=>`<li><span class="bd"><b>${a.dia}</b><small>${wd(a.mes,a.dia)}</small></span><div><div class="nm">${esc(a.nome)}</div><span class="dot o-${a.org}">${ORG[a.org].n}</span>${a.detalhes?`<p class="dt">${esc(a.detalhes)}</p>`:''}</div></li>`).join('')}</ul>`:'<p class="none">Nenhuma atividade com data neste mês.</p>'}</section>`;
+  }).join('');
+}
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filtro=b.dataset.f;
+  const u=new URL(location.href);if(filtro==='todas')u.searchParams.delete('org');else u.searchParams.set('org',filtro);history.replaceState(null,'',u);render()});
+async function carregar(){
+  if(!sb){$('#upd span').textContent='Calendário indisponível no momento.';$('#msg').innerHTML='<div class="msg">O site ainda não foi configurado (config.js).</div>';return}
+  try{const{data,error}=await sb.rpc('calendario_publico');if(error)throw error;
+    acts=(data||[]).map(clean).filter(Boolean).sort((a,b)=>a.mes-b.mes||a.dia-b.dia);carregou=true;
+    $('#upd span').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});render();
+  }catch(e){$('#upd span').textContent='Não foi possível atualizar agora. Tentando de novo…';
+    if(/calendario_publico|function/i.test(String(e&&e.message)))$('#msg').innerHTML='<div class="msg">O calendário público ainda não foi ativado no banco de dados.</div>'}
+}
+render();carregar();
+setInterval(()=>{if(!document.hidden)carregar()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)carregar()});
+}
+</script>
+</body>
+</html>
