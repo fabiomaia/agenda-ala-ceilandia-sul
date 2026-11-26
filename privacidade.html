@@ -2,10 +2,15 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Política de Privacidade · Agenda da Ala Ceilândia Sul</title>
 <style>
-:root{color-scheme:light dark;--bg:light-dark(#f3f5f5,#0c1214);--paper:light-dark(#fff,#151e21);--ink:light-dark(#17211f,#e5ecea);--mute:light-dark(#62716e,#98aaa6);--line:light-dark(#e1e6e5,#243237);--pri:light-dark(#163f3a,#5fb3a2)}
+:root{color-scheme:light dark;}
+:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--pri:#163f3a}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2}}
+:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2}
+
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:760px;margin:0 auto;padding:clamp(24px,5vw,56px) 20px 64px}

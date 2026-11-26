@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calendário de Atividades Ala Ceilândia Sul 2027</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,11 +14,15 @@
    COLOUR and TYPE: pine sidebar, light grey desk, white cards; six organization colours as the accents; Inter throughout.
    LAYOUT: sidebar | header + month grid + legend | agenda and summary column; stacks on phones. */
 :root{color-scheme:light dark;
---bg:light-dark(#f3f5f5,#0c1214);--paper:light-dark(#fff,#151e21);--ink:light-dark(#17211f,#e5ecea);--mute:light-dark(#62716e,#98aaa6);
---line:light-dark(#e1e6e5,#243237);--side:light-dark(#163f3a,#0d2724);--sideink:#eaf3f1;--pri:light-dark(#163f3a,#5fb3a2);--priink:light-dark(#fff,#08201c);
---field:light-dark(#f7f9f9,#10181a);--dim:light-dark(#f7f8f8,#11191b);
---o-primaria:light-dark(#c98f00,#f0c040);--o-socorro:light-dark(#8a4fa3,#c79be0);--o-elderes:light-dark(#2d62b3,#7fa8ec);
---o-rapazes:light-dark(#2b8452,#6fcf97);--o-mocas:light-dark(#c8436f,#f08bb0);--o-escola:light-dark(#c25a24,#f19a66)}
+
+--sideink:#eaf3f1;
+
+
+}
+:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--side:#163f3a;--pri:#163f3a;--priink:#fff;--field:#f7f9f9;--dim:#f7f8f8;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24;--ld1:#fff;--ld2:#747775;--ld3:#1f1f1f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--side:#0d2724;--pri:#5fb3a2;--priink:#08201c;--field:#10181a;--dim:#11191b;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--ld1:#131314;--ld2:#8e918f;--ld3:#e3e3e3}}
+:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--side:#0d2724;--pri:#5fb3a2;--priink:#08201c;--field:#10181a;--dim:#11191b;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--ld1:#131314;--ld2:#8e918f;--ld3:#e3e3e3}
+
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 [hidden]{display:none!important}
@@ -175,7 +180,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
 .tabs button{min-height:40px;border:0;border-radius:9px;background:transparent;font-weight:600;color:var(--mute)}
 .tabs button[aria-selected=true]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.google{justify-content:center;width:100%;gap:10px;padding:0 12px;background:light-dark(#fff,#131314);border:1px solid light-dark(#747775,#8e918f);color:light-dark(#1f1f1f,#e3e3e3);font-weight:500}.google img{width:20px;height:20px;flex:none}
+.google{justify-content:center;width:100%;gap:10px;padding:0 12px;background:var(--ld1);border:1px solid var(--ld2);color:var(--ld3);font-weight:500}.google img{width:20px;height:20px;flex:none}
 .or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 #aform{display:grid;gap:12px}#aform .btn{width:100%;justify-content:center}
 .lnk{border:0;background:none;color:var(--pri);font-weight:600;min-height:36px;padding:0;justify-self:center;text-decoration:underline}
@@ -210,6 +215,42 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .dp .dom{color:#c0392b}
 .jam{font-size:13px;color:var(--mute);margin:0;display:grid;gap:3px}
 .notif{display:flex;flex-wrap:wrap;gap:8px}
+/* ---- celular ---- */
+@media(max-width:820px){
+  aside{gap:8px}
+  nav{scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}
+  nav::-webkit-scrollbar{display:none}
+  nav a{min-height:40px;font-size:14px;padding:0 10px;gap:8px}
+}
+@media(max-width:600px){
+  .main{padding:14px 12px 40px;gap:14px}
+  .head{gap:12px}
+  .head h1{font-size:24px}
+  .head .acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
+  .head .acts .btn{width:100%;min-width:0;flex-direction:column;justify-content:center;padding:8px 4px;min-height:60px;font-size:12.5px;gap:5px;white-space:normal;text-align:center;line-height:1.2}
+  .head .acts .btn.pri{flex-direction:row}
+  .head .acts .btn.pri{grid-column:1/-1;order:-1;min-height:48px;font-size:15px}
+  .head .acts .btn svg{width:18px;height:18px;flex:none}
+  .mnav{gap:6px}.mnav .btn{width:44px;flex:none}
+  .aviso{flex-direction:column;align-items:stretch;padding:12px 14px}
+  .aviso .notif{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}
+  .aviso .btn{justify-content:center;width:100%}
+  .aviso>a.btn{display:flex}
+  .layout,.col{gap:12px}
+  .panel{padding:14px}
+  .modal{padding:18px;gap:12px}
+  .mfoot .btn{flex:1 1 auto;justify-content:center}
+  .mfoot .sp{display:none}
+  .prow{grid-template-columns:6px minmax(0,1fr);padding:12px 12px 12px 0}
+  .prow .go{grid-column:2;font-size:13px}
+  .ptiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ptiles .tile b{font-size:20px}
+  .chips{gap:6px}.chip span{min-height:38px;padding:0 12px;font-size:13px}
+  .cad{padding:16px}
+  .year{gap:10px}
+  .dp button{min-height:42px;font-size:14px}
+  #toast{bottom:12px;width:calc(100vw - 24px)}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
