@@ -258,6 +258,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .authcard{position:relative}
 .authcard .tema{min-height:34px;padding:0 10px}
 @media(max-width:420px){.authcard .tema span{display:none}.authcard .tema{padding:0 9px}}
+#cov{z-index:25}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -327,6 +328,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
       <div id="fdiaw"><label for="fdia">Dia <small>(só administrador)</small></label><select id="fdia"></select></div>
     </div>
     <p class="small" id="fdianote"></p>
+    <p class="small" id="fprazo" hidden style="margin:-4px 0 0;color:#b7791f;font-weight:600"></p>
     <div><label for="fnome">Nome da atividade</label><input id="fnome" maxlength="120" autocomplete="off" placeholder="Ex.: Noite de talentos da ala"></div>
     <fieldset><legend class="lbl">Organização</legend><div class="orgs" id="forgs"></div></fieldset>
     <div><label for="fdet">Detalhes (opcional)</label><textarea id="fdet" rows="2" maxlength="400" placeholder="Local, horário, responsável…"></textarea></div>
@@ -377,6 +379,13 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
     <div class="dp" id="dgrid"></div>
     <div class="jam" id="djam"></div>
     <div class="mfoot"><button class="btn" type="button" id="deditar">Editar atividade</button><span class="sp"></span><button class="btn" type="button" id="dmes">Ver no calendário</button><button class="btn" type="button" id="dclose">Fechar</button></div>
+  </div>
+</div>
+<div class="overlay" id="cov">
+  <div class="card modal" role="alertdialog" aria-modal="true" aria-labelledby="ct" aria-describedby="cmsg" style="width:min(460px,100%)">
+    <h2 id="ct">Prazo muito curto</h2>
+    <p id="cmsg" style="margin:0;line-height:1.55"></p>
+    <div class="mfoot"><button class="btn" type="button" id="cno">Escolher outro mês</button><span class="sp"></span><button class="btn pri" type="button" id="cok">Marcar no próximo mês</button></div>
   </div>
 </div>
 <div id="toast" role="status"><span id="tmsg"></span><button type="button" id="tbtn" hidden>Desfazer</button></div>
@@ -440,7 +449,7 @@ function traduz(e){
   if(/rate limit|security purposes/i.test(m))return 'Muitas tentativas. Aguarde um minuto e tente de novo.';
   if(/provider is not enabled/i.test(m))return 'O login com Google ainda não foi ativado no Supabase.';
   if(/row-level security|42501/i.test(m))return 'Você não tem permissão para fazer isso.';
-  if(/não existe nesse mês/i.test(m))return m;
+  if(/não existe nesse mês|Prazo muito curto|Este mês já passou/i.test(m))return m;
   if(/Failed to fetch|NetworkError/i.test(m))return 'Sem conexão com o servidor. Verifique a internet.';
   return 'Algo deu errado: '+m;
 }
@@ -698,30 +707,60 @@ async function moverPara(id,dia){
 
 /* ---- formulário de atividade ---- */
 function diaOpts(m,sel){$('#fdia').innerHTML='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1;return `<option value="${d}">${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}</option>`}).join('');$('#fdia').value=String(sel<=dim(m)?sel:0)}
+/* ---- prazo para líderes ---- */
+function hojeData(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
+function statusMes(m){if(isAdmin)return 'ok';const h=hojeData(),fim=new Date(ANO,m,dim(m));if(h>fim)return 'passado';const faltam=Math.round((fim-h)/864e5);return faltam<=5?'curto':'ok'}
+function faltamDias(m){return Math.round((new Date(ANO,m,dim(m))-hojeData())/864e5)}
+function proximoMes(m){for(let k=m+1;k<12;k++)if(statusMes(k)==='ok')return k;return -1}
+function primeiroMesOk(){for(let k=0;k<12;k++)if(statusMes(k)==='ok')return k;return -1}
+function mesOpts(atual){$('#fmes').innerHTML=MESES.map((n,i)=>{const s=statusMes(i);return `<option value="${i}"${s==='passado'&&i!==atual?' disabled':''}>${n}${s==='passado'?' (encerrado)':s==='curto'?' (prazo curto)':''}</option>`}).join('')}
+function prazoNota(){const m=Number($('#fmes').value),s=statusMes(m),el=$('#fprazo'),it=items.find(i=>i.id===editId),mesmo=it&&it.mes===m;
+  el.textContent=isAdmin||mesmo||s==='ok'?'':s==='passado'?'Este mês já passou. Escolha outro mês.':`Prazo curto: faltam ${plural(faltamDias(m),'dia','dias')} para o fim de ${MESES[m]}.`;el.hidden=!el.textContent}
 function openForm(it){
   if(!it&&!podeAdicionar())return;
   const pode=!it||podeEditar(it),mo=minhaOrg();
   editId=it?it.id:null;$('#ferr').textContent='';
   $('#mt').textContent=!it?'Nova atividade':pode?'Editar atividade':'Atividade';
-  const mm=it?it.mes:mes;$('#fmes').value=String(mm);diaOpts(mm,it?it.dia:0);
+  let mm=it?it.mes:mes;mesOpts(it?it.mes:-1);if(!it&&statusMes(mm)!=='ok'){const p=proximoMes(mm)>=0?proximoMes(mm):primeiroMesOk();if(p>=0)mm=p}
+  $('#fmes').value=String(mm);diaOpts(mm,it?it.dia:0);
   $('#fdiaw').hidden=!isAdmin;$('#fdatas').style.gridTemplateColumns=isAdmin?'':'minmax(0,1fr)';
   $('#fdianote').textContent=isAdmin?'':it&&it.dia?`Dia definido pelo administrador: ${it.dia} de ${MESES[it.mes]}. Se mudar o mês, o dia volta a ficar a definir.`:'O dia será definido pelo administrador.';
   $('#fnome').value=it?it.nome:'';$('#fdet').value=it?it.detalhes:'';
   document.querySelectorAll('#form input,#form select,#form textarea').forEach(e=>e.disabled=!pode);
   document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(mo&&pode&&!isAdmin)r.disabled=r.value!==mo});
   $('#fdel').hidden=!it||!pode;$('#fsave').hidden=!pode;
+  prazoNota();
   $('#fwho').textContent=it?(it.autor===myId?'Marcada por você':it.autorNome?'Marcada por '+it.autorNome:''):'';
   $('#ov').classList.add('on');setTimeout(()=>$(pode?'#fnome':'#fcancel').focus(),30);
 }
 function closeForm(){$('#ov').classList.remove('on');editId=null}
-$('#fmes').addEventListener('change',()=>diaOpts(Number($('#fmes').value),Number($('#fdia').value)));
+$('#fmes').addEventListener('change',()=>{diaOpts(Number($('#fmes').value),Number($('#fdia').value));prazoNota()});
 $('#form').addEventListener('submit',async ev=>{
   ev.preventDefault();if(busy)return;$('#ferr').textContent='';
-  const nome=$('#fnome').value.trim(),m=Number($('#fmes').value),org=(document.querySelector('input[name=org]:checked')||{}).value,detalhes=$('#fdet').value.trim();
-  const dia=isAdmin?Number($('#fdia').value)||0:null;
+  const nome=$('#fnome').value.trim(),m=Number($('#fmes').value),org=(document.querySelector('input[name=org]:checked')||{}).value;
   if(!nome){$('#ferr').textContent='Dê um nome à atividade.';$('#fnome').focus();return}
   if(!org){$('#ferr').textContent='Escolha a organização.';(document.querySelector('input[name=org]:not(:disabled)')||$('#fnome')).focus();return}
   if(!isAdmin&&org!==minhaOrg()){$('#ferr').textContent='Você só pode marcar atividades da sua organização.';return}
+  const it=items.find(i=>i.id===editId),mudouMes=!it||it.mes!==m,s=statusMes(m);
+  if(!isAdmin&&mudouMes&&s==='passado'){$('#ferr').textContent='Este mês já passou. Escolha outro mês.';$('#fmes').focus();return}
+  if(!isAdmin&&mudouMes&&s==='curto'){confirmarPrazo(m);return}
+  await salvarAtividade(m);
+});
+function confirmarPrazo(m){
+  const p=proximoMes(m),f=faltamDias(m);
+  $('#ct').textContent='Prazo muito curto';
+  $('#cmsg').innerHTML=`Faltam só <b>${plural(f,'dia','dias')}</b> para o fim de <b>${MESES[m]}</b>. A atividade está com prazo muito curto para ser organizada e executada.`+(p>=0?`<br><br>Deseja marcar para <b>${MESES[p]}</b>, o próximo mês disponível?`:'<br><br>Não há mais meses disponíveis em '+ANO+'. Fale com o administrador.');
+  $('#cok').hidden=p<0;$('#cok').textContent=p>=0?`Marcar em ${MESES[p]}`:'';$('#cok').dataset.m=p;
+  $('#cno').textContent=p>=0?'Escolher outro mês':'Entendi';
+  $('#cov').classList.add('on');setTimeout(()=>$(p>=0?'#cok':'#cno').focus(),30);
+}
+$('#cok').addEventListener('click',async()=>{const p=Number($('#cok').dataset.m);$('#cov').classList.remove('on');if(p>=0){$('#fmes').value=String(p);diaOpts(p,0);prazoNota();await salvarAtividade(p)}});
+$('#cno').addEventListener('click',()=>{$('#cov').classList.remove('on');$('#fmes').focus()});
+$('#cov').addEventListener('click',e=>{if(e.target===$('#cov'))$('#cov').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#cov').classList.remove('on')});
+async function salvarAtividade(m){
+  const nome=$('#fnome').value.trim(),org=(document.querySelector('input[name=org]:checked')||{}).value,detalhes=$('#fdet').value.trim();
+  const dia=isAdmin?Number($('#fdia').value)||0:null;
   const row={mes:m,nome,org,detalhes};if(isAdmin)row.dia=dia||null;
   busy=true;$('#fsave').disabled=true;const era=editId;let r;
   if(era)r=await exec(sb.from('atividades').update(row).eq('id',era).select('id'));
@@ -729,7 +768,7 @@ $('#form').addEventListener('submit',async ev=>{
   busy=false;$('#fsave').disabled=false;
   if(r){const id=era||(r.data&&r.data.id);if(era&&Array.isArray(r.data)&&!r.data.length){$('#ferr').textContent='Você não tem permissão para editar esta atividade.';return}
     flash=id;toast(era?'Atividade atualizada':`Marcada em ${MESES[m]}`+(isAdmin&&dia?` (dia ${dia})`:' — aguardando data'));closeForm();if(view==='calendario')mes=m;persistMes();carregar()}
-});
+}
 $('#fdel').addEventListener('click',async()=>{
   const it=items.find(a=>a.id===editId);if(!it)return;
   const r=await exec(sb.from('atividades').delete().eq('id',it.id).select('id'));
