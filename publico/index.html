@@ -76,14 +76,14 @@ footer a{color:var(--pri);font-weight:600}
 @media(prefers-reduced-motion:no-preference){.mes{animation:in .4s ease both}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
 .tema{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;font:600 13px Inter,system-ui,sans-serif;cursor:pointer;opacity:.9}
 .tema:hover{opacity:1}.tema:focus-visible{outline:3px solid #7fa8ec;outline-offset:2px}
-.tema svg{display:none;flex:none}.tema[data-t=auto] .i-auto,.tema[data-t=light] .i-light,.tema[data-t=dark] .i-dark{display:block}
+.tema svg{display:none;flex:none}.tema[data-t=light] .i-light,.tema[data-t=dark] .i-dark{display:block}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <div style="float:right"><button type="button" class="tema" data-t="auto" aria-label="Tema"><svg class="i-auto" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg><svg class="i-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Automático</span></button></div><div class="brand"><svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 12h24M10 2v6M20 2v6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="11" cy="19" r="2.2" fill="#f0c040"/><circle cx="19" cy="19" r="2.2" fill="#6fcf97"/></svg>Agenda da Ala</div>
+    <div style="float:right"><button type="button" class="tema" data-t="dark" aria-label="Mudar para o modo escuro"><svg class="i-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Escuro</span></button></div><div class="brand"><svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 12h24M10 2v6M20 2v6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="11" cy="19" r="2.2" fill="#f0c040"/><circle cx="19" cy="19" r="2.2" fill="#6fcf97"/></svg>Agenda da Ala</div>
     <h1>Calendário de Atividades Ala Ceilândia Sul 2027</h1>
     <p class="lead">Atividades das organizações da ala com data já definida. Esta página se atualiza sozinha.</p>
     <div class="upd" id="upd"><i></i><span>Carregando…</span></div>
@@ -157,12 +157,15 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)carregar()
 }
 </script>
 <script>
-(function(){var TS=['auto','light','dark'],TN={auto:'Automático',light:'Claro',dark:'Escuro'};
-function atual(){try{return localStorage.getItem('tema')||'auto'}catch(e){return 'auto'}}
-function aplica(t){var r=document.documentElement;if(t==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',t);try{localStorage.setItem('tema',t)}catch(e){}
-  document.querySelectorAll('.tema').forEach(function(b){b.setAttribute('data-t',t);b.setAttribute('aria-label','Tema: '+TN[t]+'. Toque para trocar');b.title='Tema: '+TN[t];b.querySelector('span').textContent=TN[t]})}
-document.addEventListener('click',function(e){var b=e.target.closest('.tema');if(!b)return;var t=atual();aplica(TS[(TS.indexOf(t)+1)%3])});
-aplica(atual());})();
+(function(){var mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+function salvo(){try{return localStorage.getItem('tema')||'auto'}catch(e){return 'auto'}}
+function efetivo(){var t=salvo();return t==='auto'?(mq&&mq.matches?'dark':'light'):t}
+function pinta(){var alvo=efetivo()==='dark'?'light':'dark',nome=alvo==='dark'?'Escuro':'Claro';
+  document.querySelectorAll('.tema').forEach(function(b){b.setAttribute('data-t',alvo);b.setAttribute('aria-label','Mudar para o modo '+nome.toLowerCase());b.title='Mudar para o modo '+nome.toLowerCase();b.querySelector('span').textContent=nome})}
+function aplica(t){var r=document.documentElement;r.setAttribute('data-theme',t);try{localStorage.setItem('tema',t)}catch(e){}pinta()}
+document.addEventListener('click',function(e){var b=e.target.closest('.tema');if(b)aplica(b.getAttribute('data-t'))});
+if(mq&&mq.addEventListener)mq.addEventListener('change',pinta);
+pinta();})();
 </script>
 </body>
 </html>
