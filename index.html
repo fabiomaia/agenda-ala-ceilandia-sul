@@ -192,6 +192,24 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .chips.mini .chip span{min-height:36px;padding:0 10px;font-size:13px;min-width:52px;justify-content:center}
 .exinfo{border-radius:10px;padding:12px 14px;background:var(--field);border:1px solid var(--line);font-size:14px}
 .exinfo b{font-size:15px}
+.pend{display:grid;gap:18px}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.pmes h3{font-size:17px;font-weight:800;display:flex;gap:10px;align-items:baseline;margin:0 0 10px}.pmes h3 small{font-size:13px;color:var(--mute);font-weight:500}
+.prow{width:100%;display:grid;grid-template-columns:6px minmax(0,1fr) auto;gap:14px;align-items:center;text-align:left;padding:12px 14px 12px 0;border:1px solid var(--line);border-radius:12px;background:var(--paper);margin-bottom:8px;overflow:hidden}
+.prow:hover{border-color:var(--pri)}
+.prow .bar{align-self:stretch;margin:-12px 0;width:6px;height:auto;border-radius:0;background:var(--c)}
+.prow .t{font-weight:700;font-size:16px;display:block;overflow-wrap:anywhere}
+.prow .s{font-size:13px;color:var(--mute)}
+.prow .go{font-size:14px;font-weight:700;color:var(--pri);white-space:nowrap}
+.dp{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dp .w{text-align:center;font-size:12px;font-weight:600;color:var(--mute);padding:2px 0}
+.dp button{min-height:48px;border:1px solid var(--line);border-radius:10px;background:var(--field);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:15px;padding:2px}
+.dp button:hover,.dp button:focus-visible{border-color:var(--pri);background:color-mix(in srgb,var(--pri) 14%,var(--paper))}
+.dp button.tem{background:color-mix(in srgb,var(--o-primaria) 10%,var(--paper))}
+.dp .ds{display:flex;gap:2px;height:6px}.dp .ds i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+.dp .dom{color:#c0392b}
+.jam{font-size:13px;color:var(--mute);margin:0;display:grid;gap:3px}
+.notif{display:flex;flex-wrap:wrap;gap:8px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -228,6 +246,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
       <a href="#ano" data-v="ano"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Ano inteiro</a>
       <a href="#organizacoes" data-v="organizacoes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Por organização</a>
       <a href="#cadastro" data-v="cadastro" id="navcad" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Meu cadastro</a>
+      <a href="#pendentes" data-v="pendentes" id="navpend" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Pendentes<span class="cnt" id="pendcnt" hidden></span></a>
       <a href="#membros" data-v="membros" id="navmem" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .7 3 2.2 3.5 5"/></svg>Membros<span class="cnt" id="memcnt" hidden></span></a>
     </nav>
     <div class="sidefoot"><span class="role" id="role">…</span><div class="status" id="status"><i></i><span>Carregando…</span></div><div class="me"><span id="meemail"></span><button type="button" id="sair">Sair</button></div></div>
@@ -304,6 +323,14 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
     <div class="mfoot"><button class="btn" type="button" id="lclose">Fechar</button><span class="sp"></span><a class="btn" id="labrir" target="_blank" rel="noopener">Abrir</a><button class="btn pri" type="button" id="lcopiar">Copiar link</button></div>
   </div>
 </div>
+<div class="overlay" id="dov">
+  <div class="card modal" role="dialog" aria-modal="true" aria-labelledby="dt">
+    <div><h2 id="dt">Definir dia</h2><p class="small" id="dsub" style="margin:4px 0 0"></p></div>
+    <div class="dp" id="dgrid"></div>
+    <div class="jam" id="djam"></div>
+    <div class="mfoot"><button class="btn" type="button" id="deditar">Editar atividade</button><span class="sp"></span><button class="btn" type="button" id="dmes">Ver no calendário</button><button class="btn" type="button" id="dclose">Fechar</button></div>
+  </div>
+</div>
 <div id="toast" role="status"><span id="tmsg"></span><button type="button" id="tbtn" hidden>Desfazer</button></div>
 
 <script>
@@ -314,7 +341,7 @@ const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
 const ANO=2027,LSM='atividades-ala-2027-mes';
-const VIEWS=['calendario','ano','organizacoes','cadastro','membros'];
+const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes'];let pendOrg='todas',desigId=null;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
@@ -530,17 +557,62 @@ function aviso(){
     if(p==='sem-cadastro')h=`<p><b>Faça seu cadastro</b> para marcar atividades da sua organização.</p><a class="btn pri" href="#cadastro">Fazer cadastro</a>`;
     else if(p==='pendente')h=`<p><b>Cadastro enviado.</b> Aguarde o administrador aprovar para marcar atividades.</p><a class="btn" href="#cadastro">Ver cadastro</a>`;
     else if(p==='recusado'){cls='no';h=`<p><b>Seu cadastro foi recusado.</b> Revise os dados ou fale com o administrador.</p><a class="btn" href="#cadastro">Revisar</a>`}
-    else if(isDono){const n=Object.keys(membros).filter(id=>!aprovs[id]).length;if(n)h=`<p><b>${plural(n,'líder aguarda','líderes aguardam')} aprovação.</b></p><a class="btn pri" href="#membros">Ver pedidos</a>`}
+    else if(isAdmin){
+      const na=items.filter(i=>!i.dia).length,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,partes=[],btns=[];
+      if(na){const ms=[...new Set(items.filter(i=>!i.dia).map(i=>i.mes))].sort((x,y)=>x-y);partes.push(`<b>${plural(na,'atividade aguarda','atividades aguardam')} dia</b> (${ms.map(m=>AB[m]).join(', ')})`);btns.push('<a class="btn pri" href="#pendentes">Definir dias</a>')}
+      if(nm){partes.push(`<b>${plural(nm,'novo líder aguarda','novos líderes aguardam')} aprovação</b>`);btns.push(`<a class="btn${na?'':' pri'}" href="#membros">Ver cadastros</a>`)}
+      if(partes.length)h=`<p>🔔 ${partes.join(' · ')}.</p><div class="notif">${btns.join('')}</div>`;
+    }
   }
   a.className='aviso'+(cls?' '+cls:'');a.hidden=!h;a.innerHTML=h;
 }
+function notifs(){
+  const na=isAdmin?items.filter(i=>!i.dia).length:0,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0;
+  $('#navpend').hidden=!isAdmin;$('#pendcnt').hidden=!na;$('#pendcnt').textContent=na;
+  const t='Calendário de Atividades Ala Ceilândia Sul 2027',n=na+nm;document.title=n?`(${n}) ${t}`:t;
+}
+function vPendentes(){
+  if(!isAdmin)return `<div class="card cad"><p class="small">Só administradores veem esta tela.</p></div>`;
+  const todos=items.filter(i=>!i.dia),cnt={};todos.forEach(i=>cnt[i.org]=(cnt[i.org]||0)+1);
+  const lista=todos.filter(i=>pendOrg==='todas'||i.org===pendOrg).sort((a,b)=>a.mes-b.mes||a.criado-b.criado);
+  const meses=[...new Set(lista.map(i=>i.mes))];
+  const chips=`<div class="chips">${[['todas','Todas',todos.length],...ORGS.filter(o=>cnt[o.k]).map(o=>[o.k,o.n,cnt[o.k]])].map(([k,n,c])=>`<label class="chip"><input type="radio" name="pfilt" value="${k}"${pendOrg===k?' checked':''}><span>${k==='todas'?'':`<i style="width:9px;height:9px;border-radius:50%;background:var(--o-${k});margin-right:8px;display:inline-block"></i>`}${n} · ${c}</span></label>`).join('')}</div>`;
+  if(!todos.length)return `<div class="card cad"><h2>Tudo em dia ✓</h2><p class="small">Nenhuma atividade aguardando dia. Quando um líder marcar uma atividade, ela aparece aqui com o mês escolhido.</p></div>`;
+  return `<div class="pend">
+    <div class="ptiles"><div class="tile"><b>${todos.length}</b><span>Aguardando dia</span></div><div class="tile"><b>${new Set(todos.map(i=>i.mes)).size}</b><span>Meses</span></div><div class="tile"><b>${Object.keys(cnt).length}</b><span>Organizações</span></div></div>
+    ${chips}
+    <p class="small" style="margin:0">Toque numa atividade para escolher o dia dentro do mês que o líder pediu.</p>
+    ${meses.map(m=>{const l=lista.filter(i=>i.mes===m);return `<section class="pmes"><h3>${MESES[m]} <small>${plural(l.length,'atividade','atividades')}</small></h3>${l.map(i=>`<button type="button" class="prow o-${i.org}" data-act="designar" data-id="${esc(i.id)}"><span class="bar"></span><span><span class="t">${esc(i.nome)}</span><span class="s"><span class="dot o-${i.org}">${ORG[i.org].n}</span>${i.autorNome?' · marcada por '+esc(i.autorNome):''}${i.detalhes?' · '+esc(i.detalhes.slice(0,80))+(i.detalhes.length>80?'…':''):''}</span></span><span class="go">Definir dia →</span></button>`).join('')}</section>`}).join('')}
+  </div>`;
+}
+function openDesignar(id){
+  const it=items.find(i=>i.id===id);if(!it||!isAdmin)return;desigId=id;
+  const m=it.mes,first=new Date(ANO,m,1).getDay(),n=dim(m),marcadas=items.filter(i=>i.mes===m&&i.dia).sort(ord);
+  $('#dt').textContent=it.nome;
+  $('#dsub').innerHTML=`<span class="dot o-${it.org}">${ORG[it.org].n}</span> · escolha o dia em <b>${MESES[m]} de ${ANO}</b>`;
+  let g=SEM.map(s=>`<span class="w">${s}</span>`).join('');for(let i=0;i<first;i++)g+='<span></span>';
+  for(let d=1;d<=n;d++){const di=marcadas.filter(i=>i.dia===d),dw=new Date(ANO,m,d).getDay();
+    g+=`<button type="button" data-dia="${d}" class="${di.length?'tem':''}" aria-label="${d} de ${MESES[m]}${di.length?', já tem '+plural(di.length,'atividade','atividades'):''}" title="${esc(di.map(i=>i.nome+' ('+ORG[i.org].n+')').join(' · '))}"><span class="${dw===0?'dom':''}">${d}</span><span class="ds">${di.slice(0,4).map(i=>`<i class="o-${i.org}"></i>`).join('')}</span></button>`}
+  $('#dgrid').innerHTML=g;
+  $('#djam').innerHTML=marcadas.length?`<b style="color:var(--ink)">Já marcadas em ${MESES[m]}:</b>${marcadas.map(i=>`<span>${i.dia} (${SEM[new Date(ANO,m,i.dia).getDay()].toLowerCase()}) · ${esc(i.nome)} · ${ORG[i.org].n}</span>`).join('')}`:`<span>Nenhuma atividade com dia em ${MESES[m]} ainda.</span>`;
+  $('#dov').classList.add('on');setTimeout(()=>{const b=$('#dgrid button');if(b)b.focus()},30);
+}
+$('#dgrid').addEventListener('click',async e=>{const b=e.target.closest('button[data-dia]');if(!b||!desigId)return;const id=desigId;$('#dov').classList.remove('on');desigId=null;await moverPara(id,Number(b.dataset.dia))});
+$('#dclose').addEventListener('click',()=>{$('#dov').classList.remove('on');desigId=null});
+$('#dov').addEventListener('click',e=>{if(e.target===$('#dov')){$('#dov').classList.remove('on');desigId=null}});
+$('#deditar').addEventListener('click',()=>{const it=items.find(i=>i.id===desigId);$('#dov').classList.remove('on');if(it)openForm(it)});
+$('#dmes').addEventListener('click',()=>{const it=items.find(i=>i.id===desigId);$('#dov').classList.remove('on');if(it){mes=it.mes;persistMes();location.hash='calendario';render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#dov').classList.contains('on')){$('#dov').classList.remove('on');desigId=null}});
+$('#view').addEventListener('change',e=>{if(e.target.name==='pfilt'){pendOrg=e.target.value;render()}});
 function render(){
   const p=papel();
   $('#navcad').hidden=isAdmin;$('#navmem').hidden=!isDono;
   const n=Object.keys(membros).filter(id=>!aprovs[id]).length;$('#memcnt').hidden=!n||!isDono;$('#memcnt').textContent=n;
   if(view==='membros'&&!isDono&&carregado)view='calendario';
+  if(view==='pendentes'&&!isAdmin&&carregado)view='calendario';
+  notifs();
   document.querySelectorAll('nav a').forEach(a=>{if(a.dataset.v===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  $('#titulo').textContent={calendario:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:`Atividades de ${ANO}`,organizacoes:'Resumo por organização',cadastro:'Meu cadastro',membros:'Membros e aprovações'}[view];
+  $('#titulo').textContent={calendario:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:`Atividades de ${ANO}`,organizacoes:'Resumo por organização',cadastro:'Meu cadastro',membros:'Membros e aprovações',pendentes:'Atividades aguardando dia'}[view];
   $('#filtro').hidden=!['calendario','ano'].includes(view);
   $('#role').textContent=p==='admin'?(isDono?'Administrador (dono)':'Administrador'):p==='aprovado'?'Líder · '+ORG[minhaOrg()].n:p==='carregando'?'…':'Líder (sem aprovação)';
   $('#sub').textContent=p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades da ${ORG[minhaOrg()].n}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
@@ -548,7 +620,7 @@ function render(){
   $('#meemail').textContent=meEmail;
   aviso();
   const keep=view==='cadastro'&&document.activeElement&&document.activeElement.closest('#cadform');
-  if(!keep)$('#view').innerHTML=view==='ano'?vAno():view==='organizacoes'?vOrg():view==='cadastro'?vCadastro():view==='membros'?vMembros():vCalendario();
+  if(!keep)$('#view').innerHTML=view==='ano'?vAno():view==='organizacoes'?vOrg():view==='cadastro'?vCadastro():view==='membros'?vMembros():view==='pendentes'?vPendentes():vCalendario();
   flash=null;
   if($('#pov').classList.contains('on'))renderPick();
 }
@@ -675,6 +747,7 @@ document.addEventListener('keydown',e=>{
   if(view==='calendario'&&!document.querySelector('.overlay.on')&&$('#auth').hidden&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key==='ArrowLeft'&&mes>0){mes--;persistMes();render()}if(e.key==='ArrowRight'&&mes<11){mes++;persistMes();render()}}});
 function persistMes(){try{localStorage.setItem(LSM,String(mes))}catch(e){}}
 V.addEventListener('click',e=>{
+  const dz=e.target.closest('[data-act=designar]');if(dz&&isAdmin){openDesignar(dz.dataset.id);return}
   const mb=e.target.closest('[data-mem]');if(mb&&isDono){acaoMembro(mb);return}
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
   if(a==='prev'&&mes>0){mes--;persistMes();render()}
