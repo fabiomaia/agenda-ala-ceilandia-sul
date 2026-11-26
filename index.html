@@ -175,7 +175,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
 .tabs button{min-height:40px;border:0;border-radius:9px;background:transparent;font-weight:600;color:var(--mute)}
 .tabs button[aria-selected=true]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.google{justify-content:center;width:100%}
+.google{justify-content:center;width:100%;gap:10px;padding:0 12px;background:light-dark(#fff,#131314);border:1px solid light-dark(#747775,#8e918f);color:light-dark(#1f1f1f,#e3e3e3);font-weight:500}.google img{width:20px;height:20px;flex:none}
 .or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 #aform{display:grid;gap:12px}#aform .btn{width:100%;justify-content:center}
 .lnk{border:0;background:none;color:var(--pri);font-weight:600;min-height:36px;padding:0;justify-self:center;text-decoration:underline}
@@ -197,7 +197,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
     <div id="abody">
       <div class="tabs" role="tablist" id="atabs"><button type="button" role="tab" data-tab="entrar" aria-selected="true">Entrar</button><button type="button" role="tab" data-tab="criar" aria-selected="false">Criar conta</button></div>
       <div style="display:grid;gap:14px;margin-top:14px" id="agoogw">
-        <button class="btn google" type="button" id="agoogle">Continuar com Google</button>
+        <button class="btn google" type="button" id="agoogle"><img src="google-g.svg" alt="" width="20" height="20" onerror="this.remove()"><span>Continuar com Google</span></button>
         <div class="or"><span>ou com e-mail</span></div>
       </div>
       <form id="aform" novalidate>
@@ -286,7 +286,7 @@ const dim=m=>new Date(ANO,m+1,0).getDate();
 const plural=(n,a,b)=>n===1?`1 ${a}`:`${n} ${b}`;
 const orgOpts=sel=>ORGS.map(o=>`<option value="${o.k}"${o.k===sel?' selected':''}>${o.n}</option>`).join('');
 const CFG=window.AGENDA_CONFIG||{};
-const configurado=typeof CFG.SUPABASE_URL==='string'&&/^https:\/\/.+\.supabase\.co\/?$/.test(CFG.SUPABASE_URL)&&typeof CFG.SUPABASE_KEY==='string'&&CFG.SUPABASE_KEY.length>20;
+const configurado=typeof CFG.SUPABASE_URL==='string'&&/^https:\/\/[a-z0-9]{15,}\.supabase\.co\/?$/.test(CFG.SUPABASE_URL)&&typeof CFG.SUPABASE_KEY==='string'&&CFG.SUPABASE_KEY.length>20&&!/SEU-PROJETO|COLE-AQUI/i.test(CFG.SUPABASE_URL+CFG.SUPABASE_KEY);
 const sb=configurado&&window.supabase?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_KEY):null;
 const VOLTA=location.origin+location.pathname;
 
