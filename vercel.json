@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js 'sha256-05xR7lU0Cm3h4zJBenmbQn7VdJ2eXLHPIjglM1Crw3g=' 'sha256-2sgUwh6yVHkFtt48IWjiRPLeT49O2TiPuNrzYJU0WLA=' 'sha256-MyjQvo552QM2gLcVBTQmUD1lj5u4ID5SKe51Yv54VbI=' 'sha256-fh4ujMHUACWic4mXcm2w0aJdr4M5XoPl2UW3m7BC8D8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://oawfulvhjuqybnqmeqmi.supabase.co wss://oawfulvhjuqybnqmeqmi.supabase.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js 'sha256-05xR7lU0Cm3h4zJBenmbQn7VdJ2eXLHPIjglM1Crw3g=' 'sha256-MyjQvo552QM2gLcVBTQmUD1lj5u4ID5SKe51Yv54VbI=' 'sha256-XHzojdD9LokSaZNDXga/bjSygsjcJgvtcCUuduGaAmQ=' 'sha256-fh4ujMHUACWic4mXcm2w0aJdr4M5XoPl2UW3m7BC8D8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://oawfulvhjuqybnqmeqmi.supabase.co wss://oawfulvhjuqybnqmeqmi.supabase.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "X-Frame-Options",

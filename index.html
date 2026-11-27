@@ -281,6 +281,42 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .resp .linha{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:var(--paper);border:1px solid var(--line)}
 .resp .linha.no{border-color:color-mix(in srgb,#c0392b 35%,var(--line))}
 .danger-pri{background:#c0392b!important;color:#fff!important}
+
+/* ---- identificação no topo ---- */
+.quem{display:flex;align-items:center;gap:12px;min-width:0;flex:0 1 auto}
+.quem .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--c,var(--pri));color:var(--bg);font-weight:800;font-size:15px;letter-spacing:.02em}
+.quem .qtx{min-width:0}
+.quem b{display:block;font-size:17px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quem #quemtit{display:block;font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbdir{margin-left:auto;display:flex;align-items:center;gap:12px;flex:none}
+.tbdir .tema{margin-left:0;flex:none;white-space:nowrap}
+@media(max-width:820px){.tbdir{width:100%;margin-left:0}.tbdir .sel{flex:1;max-width:none}}
+/* ---- boas-vindas ---- */
+.bv{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:28px;text-align:center;color:#fff;cursor:pointer;
+  background:radial-gradient(120% 90% at 25% 15%,#2a6b61 0%,#163f3a 55%,#0d2724 100%);opacity:0;transition:opacity .55s ease,transform .7s ease}
+.bv[hidden]{display:none!important}
+.bv.on{opacity:1}
+.bv.sai{opacity:0;transform:scale(1.04);pointer-events:none}
+.bvc{max-width:640px}
+.bvlogo{display:inline-grid;place-items:center;width:96px;height:96px;border-radius:28px;background:rgba(255,255,255,.1);margin-bottom:26px;animation:bvpulse 1.6s ease-in-out infinite}
+.bv.txt .bvlogo{animation:none}
+@keyframes bvpulse{50%{transform:scale(1.06);background:rgba(255,255,255,.16)}}
+.bv .lin{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.bv.txt .lin{opacity:1;transform:none}
+.bv.txt .bv2{transition-delay:.15s}.bv.txt .bv3{transition-delay:.35s}.bv.txt .bvbar{transition-delay:.5s}.bv.txt .bvdica{transition-delay:.7s}
+.bv1{margin:0 0 6px;font-size:20px;opacity:.85}
+.bv.txt .bv1{opacity:.85}
+.bv2{margin:0;font-size:clamp(28px,6vw,46px);line-height:1.1;font-weight:800;letter-spacing:-.01em}
+.bv3{margin:14px 0 0;font-size:clamp(19px,3.6vw,24px);font-weight:600;color:#cfe9e3}
+.bvbar{width:160px;height:3px;border-radius:3px;background:rgba(255,255,255,.18);margin:30px auto 0;overflow:hidden}
+.bvbar i{display:block;height:100%;width:0;background:#fff;border-radius:3px}
+.bv.txt .bvbar i{animation:bvfill 2.6s linear forwards}
+@keyframes bvfill{to{width:100%}}
+.bvdica{margin:14px 0 0;font-size:13px;color:rgba(255,255,255,.6)}
+.bv.txt .bvdica{opacity:1}
+.app.entra{animation:entra .7s ease both}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.bv,.bv .lin{transition:none}.bvlogo,.app.entra{animation:none}.bv.txt .bvbar i{animation-duration:2.6s}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
 <script src="config.js"></script>
@@ -326,9 +362,12 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 
   <div class="main">
     <div class="topbar">
+      <div class="quem" id="quem" hidden><span class="av" id="quemav" aria-hidden="true"></span><div class="qtx"><b id="quemnome"></b><span id="quemtit"></span></div></div>
+      <div class="tbdir">
       <select class="sel" id="filtro" aria-label="Filtrar por organização"></select>
       <div class="status" id="status2" hidden></div>
       <button type="button" class="tema tema-desk" data-t="dark" aria-label="Mudar para o modo escuro"><svg class="i-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Escuro</span></button>
+      </div>
     </div>
     <div class="head">
       <div><h1 id="titulo">Calendário de Atividades Ala Ceilândia Sul 2027</h1><p id="sub">Líderes escolhem o mês e a atividade; o administrador define o dia.</p></div>
@@ -423,6 +462,16 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
     <div class="err" id="qerr" role="alert"></div>
     <div class="mfoot"><button class="btn" type="button" id="qcancel">Voltar</button><span class="sp"></span><button class="btn pri" type="submit" id="qok">Confirmar</button></div>
   </form>
+</div>
+<div class="bv" id="bv" hidden role="status" aria-live="polite">
+  <div class="bvc">
+    <div class="bvlogo"><svg width="56" height="56" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 12h24M10 2v6M20 2v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="10" cy="18" r="1.8" fill="currentColor"/><circle cx="15" cy="18" r="1.8" fill="currentColor"/><circle cx="20" cy="18" r="1.8" fill="currentColor"/></svg></div>
+    <p class="lin bv1" id="bv1"></p>
+    <h2 class="lin bv2" id="bv2"></h2>
+    <p class="lin bv3" id="bv3"></p>
+    <div class="lin bvbar"><i></i></div>
+    <p class="lin bvdica">Toque para continuar</p>
+  </div>
 </div>
 <div id="toast" role="status"><span id="tmsg"></span><button type="button" id="tbtn" hidden>Desfazer</button></div>
 
@@ -556,6 +605,7 @@ async function carregar(){
     if(!meuCad&&!isAdmin&&!autoCad&&!location.hash){autoCad=true;location.hash='cadastro'}
   }
   carregado=true;setStatus('Sincronizado');render();
+  if(bvEstado==='esperando')bvTexto();
 }
 function agendar(){clearTimeout(recT);recT=setTimeout(carregar,350)}
 function ouvir(){
@@ -791,6 +841,7 @@ function render(){
   document.querySelectorAll('nav a').forEach(a=>{if(a.dataset.v===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   $('#titulo').textContent={calendario:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:`Atividades de ${ANO}`,organizacoes:'Resumo por organização',cadastro:'Meu cadastro',membros:'Membros e aprovações',pendentes:'Atividades aguardando dia'}[view];
   $('#filtro').hidden=!['calendario','ano'].includes(view);
+  pintaQuem();
   $('#role').textContent=p==='admin'?(isDono?'Administrador (dono)':'Administrador'):p==='aprovado'?'Líder · '+ORG[minhaOrg()].n:p==='carregando'?'…':'Líder (sem aprovação)';
   $('#sub').textContent=p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades da ${ORG[minhaOrg()].n}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
   $('#novo').disabled=!podeAdicionar();
@@ -1197,13 +1248,62 @@ $('#lclose').addEventListener('click',()=>$('#lov').classList.remove('on'));
 $('#lov').addEventListener('click',e=>{if(e.target===$('#lov'))$('#lov').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lov').classList.remove('on')});
 
+/* ================= QUEM SOU / BOAS-VINDAS ================= */
+const ART={primaria:'da',socorro:'da',elderes:'do',rapazes:'dos',mocas:'das',escola:'da'};
+const FEM=['primaria','socorro','mocas'];
+function nomeCurto(n){const w=String(n||'').trim().split(/\s+/).filter(Boolean);return w.length>1?w[0]+' '+w[w.length-1]:(w[0]||'')}
+function quemSou(){
+  const p=papel(),org=minhaAprov&&minhaAprov.status==='aprovado'&&ORG[minhaAprov.org]?minhaAprov.org:'';
+  const completo=(meuCad&&meuCad.nome)||(membros[myId]&&membros[myId].nome)||meNome||(meEmail?meEmail.split('@')[0]:'');
+  const nome=nomeCurto(completo);
+  const pres=org?`Presidente ${ART[org]} ${ORG[org].n}`:'';
+  let tit;
+  if(p==='admin')tit=pres?pres+' · Administrador':(isDono?'Administrador da agenda':'Administrador');
+  else if(p==='aprovado')tit=pres;
+  else if(p==='pendente')tit='Cadastro em análise';
+  else if(p==='recusado')tit='Cadastro não aprovado';
+  else if(p==='sem-cadastro')tit='Complete seu cadastro';
+  else tit='…';
+  const ini=nome.split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2)||'?';
+  return{nome,tit,pres,org,ini,saud:org?(FEM.includes(org)?'Bem-vinda':'Bem-vindo'):'Boas-vindas'};
+}
+function pintaQuem(){
+  const q=$('#quem');if(!myId){q.hidden=true;return}
+  const s=quemSou();q.hidden=false;
+  $('#quemnome').textContent=s.nome||'Olá!';$('#quemtit').textContent=s.tit;$('#quemav').textContent=s.ini;
+  q.style.setProperty('--c',s.org?`var(--o-${s.org})`:'var(--pri)');
+}
+let bvEstado=null,bvT=0;
+const bvChave=s=>s&&s.user?s.user.id+'|'+(s.user.last_sign_in_at||''):'';
+function bvAbrir(){
+  const o=$('#bv');clearTimeout(bvT);o.className='bv';o.hidden=false;$('#bv1').textContent='';$('#bv2').textContent='';$('#bv3').textContent='';
+  bvEstado='esperando';requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add('on')));
+  bvT=setTimeout(bvTexto,5000);
+}
+function bvTexto(){
+  if(bvEstado!=='esperando')return;bvEstado='mostrando';clearTimeout(bvT);
+  const s=quemSou();
+  if(s.pres){$('#bv1').textContent=s.saud+',';$('#bv2').textContent=s.pres+',';$('#bv3').textContent=s.nome}
+  else{$('#bv1').textContent=s.saud+',';$('#bv2').textContent=(s.nome||'que bom ter você aqui')+(s.nome?'!':'');$('#bv3').textContent=papel()==='admin'?s.tit:'Calendário de Atividades Ala Ceilândia Sul '+ANO}
+  $('#bv').classList.add('txt');bvT=setTimeout(bvFechar,2800);
+}
+function bvFechar(){
+  if(!bvEstado)return;bvEstado=null;clearTimeout(bvT);const o=$('#bv'),app=document.querySelector('.app');
+  if(papel()!=='sem-cadastro'&&view!=='calendario')location.hash='calendario';
+  o.classList.add('sai');app.classList.remove('entra');void app.offsetWidth;app.classList.add('entra');
+  setTimeout(()=>{o.hidden=true;o.className='bv';app.classList.remove('entra')},700);
+}
+$('#bv').addEventListener('click',()=>{if(bvEstado==='mostrando')bvFechar()});
+document.addEventListener('keydown',e=>{if(bvEstado==='mostrando'&&(e.key==='Enter'||e.key===' '||e.key==='Escape')){e.preventDefault();bvFechar()}});
+
 /* ================= INÍCIO ================= */
 function entrou(s){
   const novo=!sessao||sessao.user.id!==s.user.id;sessao=s;myId=s.user.id;meEmail=s.user.email||'';
   const md=s.user.user_metadata||{};meNome=String(md.full_name||md.name||'').slice(0,80);
+  if(novo){let ver=false;try{const k=bvChave(s);ver=localStorage.getItem('bvLogin')!==k;localStorage.setItem('bvLogin',k)}catch(e){}if(ver)bvAbrir()}
   mostrarApp();if(novo){carregado=false;meuCad=undefined;minhaAprov=undefined;isDono=false;isAdmin=false;membros={};aprovs={};render();carregar();ouvir()}
 }
-function saiu(){sessao=null;myId=null;acts=[];items=[];carregado=false;isAdmin=false;isDono=false;if(canal){sb.removeChannel(canal);canal=null}authModo('entrar');mostrarLogin()}
+function saiu(){if(bvEstado){bvEstado=null;clearTimeout(bvT);$('#bv').hidden=true}sessao=null;myId=null;acts=[];items=[];carregado=false;isAdmin=false;isDono=false;if(canal){sb.removeChannel(canal);canal=null}authModo('entrar');mostrarLogin()}
 function init(){
   route();
   if(!sb){
