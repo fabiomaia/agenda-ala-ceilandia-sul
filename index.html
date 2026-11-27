@@ -20,9 +20,9 @@
 
 
 }
-:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--side:#163f3a;--pri:#163f3a;--priink:#fff;--field:#f7f9f9;--dim:#f7f8f8;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24;--ld1:#fff;--ld2:#747775;--ld3:#1f1f1f}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--side:#0d2724;--pri:#5fb3a2;--priink:#08201c;--field:#10181a;--dim:#11191b;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--ld1:#131314;--ld2:#8e918f;--ld3:#e3e3e3}}
-:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--side:#0d2724;--pri:#5fb3a2;--priink:#08201c;--field:#10181a;--dim:#11191b;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--ld1:#131314;--ld2:#8e918f;--ld3:#e3e3e3}
+:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--side:#163f3a;--pri:#163f3a;--priink:#fff;--field:#f7f9f9;--dim:#f7f8f8;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24;--o-estaca:#0e7490;--o-geral:#475569;--ld1:#fff;--ld2:#747775;--ld3:#1f1f1f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--side:#0d2724;--pri:#5fb3a2;--priink:#08201c;--field:#10181a;--dim:#11191b;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--o-estaca:#5fc8de;--o-geral:#a9b6c9;--ld1:#131314;--ld2:#8e918f;--ld3:#e3e3e3}}
+:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--side:#0d2724;--pri:#5fb3a2;--priink:#08201c;--field:#10181a;--dim:#11191b;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--o-estaca:#5fc8de;--o-geral:#a9b6c9;--ld1:#131314;--ld2:#8e918f;--ld3:#e3e3e3}
 
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
@@ -75,7 +75,7 @@ nav a[aria-current=page]{background:rgba(255,255,255,.14);opacity:1;font-weight:
 .pill::before,.dot::before,.leg i{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
 .pill span{overflow:hidden;text-overflow:ellipsis}
 .more{font-size:12px;color:var(--mute);padding-left:6px}
-.o-primaria{--c:var(--o-primaria)}.o-socorro{--c:var(--o-socorro)}.o-elderes{--c:var(--o-elderes)}.o-rapazes{--c:var(--o-rapazes)}.o-mocas{--c:var(--o-mocas)}.o-escola{--c:var(--o-escola)}
+.o-primaria{--c:var(--o-primaria)}.o-socorro{--c:var(--o-socorro)}.o-elderes{--c:var(--o-elderes)}.o-rapazes{--c:var(--o-rapazes)}.o-mocas{--c:var(--o-mocas)}.o-escola{--c:var(--o-escola)}.o-estaca{--c:var(--o-estaca)}.o-geral{--c:var(--o-geral)}
 .legend{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:14px;font-size:13px}
 .leg{display:flex;align-items:center;gap:8px;font-weight:500}.leg i{width:12px;height:12px}
 .panel{padding:16px 16px 14px}
@@ -346,6 +346,11 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 #tbtn2{background:transparent;color:inherit;border:1px solid currentColor;border-radius:8px;padding:6px 10px;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
 :root[data-theme=dark] .btn.wa{color:#6fdc9c;border-color:#2c6b46}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .btn.wa{color:#6fdc9c;border-color:#2c6b46}}
+
+/* ---- dias reservados (Estaca / Igreja Geral) ---- */
+.cell.res{background-image:repeating-linear-gradient(135deg,color-mix(in srgb,var(--o-geral) 9%,transparent) 0 6px,transparent 6px 12px)}
+.cell.res .d{text-decoration:underline dotted;text-underline-offset:3px}
+#dgrid button.res{background-image:repeating-linear-gradient(135deg,color-mix(in srgb,var(--o-geral) 14%,transparent) 0 5px,transparent 5px 10px);border-color:color-mix(in srgb,var(--o-geral) 45%,var(--line))}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
 <script src="config.js"></script>
@@ -522,9 +527,11 @@ pinta();})();
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const AB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
+const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'},{k:'estaca',n:'Estaca Ceilândia'},{k:'geral',n:'Igreja Geral'}];
+const ESPECIAIS=['estaca','geral'],ehEspecial=k=>ESPECIAIS.includes(k);
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
-const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a'};
+const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a',estaca:'a',geral:'a'};
+const ORGS_LID=ORGS.filter(o=>!ehEspecial(o.k));
 const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
 let ANO=2027,PRAZO='';const LSM='atividades-ala-2027-mes';
 const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes','historico'];let hist=[],histLim=200,histOrg='todas',histCarregando=false,histErro='';let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
@@ -532,7 +539,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
 const plural=(n,a,b)=>n===1?`1 ${a}`:`${n} ${b}`;
-const orgOpts=sel=>ORGS.map(o=>`<option value="${o.k}"${o.k===sel?' selected':''}>${o.n}</option>`).join('');
+const orgOpts=(sel,todas)=>(todas?ORGS:ORGS.filter(o=>!ehEspecial(o.k))).map(o=>`<option value="${o.k}"${o.k===sel?' selected':''}>${o.n}</option>`).join('');
 const CFG=window.AGENDA_CONFIG||{};
 const configurado=typeof CFG.SUPABASE_URL==='string'&&/^https:\/\/[a-z0-9]{15,}\.supabase\.co\/?$/.test(CFG.SUPABASE_URL)&&typeof CFG.SUPABASE_KEY==='string'&&CFG.SUPABASE_KEY.length>20&&!/SEU-PROJETO|COLE-AQUI/i.test(CFG.SUPABASE_URL+CFG.SUPABASE_KEY);
 const sb=configurado&&window.supabase?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_KEY):null;
@@ -544,7 +551,7 @@ let view='calendario',filtro='todas',editId=null,undoItem=null,flash=null,toastT
 let mes=0;try{const s=Number(localStorage.getItem(LSM));if(Number.isInteger(s)&&s>=0&&s<12)mes=s}catch(e){}
 const now=new Date();if(now.getFullYear()===ANO)mes=now.getMonth();
 
-$('#filtro').innerHTML='<option value="todas">Todas as organizações</option>'+orgOpts('');
+$('#filtro').innerHTML='<option value="todas">Todas as organizações</option>'+orgOpts('',true);
 $('#fmes').innerHTML=MESES.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
 $('#forgs').innerHTML=ORGS.map(o=>`<label class="org o-${o.k}"><input type="radio" name="org" value="${o.k}"><span>${o.n}</span></label>`).join('');
 
@@ -699,10 +706,10 @@ function vCalendario(){
     const di=list.filter(i=>i.dia===d).sort(ord);
     const pills=di.slice(0,3).map(i=>`<button type="button" class="pill o-${i.org}" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} title="${i.horario?i.horario+' · ':''}${esc(i.nome)} · ${ORG[i.org].n}"><span>${i.horario?`<b class="hr">${i.horario}</b> `:''}${esc(i.nome)}</span></button>`).join('')+(di.length>3?`<span class="more">+${di.length-3} mais</span>`:'');
     const lab=`${d} de ${MESES[mes]}${di.length?', '+plural(di.length,'atividade','atividades'):''}`;
-    cells+=`<div class="cell${di.length?' has':''}${isToday(d)?' today':''}" data-dia="${d}">${isAdmin?`<button type="button" class="dn" data-act="pick" data-d="${d}" aria-label="${lab}. Definir atividade para este dia"><span class="d">${d}</span><span class="plus" aria-hidden="true">+</span></button>`:`<span class="dn" style="pointer-events:none" aria-label="${lab}"><span class="d">${d}</span></span>`}<div class="pills">${pills}</div></div>`;
+    const rsv=reservas(mes,d);cells+=`<div class="cell${di.length?' has':''}${isToday(d)?' today':''}${rsv.length?' res':''}" data-dia="${d}"${rsv.length?` title="Dia reservado: ${esc(rsv.map(x=>x.nome+' ('+ORG[x.org].n+')').join(' · '))}"`:''}>${isAdmin?`<button type="button" class="dn" data-act="pick" data-d="${d}" aria-label="${lab}. Definir atividade para este dia"><span class="d">${d}</span><span class="plus" aria-hidden="true">+</span></button>`:`<span class="dn" style="pointer-events:none" aria-label="${lab}"><span class="d">${d}</span></span>`}<div class="pills">${pills}</div></div>`;
   }
   const tail=(7-(first+n)%7)%7;for(let i=0;i<tail;i++)cells+='<div class="cell out"></div>';
-  const all=items.filter(i=>i.mes===mes),com=all.filter(i=>i.dia),orgsCom=new Set(all.map(i=>i.org)),falta=ORGS.filter(o=>!orgsCom.has(o.k));
+  const all=items.filter(i=>i.mes===mes),com=all.filter(i=>i.dia),orgsCom=new Set(all.map(i=>i.org)),falta=ORGS_LID.filter(o=>!orgsCom.has(o.k));
   const pct=all.length?Math.round(com.length/all.length*100):0;
   const wait=list.filter(i=>!i.dia).sort(ord),dated=list.filter(i=>i.dia).sort(ord),load=!carregado;
   return `<div class="layout"><div>
@@ -877,9 +884,9 @@ function responderPedido(id,acao){
   if(acao==='recusar')return pergunta({titulo:'Recusar pedido',html:`<p style="margin:0 0 12px">Recusar o pedido de ${s.tipo==='cancelar'?'cancelamento':'alteração'} de <b>${esc(s.antes.nome)}</b>? A atividade continua como está.</p><label for="qresp">Resposta ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off">`,ok:'Recusar pedido',acao:()=>rpc(false,null,undefined,$('#qresp').value.trim())});
   if(s.tipo==='cancelar')return pergunta({titulo:'Confirmar exclusão',html:`<p style="margin:0 0 12px">Excluir <b>${esc(s.antes.nome)}</b> (${fmtData(s.antes.mes,s.antes.dia)}${s.antes.horario?' às '+s.antes.horario:''})? Ela sai do calendário e do calendário público.</p><label for="qresp">Mensagem ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off">`,ok:'Excluir atividade',perigo:true,acao:()=>rpc(true,null,undefined,$('#qresp').value.trim())});
   const D=s.depois,m=D.mes,diaIni=m===s.antes.mes?s.antes.dia:0;
-  const ops='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1,oc=items.filter(x=>x.mes===m&&x.dia===d&&x.id!==s.atividade).length;return `<option value="${d}"${d===diaIni?' selected':''}>${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}${oc?` (${oc} já marcada${oc>1?'s':''})`:''}</option>`}).join('');
+  let ackRes=0;const ops='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1,oc=items.filter(x=>x.mes===m&&x.dia===d&&x.id!==s.atividade).length,rs=reservas(m,d,s.atividade);return `<option value="${d}"${d===diaIni?' selected':''}>${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}${rs.length?' · reservado: '+esc(rs.map(x=>x.nome).join(', ')):oc?` (${oc} já marcada${oc>1?'s':''})`:''}</option>`}).join('');
   pergunta({titulo:'Aprovar alteração',html:`<p style="margin:0 0 12px"><b>${esc(D.nome)}</b> em <b>${MESES[m]}</b>. Confira o dia e o horário antes de aprovar.</p><div class="two"><div><label for="qdia">Dia</label><select id="qdia">${ops}</select></div><div><label for="qhora">Horário (24 horas)</label><input id="qhora" inputmode="numeric" maxlength="5" value="${esc(D.horario||'')}" placeholder="Ex.: 19:00"></div></div><div style="margin-top:12px"><label for="qresp">Mensagem ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off"></div>`,ok:'Aprovar alteração',
-    acao:()=>{const h=$('#qhora').value.trim();if(h&&!validaHora(h)){$('#qerr').textContent='Horário inválido: use 24 horas, de 00:00 a 23:59.';return false}return rpc(true,Number($('#qdia').value)||null,h,$('#qresp').value.trim())}});
+    acao:()=>{const h=$('#qhora').value.trim();if(h&&!validaHora(h)){$('#qerr').textContent='Horário inválido: use 24 horas, de 00:00 a 23:59.';return false}const dd=Number($('#qdia').value)||0,rs=reservas(m,dd,s.atividade);if(rs.length&&ackRes!==dd){ackRes=dd;$('#qerr').innerHTML=`${dd} de ${MESES[m]} já está reservado para ${resTxt(rs)}. Toque de novo em “Aprovar alteração” para agendar mesmo assim.`;return false}return rpc(true,dd||null,h,$('#qresp').value.trim())}});
 }
 function openDesignar(id){
   const it=items.find(i=>i.id===id);if(!it||!isAdmin)return;desigId=id;
@@ -888,7 +895,7 @@ function openDesignar(id){
   $('#dsub').innerHTML=`<span class="dot o-${it.org}">${ORG[it.org].n}</span> · escolha o dia em <b>${MESES[m]} de ${ANO}</b>`;
   let g=SEM.map(s=>`<span class="w">${s}</span>`).join('');for(let i=0;i<first;i++)g+='<span></span>';
   for(let d=1;d<=n;d++){const di=marcadas.filter(i=>i.dia===d),dw=new Date(ANO,m,d).getDay();
-    g+=`<button type="button" data-dia="${d}" class="${di.length?'tem':''}" aria-label="${d} de ${MESES[m]}${di.length?', já tem '+plural(di.length,'atividade','atividades'):''}" title="${esc(di.map(i=>i.nome+' ('+ORG[i.org].n+')').join(' · '))}"><span class="${dw===0?'dom':''}">${d}</span><span class="ds">${di.slice(0,4).map(i=>`<i class="o-${i.org}"></i>`).join('')}</span></button>`}
+    const rs=reservas(m,d,id);g+=`<button type="button" data-dia="${d}" class="${di.length?'tem':''}${rs.length?' res':''}" aria-label="${d} de ${MESES[m]}${rs.length?', reservado para '+esc(rs.map(x=>x.nome).join(', ')):di.length?', já tem '+plural(di.length,'atividade','atividades'):''}" title="${esc(di.map(i=>i.nome+' ('+ORG[i.org].n+')').join(' · '))}"><span class="${dw===0?'dom':''}">${d}</span><span class="ds">${di.slice(0,4).map(i=>`<i class="o-${i.org}"></i>`).join('')}</span></button>`}
   $('#dgrid').innerHTML=g;
   $('#djam').innerHTML=marcadas.length?`<b style="color:var(--ink)">Já marcadas em ${MESES[m]}:</b>${marcadas.map(i=>`<span>${i.dia} (${SEM[new Date(ANO,m,i.dia).getDay()].toLowerCase()}) · ${esc(i.nome)} · ${ORG[i.org].n}</span>`).join('')}`:`<span>Nenhuma atividade com dia em ${MESES[m]} ainda.</span>`;
   $('#dov').classList.add('on');setTimeout(()=>{const b=$('#dgrid button');if(b)b.focus()},30);
@@ -932,8 +939,14 @@ async function exec(promise,msgErro){
   catch(e){const t=traduz(e);$('#ferr').textContent=t;toast(t);return null}
 }
 async function setDia(id,dia,hora){if(!isAdmin)return false;const up={dia:dia||null};if(hora!==undefined)up.horario=hora||null;return !!await exec(sb.from('atividades').update(up).eq('id',id))}
-async function moverPara(id,dia,hora){
+const reservas=(m,d,exceto)=>d?items.filter(i=>ehEspecial(i.org)&&i.mes===m&&i.dia===d&&i.id!==exceto):[];
+const resTxt=l=>l.map(i=>`<b>${esc(i.nome)}</b> (${ORG[i.org].n}${i.horario?', '+i.horario:''})`).join(', ');
+function confirmarReserva(l,m,d,seguir){
+  return pergunta({titulo:'Dia reservado',html:`<p style="margin:0 0 10px">${d} de ${MESES[m]} já está reservado para ${resTxt(l)}.</p><p class="small" style="margin:0">Atividades da Estaca e da Igreja Geral reservam o dia para as organizações da ala. Você pode agendar mesmo assim, se for o caso.</p>`,ok:'Agendar mesmo assim',acao:async()=>{await seguir();return true}});
+}
+async function moverPara(id,dia,hora,forcar){
   const it=items.find(i=>i.id===id);if(!it)return;
+  if(dia&&!forcar&&dia!==it.dia){const r=reservas(it.mes,dia,id);if(r.length)return confirmarReserva(r,it.mes,dia,()=>moverPara(id,dia,hora,true))}
   if((dia||0)===it.dia&&(hora===undefined||hora===(it.horario||'')))return;
   const tinha=it.dia;it.dia=dia||0;if(hora!==undefined)it.horario=hora;render();
   if(await setDia(id,dia,hora)){flash=id;const wa=dia&&it.autor&&it.autor!==myId?acaoWa(it.autor,msgLider(tinha?'remarcada':'agendada',it)):null;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}${it.horario?' às '+it.horario:''}`:`“${it.nome}” voltou a aguardar data`,false,wa)}
@@ -971,6 +984,7 @@ function openForm(it){
   const editavel=['novo','admin','pedido','direto'].includes(formModo);
   document.querySelectorAll('#form input,#form select,#form textarea').forEach(e=>e.disabled=!editavel);
   document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(formModo==='pedido')r.disabled=true;else if(mo&&editavel&&!isAdmin)r.disabled=r.value!==mo});
+  document.querySelectorAll('#forgs label').forEach(l=>{const v=l.querySelector('input').value;l.hidden=ehEspecial(v)&&!isAdmin&&!(it&&it.org===v)});
   $('#fmotivow').hidden=formModo!=='pedido';
   $('#fdel').hidden=!['admin','pedido','direto'].includes(formModo);$('#fdel').textContent=formModo==='pedido'?'Pedir cancelamento':'Excluir';
   $('#fsave').hidden=!editavel;$('#fsave').textContent=formModo==='pedido'?'Enviar pedido':'Salvar';
@@ -994,7 +1008,8 @@ $('#form').addEventListener('submit',async ev=>{
   const it=items.find(i=>i.id===editId),mudouMes=!it||it.mes!==m,s=statusMes(m);
   if(formModo==='pedido'&&it.mes===m&&it.nome===nome&&(it.horario||'')===hora&&it.detalhes===$('#fdet').value.trim()){$('#ferr').textContent='Nada foi alterado. Mude o mês, o horário, o nome ou o local antes de enviar o pedido.';return}
   if(!isAdmin&&mudouMes&&s==='passado'){$('#ferr').textContent='Este mês já passou. Escolha outro mês.';$('#fmes').focus();return}
-  const seguir=mm=>formModo==='pedido'?enviarPedido(mm):salvarAtividade(mm);
+  const seguir0=mm=>formModo==='pedido'?enviarPedido(mm):salvarAtividade(mm);
+  const seguir=mm=>{const d=isAdmin?Number($('#fdia').value)||0:0;if(d&&(!it||it.dia!==d||it.mes!==mm)){const r=reservas(mm,d,editId);if(r.length)return confirmarReserva(r,mm,d,()=>seguir0(mm))}return seguir0(mm)};
   if(!isAdmin&&mudouMes&&s==='curto'){confirmarPrazo(m,seguir);return}
   await seguir(m);
 });
@@ -1143,10 +1158,10 @@ window.addEventListener('hashchange',route);
 
 /* ================= EXPORTAR (PDF / PNG) ================= */
 const PERIODOS=[{k:'ano',n:'Ano inteiro',m:[0,1,2,3,4,5,6,7,8,9,10,11]},{k:'t1',n:'1º trimestre',m:[0,1,2]},{k:'t2',n:'2º trimestre',m:[3,4,5]},{k:'t3',n:'3º trimestre',m:[6,7,8]},{k:'t4',n:'4º trimestre',m:[9,10,11]},{k:'meses',n:'Escolher meses',m:null}];
-const COR={primaria:'#c98f00',socorro:'#8a4fa3',elderes:'#2d62b3',rapazes:'#2b8452',mocas:'#c8436f',escola:'#c25a24'};
+const COR={primaria:'#c98f00',socorro:'#8a4fa3',elderes:'#2d62b3',rapazes:'#2b8452',mocas:'#c8436f',escola:'#c25a24',estaca:'#0e7490',geral:'#475569'};
 const PINE='#163f3a',INK='#17211f',MUTE='#62716e',LINE='#dde3e1',SOFT='#f4f7f6';
 const FONT='Inter, "Segoe UI", Roboto, Arial, sans-serif';
-$('#eorg').innerHTML='<option value="todas">Todas as organizações</option>'+orgOpts('');
+$('#eorg').innerHTML='<option value="todas">Todas as organizações</option>'+orgOpts('',true);
 $('#eper').innerHTML=PERIODOS.map((p,i)=>`<label class="chip"><input type="radio" name="eper" value="${p.k}"${i===0?' checked':''}><span>${p.n}</span></label>`).join('');
 $('#emeses').innerHTML=AB.map((a,i)=>`<label class="chip"><input type="checkbox" name="emes" value="${i}"><span>${a}</span></label>`).join('');
 function exSel(){
@@ -1337,7 +1352,7 @@ function vHistorico(){
   if(!isAdmin)return `<div class="card cad"><p class="small">Só administradores veem esta tela.</p></div>`;
   const qd=o=>o?(o.mes===null?'':o.dia?`${o.dia} de ${MESES[o.mes]}`:`${MESES[o.mes]} (dia a definir)`)+(o.horario?' às '+o.horario:''):'';
   const lista=hist.filter(h=>histOrg==='todas'||h.org===histOrg);
-  const filtros=`<div class="histf"><select class="sel" id="historg" aria-label="Filtrar histórico por organização"><option value="todas">Todas as organizações</option>${orgOpts(histOrg==='todas'?'':histOrg)}</select><span class="small">${histCarregando?'Carregando…':plural(lista.length,'registro','registros')}</span></div>`;
+  const filtros=`<div class="histf"><select class="sel" id="historg" aria-label="Filtrar histórico por organização"><option value="todas">Todas as organizações</option>${orgOpts(histOrg==='todas'?'':histOrg,true)}</select><span class="small">${histCarregando?'Carregando…':plural(lista.length,'registro','registros')}</span></div>`;
   if(histErro)return filtros+`<div class="card cad"><p class="small">Não foi possível carregar o histórico: ${esc(histErro)}</p></div>`;
   if(!lista.length)return filtros+`<div class="card cad"><p class="empty">${histCarregando?'Carregando…':'Nenhuma mudança registrada ainda.'}</p></div>`;
   let dAnt='',html='';
