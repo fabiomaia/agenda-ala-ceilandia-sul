@@ -351,6 +351,26 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .cell.res{background-image:repeating-linear-gradient(135deg,color-mix(in srgb,var(--o-geral) 9%,transparent) 0 6px,transparent 6px 12px)}
 .cell.res .d{text-decoration:underline dotted;text-underline-offset:3px}
 #dgrid button.res{background-image:repeating-linear-gradient(135deg,color-mix(in srgb,var(--o-geral) 14%,transparent) 0 5px,transparent 5px 10px);border-color:color-mix(in srgb,var(--o-geral) 45%,var(--line))}
+
+/* ---- responsáveis ---- */
+.respbox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--dim)}
+.respbox h3{font-size:15.5px;margin:0 0 4px}
+.respbox p.small{margin:0 0 10px}
+.respbox label{margin-top:10px}
+.respbox label:first-child{margin-top:0}
+.respbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.respbox.ok{border-color:color-mix(in srgb,#2b8452 45%,var(--line))}
+.respbox.urg{border-color:#f0c040;background:color-mix(in srgb,#f0c040 10%,var(--paper))}
+.respbox.fim{border-color:#f3b4b4;background:color-mix(in srgb,#e05252 8%,var(--paper))}
+/* ---- próximas atividades (lembretes na tela) ---- */
+.prox{width:100%;display:grid;gap:8px;margin-top:4px}
+.prox .linha{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+.prox .linha span{font-size:14px}
+.prox .stt{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--dim);border:1px solid var(--line);margin-left:4px}
+.prox .stt.ok{color:#1f6b3f;border-color:#9fd8b5}.prox .stt.urg{color:#6b4a00;border-color:#f0c040}.prox .stt.fim{color:#8a1f1f;border-color:#f3b4b4}
+:root[data-theme=dark] .prox .stt.ok{color:#6fdc9c}:root[data-theme=dark] .prox .stt.urg{color:#f6d27a}:root[data-theme=dark] .prox .stt.fim{color:#f3b4b4}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .prox .stt.ok{color:#6fdc9c}:root:not([data-theme=light]) .prox .stt.urg{color:#f6d27a}:root:not([data-theme=light]) .prox .stt.fim{color:#f3b4b4}}
+.chavebox{display:flex;gap:8px;margin-top:8px}.chavebox input{flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
 <script src="config.js"></script>
@@ -426,6 +446,17 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
       <div id="fdiaw"><label for="fdia">Dia <small>(só administrador)</small></label><select id="fdia"></select></div>
     </div>
     <div id="fsol" class="solbox" hidden></div>
+    <div class="respbox" id="fresp" hidden>
+      <h3>👥 Responsáveis pela atividade</h3>
+      <p class="small" id="frespnota"></p>
+      <div id="frespcampos">
+        <label for="rsac">⛪ Portador do Sacerdócio responsável</label><input id="rsac" maxlength="120" autocomplete="off" placeholder="Nome do irmão">
+        <label for="rcap">🔑 Quem abrirá e fechará a capela?</label><input id="rcap" maxlength="120" autocomplete="off" placeholder="Nome">
+        <label for="rlim">🧹 Responsável pela limpeza</label><input id="rlim" maxlength="120" autocomplete="off" placeholder="Nome ou equipe">
+      </div>
+      <div class="err" id="resperr" role="alert"></div>
+      <div class="respbtns"><button type="button" class="btn pri" id="rsalvar">Salvar responsáveis</button><button type="button" class="btn" id="rdepois">Preencher depois</button><button type="button" class="btn wa" id="rajuda">🙋 Preciso de ajuda da liderança</button></div>
+    </div>
     <p class="small" id="fdianote"></p>
     <p class="small" id="fprazo" hidden style="margin:-4px 0 0;color:#b7791f;font-weight:600"></p>
     <div><label for="fhora">Horário (24 horas)</label><input id="fhora" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Ex.: 19:00" style="max-width:160px"><p class="small" id="fhoranote" style="margin:6px 0 0"></p></div>
@@ -534,7 +565,7 @@ const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:
 const ORGS_LID=ORGS.filter(o=>!ehEspecial(o.k));
 const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
 let ANO=2027,PRAZO='';const LSM='atividades-ala-2027-mes';
-const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes','historico'];let hist=[],histLim=200,histOrg='todas',histCarregando=false,histErro='';let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
+const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes','historico'];let resps={},WHATS_AJUDA='',abrirDepois=null,chaveCriada=null,hist=[],histLim=200,histOrg='todas',histCarregando=false,histErro='';let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
@@ -626,9 +657,11 @@ function cleanMembro(r){if(!r)return null;return{nome:String(r.nome??'').slice(0
 function cleanAprov(r){if(!r)return null;const st=r.status==='aprovado'||r.status==='recusado'?r.status:null;return st?{status:st,org:ORG[r.org]?r.org:''}:null}
 async function carregar(){
   if(!sb||!myId)return;
-  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado'),sb.from('avisos').select('*').eq('visto',false).order('criado'),sb.from('config').select('chave,valor')];
+  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado'),sb.from('avisos').select('*').eq('visto',false).order('criado'),sb.from('config').select('chave,valor'),sb.from('responsaveis').select('*'),sb.from('config_priv').select('chave,valor')];
   if(!isDono){q.push(sb.from('perfis').select('*').eq('id',myId).maybeSingle(),sb.from('aprovacoes').select('*').eq('user_id',myId).maybeSingle())}
-  const [a,ad,sl,av,cf,pf,ap]=await Promise.all(q);
+  const [a,ad,sl,av,cf,rsp,cpv,pf,ap]=await Promise.all(q);
+  resps={};if(rsp&&!rsp.error)(rsp.data||[]).forEach(r=>{resps[String(r.atividade)]={sacerdocio:String(r.sacerdocio||'').slice(0,120),capela:String(r.capela||'').slice(0,120),limpeza:String(r.limpeza||'').slice(0,120),porNome:String(r.por_nome||'').slice(0,80),atualizado:Date.parse(r.atualizado)||0}});
+  WHATS_AJUDA='';if(cpv&&!cpv.error)(cpv.data||[]).forEach(r=>{if(r.chave==='whats_ajuda')WHATS_AJUDA=String(r.valor||'').replace(/\D/g,'')});
   if(cf&&!cf.error)aplicarConfig(cf.data);
   solics=sl&&!sl.error?(sl.data||[]).map(cleanSol).filter(Boolean):[];
   avisosL=av&&!av.error?(av.data||[]).map(cleanAviso).filter(Boolean):[];
@@ -647,6 +680,8 @@ async function carregar(){
   }
   carregado=true;setStatus('Sincronizado');render();
   if(view==='historico'&&isAdmin)carregarHist();
+  if(abrirDepois){const it=items.find(i=>i.id===abrirDepois);abrirDepois=null;if(it){if(it.mes!==mes){mes=it.mes;persistMes();render()}openForm(it)}}
+  if(isDono&&view==='membros'&&chaveCriada===null)sb.rpc('chave_lembretes_criada').then(r=>{chaveCriada=r&&!r.error&&r.data?Date.parse(r.data)||0:0;if(view==='membros')render()});
   if(bvEstado==='esperando')bvTexto();
 }
 function agendar(){clearTimeout(recT);recT=setTimeout(carregar,350)}
@@ -774,26 +809,41 @@ function vMembros(){
    +sec('Líderes aprovados',apr,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div><span class="dot o-${aprovs[id].org}" style="color:var(--ink);font-size:14px">${ORG[aprovs[id].org].n}</span></div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(aprovs[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Salvar</button><button class="btn" type="button" data-mem="${adminIds.includes(id)?'desadmin':'admin'}">${adminIds.includes(id)?'Tirar de administrador':'Tornar administrador'}</button><button class="btn danger" type="button" data-mem="remover">Remover</button></div></div>`,'Ninguém aprovado ainda.')
    +(rec.length?sec('Recusados',rec,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Pediu: ${membros[id].org?ORG[membros[id].org].n:'—'}</div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(membros[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Aprovar</button><button class="btn danger" type="button" data-mem="remover">Apagar</button></div></div>`,''):'')
    +`<p class="small">Administradores definem os dias e editam qualquer atividade; só você aprova cadastros e vê os contatos. “Remover” apaga o cadastro e a aprovação: a pessoa continua com a conta de login, mas precisa se cadastrar de novo e ser aprovada para marcar atividades.</p>`
-   +cfgHtml()+backupHtml();
+   +cfgHtml()+roboHtml()+backupHtml();
 }
 function cfgHtml(){
   const s=prazoStatus(),anos=[];for(let y=Math.min(ANO,new Date().getFullYear());y<=Math.max(ANO,new Date().getFullYear())+3;y++)anos.push(y);
   return `<form class="card cad" id="cfgform" style="margin-top:18px" novalidate><h3 style="font-size:17px;margin:0 0 6px">Configurações da agenda</h3><p class="small" style="margin:0 0 12px">O prazo vale para os líderes: depois dessa data eles não conseguem propor atividades novas (pedidos de alteração continuam). Administradores não têm prazo.</p>
   <div class="cfg"><div><label for="cfgano">Ano da agenda</label><select id="cfgano">${anos.map(y=>`<option value="${y}"${y===ANO?' selected':''}>${y}</option>`).join('')}</select></div>
   <div><label for="cfgprazo">Prazo para os líderes proporem atividades</label><input type="date" id="cfgprazo" value="${esc(PRAZO)}"${PRAZO?'':' disabled'}><label class="small" style="display:flex;gap:8px;align-items:center;margin-top:8px;font-weight:500"><input type="checkbox" id="cfgsem"${PRAZO?'':' checked'}> Sem prazo</label></div></div>
+  <div class="cfg"><div><label for="cfgwa">WhatsApp da liderança para pedidos de ajuda</label><input id="cfgwa" inputmode="tel" maxlength="20" autocomplete="off" placeholder="Ex.: 61 99999-8888" value="${esc(fmtWhats(WHATS_AJUDA))}"><p class="small" style="margin:6px 0 0">Recebe o “Preciso de ajuda da liderança” dos líderes. Só líderes aprovados e administradores veem este número.</p></div></div>
   <div class="err" id="cfgerr" role="alert"></div>
   <div class="notif" style="justify-content:flex-start;align-items:center;gap:12px"><button type="submit" class="btn pri" id="cfgsalvar">Salvar configurações</button><span class="small">${s?(s.fim?'Prazo encerrado em '+s.data:'Prazo atual: '+s.data):'Sem prazo definido'}</span></div></form>`;
 }
 async function salvarConfig(){
   if(!isDono||busy)return;const ano=Number($('#cfgano').value),sem=$('#cfgsem').checked,pz=$('#cfgprazo').value;$('#cfgerr').textContent='';
   if(!sem&&!/^\d{4}-\d{2}-\d{2}$/.test(pz)){$('#cfgerr').textContent='Escolha a data do prazo ou marque “Sem prazo”.';return}
-  const grava=async()=>{if(document.activeElement)document.activeElement.blur();busy=true;let ok=!!await exec(sb.from('config').update({valor:sem?null:pz}).eq('chave','prazo'));if(ok&&ano!==ANO)ok=!!await exec(sb.from('config').update({valor:ano}).eq('chave','ano'));busy=false;if(!ok)return false;
+  const wa=$('#cfgwa').value.replace(/\D/g,'');if(wa&&(wa.length<10||wa.length>13)){$('#cfgerr').textContent='WhatsApp inválido: use DDD e número, por exemplo 61 99999-8888.';return}
+  const grava=async()=>{if(document.activeElement)document.activeElement.blur();busy=true;let ok=!!await exec(sb.from('config').update({valor:sem?null:pz}).eq('chave','prazo'));if(ok&&wa!==WHATS_AJUDA.replace(/^55(?=\d{10,11}$)/,'')&&wa!==WHATS_AJUDA)ok=!!await exec(sb.from('config_priv').update({valor:wa}).eq('chave','whats_ajuda'));if(ok&&ano!==ANO)ok=!!await exec(sb.from('config').update({valor:ano}).eq('chave','ano'));busy=false;if(!ok)return false;
     const mudouAno=ano!==ANO;if(mudouAno){ANO=ano;mes=0;persistMes()}toast(mudouAno?`Agenda agora é de ${ano}.`:'Configurações salvas.');carregar();return true};
   if(ano!==ANO)return pergunta({titulo:`Mudar a agenda para ${ano}?`,html:`<p style="margin:0 0 10px">O calendário, o link público, as exportações e as propostas dos líderes passam a ser de <b>${ano}</b>.</p><p class="small" style="margin:0">As atividades de ${ANO} <b>não são apagadas</b>: ficam guardadas no banco e na cópia de segurança, e voltam a aparecer se você escolher ${ANO} de novo.</p>`,ok:`Mudar para ${ano}`,acao:grava});
   await grava();
 }
 document.addEventListener('submit',e=>{if(e.target.id==='cfgform'){e.preventDefault();salvarConfig()}});
 document.addEventListener('change',e=>{if(e.target.id==='cfgsem'){$('#cfgprazo').disabled=e.target.checked;if(!e.target.checked)$('#cfgprazo').focus()}if(e.target.id==='historg'){histOrg=e.target.value;render()}});
+function roboHtml(){
+  const c=chaveCriada;
+  return `<div class="card cad" style="margin-top:18px"><h3 style="font-size:17px;margin:0 0 6px">📧 Robô de e-mails (lembretes)</h3><p class="small" style="margin:0 0 10px">Todo dia às 8h, um script na sua conta Google envia aos líderes os lembretes de 1 mês, 1 semana e 1 dia antes de cada atividade. O script usa uma chave secreta para buscar só o necessário.</p>
+  <p class="small" style="margin:0 0 10px">${c===null?'Verificando…':c?'🔑 Chave ativa, criada em '+new Date(c).toLocaleDateString('pt-BR')+'. Gerar outra desliga a anterior.':'⚠️ Nenhuma chave gerada ainda: os e-mails só começam depois que você gerar a chave e colar no script.'}</p>
+  <div class="notif" style="justify-content:flex-start;gap:12px"><button type="button" class="btn${c?'':' pri'}" id="chavegerar">${c?'Gerar nova chave':'Gerar chave do robô'}</button></div>
+  <div id="chavebox" hidden><div class="chavebox"><input id="chaveval" readonly aria-label="Chave do robô de e-mails"><button type="button" class="btn pri" id="chavecopiar">Copiar</button></div><p class="small" style="margin:8px 0 0">Cole esta chave no script do Google (Configurações do projeto → Propriedades do script → <b>CHAVE_LEMBRETES</b>). Ela aparece só agora: se perder, gere outra.</p></div></div>`;
+}
+async function gerarChave(){
+  if(!isDono||busy)return;
+  const gera=async()=>{busy=true;const r=await exec(sb.rpc('gerar_chave_lembretes'));busy=false;if(!r||!r.data)return false;chaveCriada=Date.now();render();setTimeout(()=>{const bx=$('#chavebox');if(bx){bx.hidden=false;$('#chaveval').value=r.data;$('#chaveval').select()}},50);return true};
+  if(chaveCriada)return pergunta({titulo:'Gerar nova chave?',html:'<p style="margin:0">A chave atual deixa de funcionar e o robô só volta a enviar e-mails depois que você colar a nova chave no script do Google.</p>',ok:'Gerar nova chave',perigo:true,acao:gera});
+  await gera();
+}
 function backupHtml(){
   let ult='';try{const t=Number(localStorage.getItem('ultimoBackup'));if(t)ult=new Date(t).toLocaleDateString('pt-BR')}catch(e){}
   return `<div class="card cad" style="margin-top:18px"><h3 style="font-size:17px;margin:0 0 6px">Cópia de segurança</h3><p class="small" style="margin:0 0 12px">Baixa um arquivo com todas as atividades, pedidos, cadastros e aprovações. O plano gratuito do Supabase não guarda backups que você possa restaurar, então baixe uma cópia de vez em quando (por exemplo, uma vez por mês). <b>O arquivo tem WhatsApp e e-mail dos líderes: guarde em local seguro e não compartilhe.</b></p><div class="notif" style="justify-content:flex-start;align-items:center;gap:12px"><button type="button" class="btn pri" id="backupBtn">Baixar cópia dos dados</button><span class="small">${ult?'Última cópia baixada neste aparelho: '+esc(ult):'Nenhuma cópia baixada neste aparelho ainda.'}</span></div></div>`;
@@ -801,7 +851,7 @@ function backupHtml(){
 async function baixarBackup(){
   if(!isDono||busy)return;busy=true;const b=$('#backupBtn');if(b){b.disabled=true;b.textContent='Preparando…'}
   try{
-    const tabs=['atividades','solicitacoes','perfis','aprovacoes','admins','config','historico'],dados={};
+    const tabs=['atividades','solicitacoes','perfis','aprovacoes','admins','config','historico','responsaveis','lembretes_enviados'],dados={};
     for(const t of tabs){const r=await sb.from(t).select('*').limit(5000);if(r.error)throw r.error;dados[t]=r.data||[]}
     const hoje=new Date(),d=hoje.toISOString().slice(0,10);
     const arq={site:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:ANO,gerado:hoje.toISOString(),versao:1,contagem:Object.fromEntries(tabs.map(t=>[t,dados[t].length])),tabelas:dados};
@@ -822,6 +872,7 @@ function aviso(){
       if(ns){partes.push(`<b>${plural(ns,'pedido de alteração/cancelamento','pedidos de alteração/cancelamento')}</b> dos líderes`);btns.push('<a class="btn pri" href="#pendentes">Ver pedidos</a>')}
       if(na){const ms=[...new Set(items.filter(i=>!i.dia).map(i=>i.mes))].sort((x,y)=>x-y);partes.push(`<b>${plural(na,'atividade aguarda','atividades aguardam')} dia</b> (${ms.map(m=>AB[m]).join(', ')})`);if(!ns)btns.push('<a class="btn pri" href="#pendentes">Definir dias</a>')}
       if(nm){partes.push(`<b>${plural(nm,'novo líder aguarda','novos líderes aguardam')} aprovação</b>`);btns.push(`<a class="btn${na||ns?'':' pri'}" href="#membros">Ver cadastros</a>`)}
+      const sr=semRespSemana().length;if(sr){partes.push(`<b>${plural(sr,'atividade da próxima semana está','atividades da próxima semana estão')} sem responsáveis</b>`);if(!btns.length)btns.push('<a class="btn pri" href="#pendentes">Ver</a>')}
       if(partes.length)h=`<p>🔔 ${partes.join(' · ')}.</p><div class="notif">${btns.join('')}</div>`;
     }else if(p==='aprovado'){
       const resp=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto),pend=solics.filter(s=>s.autor===myId&&s.status==='pendente');
@@ -836,11 +887,13 @@ function aviso(){
           else{const f=s.final||s.depois;t=`✅ <b>Alteração aprovada</b>: “${nm}” agora em <b>${fmtData(f.mes,f.dia)}${f.horario?' às '+f.horario:''}</b>.`}
           return `<div class="linha${s.status==='recusado'?' no':''}"><span>${t}${s.resposta?`<br><span class="small">Resposta: ${esc(s.resposta)}</span>`:''}</span>${s.status==='aprovado'&&s.tipo==='alterar'?`<button type="button" class="btn" data-vermes="${(s.final||s.depois).mes}">Ver no calendário</button>`:''}</div>`}).join('')}<div class="notif"><button type="button" class="btn pri" id="vistoBtn">Ok, entendi</button></div></div>`;
       }else if(pend.length)h=`<p>⏳ ${plural(pend.length,'pedido seu aguarda','pedidos seus aguardam')} aprovação do administrador.</p>`;
+      h+=proximasHtml();
     }
   }
   a.className='aviso'+(cls?' '+cls:'');a.hidden=!h;a.innerHTML=h;
 }
 $('#aviso').addEventListener('click',async e=>{
+  const ab=e.target.closest('[data-abrir]');if(ab){const it=items.find(i=>i.id===ab.dataset.abrir);if(it)openForm(it);return}
   const v=e.target.closest('[data-vermes]');if(v){mes=Number(v.dataset.vermes);persistMes();location.hash='calendario';render();return}
   if(e.target.id==='vistoBtn'){const ids=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).map(s=>s.id),avs=avisosL.map(v=>v.id);solics=solics.filter(s=>!ids.includes(s.id));avisosL=[];render();if(ids.length)await exec(sb.from('solicitacoes').update({visto:true}).in('id',ids));if(avs.length)await exec(sb.from('avisos').update({visto:true}).in('id',avs))}
 });
@@ -856,7 +909,9 @@ function vPendentes(){
   const meses=[...new Set(lista.map(i=>i.mes))];
   const chips=`<div class="chips">${[['todas','Todas',todos.length],...ORGS.filter(o=>cnt[o.k]).map(o=>[o.k,o.n,cnt[o.k]])].map(([k,n,c])=>`<label class="chip"><input type="radio" name="pfilt" value="${k}"${pendOrg===k?' checked':''}><span>${k==='todas'?'':`<i style="width:9px;height:9px;border-radius:50%;background:var(--o-${k});margin-right:8px;display:inline-block"></i>`}${n} · ${c}</span></label>`).join('')}</div>`;
   const sp=solics.filter(s=>s.status==='pendente');
-  const pedidos=sp.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Pedidos dos líderes <span class="small">(${sp.length})</span></h3><div class="mems" style="margin:0">${sp.map(cardPedido).join('')}</div></section>`:'';
+  const sr=semRespSemana().sort((x,y)=>diasPara(x)-diasPara(y));
+  const respSec=sr.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Sem responsáveis na próxima semana <span class="small">(${sr.length})</span></h3><div class="prox">${sr.map(i=>`<div class="linha"><span>📅 <b>${esc(i.nome)}</b> · <span class="dot o-${i.org}" style="display:inline-flex">${ORG[i.org].n}</span> · ${dataCurta(i)}${i.horario?' às '+i.horario:''} · ${faltamTxt(diasPara(i))} <span class="stt ${respStatus(i).c}">Falta: ${respFalta(i).map(x=>x[2]).join(' ')}</span></span><button type="button" class="btn" data-abrir="${esc(i.id)}">Abrir</button></div>`).join('')}</div></section>`:'';
+  const pedidos=respSec+(sp.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Pedidos dos líderes <span class="small">(${sp.length})</span></h3><div class="mems" style="margin:0">${sp.map(cardPedido).join('')}</div></section>`:'');
   if(!todos.length)return `<div class="pend">${pedidos}<div class="card cad"><h2>${sp.length?'Nenhuma atividade aguardando dia':'Tudo em dia ✓'}</h2><p class="small">Quando um líder marcar uma atividade, ela aparece aqui com o mês escolhido.</p></div></div>`;
   return `<div class="pend">${pedidos}
     <div class="ptiles"><div class="tile"><b>${todos.length}</b><span>Aguardando dia</span></div><div class="tile"><b>${new Set(todos.map(i=>i.mes)).size}</b><span>Meses</span></div><div class="tile"><b>${Object.keys(cnt).length}</b><span>Organizações</span></div></div>
@@ -931,7 +986,7 @@ function render(){
   flash=null;
   if($('#pov').classList.contains('on'))renderPick();
 }
-function route(){const h=location.hash.slice(1);view=VIEWS.includes(h)?h:'calendario';render();if(view==='historico'&&isAdmin&&!histCarregando)carregarHist()}
+function route(){let h=location.hash.slice(1);if(h.startsWith('atividade=')){abrirDepois=decodeURIComponent(h.slice(10));h='calendario';try{history.replaceState(null,'','#calendario')}catch(e){}if(carregado){const it=items.find(i=>i.id===abrirDepois);abrirDepois=null;if(it){mes=it.mes;persistMes();view='calendario';render();openForm(it);return}}}view=VIEWS.includes(h)?h:'calendario';render();if(view==='historico'&&isAdmin&&!histCarregando)carregarHist()}
 
 /* ================= ESCRITA ================= */
 async function exec(promise,msgErro){
@@ -986,13 +1041,14 @@ function openForm(it){
   document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(formModo==='pedido')r.disabled=true;else if(mo&&editavel&&!isAdmin)r.disabled=r.value!==mo});
   document.querySelectorAll('#forgs label').forEach(l=>{const v=l.querySelector('input').value;l.hidden=ehEspecial(v)&&!isAdmin&&!(it&&it.org===v)});
   $('#fmotivow').hidden=formModo!=='pedido';
+  pintaResp(it);
   $('#fdel').hidden=!['admin','pedido','direto'].includes(formModo);$('#fdel').textContent=formModo==='pedido'?'Pedir cancelamento':'Excluir';
   $('#fsave').hidden=!editavel;$('#fsave').textContent=formModo==='pedido'?'Enviar pedido':'Salvar';
   $('#fdesistir').hidden=formModo!=='pendente';
   {const wa=$('#fwa'),av=isAdmin&&it&&it.autor&&it.autor!==myId;wa.hidden=!it||(!av&&!it.dia);wa.textContent=av?'Avisar o líder no WhatsApp':'Compartilhar no WhatsApp'}
   prazoNota();
   $('#fwho').textContent=it?(it.autor===myId?'Marcada por você':it.autorNome?'Marcada por '+it.autorNome:''):'';
-  $('#ov').classList.add('on');setTimeout(()=>$(editavel?'#fnome':'#fcancel').focus(),30);
+  $('#ov').classList.add('on');setTimeout(()=>{const rf=!$('#fresp').hidden&&!$('#frespcampos').hidden?[...document.querySelectorAll('#frespcampos input')].find(x=>!x.value):null;(rf||$(editavel?'#fnome':'#fcancel')).focus()},30);
 }
 $('#fwa').addEventListener('click',()=>{const it=items.find(i=>i.id===editId);if(!it)return;if(isAdmin&&it.autor&&it.autor!==myId)waAbrir(liderContato(it.autor).num,msgLider(it.dia?'agendada':'semdia',it));else waAbrir('',msgCompartilhar(it))});
 function closeForm(){$('#ov').classList.remove('on');editId=null}
@@ -1136,6 +1192,9 @@ document.addEventListener('keydown',e=>{
 function persistMes(){try{localStorage.setItem(LSM,String(mes))}catch(e){}}
 V.addEventListener('click',e=>{
   if(e.target.closest('#backupBtn')){baixarBackup();return}
+  {const ab=e.target.closest('[data-abrir]');if(ab){const it=items.find(i=>i.id===ab.dataset.abrir);if(it)openForm(it);return}}
+  if(e.target.closest('#chavegerar')){gerarChave();return}
+  if(e.target.closest('#chavecopiar')){const i=$('#chaveval');i.select();try{navigator.clipboard.writeText(i.value);toast('Chave copiada')}catch(er){toast('Selecionei a chave: copie com Ctrl+C')}return}
   if(e.target.closest('#histmais')){histLim+=200;carregarHist();return}
   const sa=e.target.closest('[data-sact]');if(sa&&isAdmin){responderPedido(sa.closest('[data-sol]').dataset.sol,sa.dataset.sact);return}
   const dz=e.target.closest('[data-act=designar]');if(dz&&isAdmin){openDesignar(dz.dataset.id);return}
@@ -1373,6 +1432,56 @@ function vHistorico(){
   html+='</div>';
   return filtros+html+(hist.length>=histLim?`<div style="margin-top:14px"><button type="button" class="btn" id="histmais">Carregar mais</button></div>`:'');
 }
+
+/* ================= RESPONSÁVEIS / LEMBRETES ================= */
+const RCAMPOS=[['sacerdocio','Portador do Sacerdócio responsável','⛪'],['capela','Quem abrirá e fechará a capela','🔑'],['limpeza','Responsável pela limpeza','🧹']];
+const diasPara=it=>it&&it.dia?Math.round((new Date(ANO,it.mes,it.dia)-hojeData())/864e5):null;
+const dataCurta=(it,menos)=>{const d=new Date(ANO,it.mes,it.dia-(menos||0));return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})};
+const podeResp=it=>!!it&&!ehEspecial(it.org)&&(isAdmin||it.autor===myId||it.org===minhaOrg());
+const respFalta=it=>{const r=resps[it.id]||{};return RCAMPOS.filter(([k])=>!(r[k]||'').trim())};
+function respStatus(it){const dd=diasPara(it),f=respFalta(it);
+  if(dd>7)return{c:'',t:`🗓️ Responsáveis a partir de ${dataCurta(it,7)}`};
+  if(!f.length)return{c:'ok',t:'✅ Responsáveis definidos'};
+  if(dd>3)return{c:'urg',t:`✍️ Definir responsáveis até ${dataCurta(it,3)}`};
+  return{c:'fim',t:'🙋 Prazo encerrado: peça ajuda'}}
+const faltamTxt=dd=>dd===0?'é hoje':dd===1?'é amanhã':dd===7?'falta 1 semana':`faltam ${dd} dias`;
+function proximasHtml(){
+  if(papel()!=='aprovado')return '';
+  const l=items.filter(i=>i.dia&&podeResp(i)&&(i.org===minhaOrg()||i.autor===myId)).map(i=>[i,diasPara(i)]).filter(([,d])=>d>=0&&d<=30).sort((x,y)=>x[1]-y[1]);
+  if(!l.length)return '';
+  return `<div class="prox"><p style="margin:0"><b>⏰ Suas próximas atividades</b></p>${l.map(([i,d])=>{const s=respStatus(i);return `<div class="linha"><span>📅 <b>${esc(i.nome)}</b> · ${dataCurta(i)}${i.horario?' às '+i.horario:''} · ${faltamTxt(d)} <span class="stt ${s.c}">${s.t}</span></span><button type="button" class="btn" data-abrir="${esc(i.id)}">${d<=7&&respFalta(i).length?'Designar responsáveis':'Abrir'}</button></div>`}).join('')}</div>`;
+}
+function semRespSemana(){return items.filter(i=>i.dia&&!ehEspecial(i.org)).filter(i=>{const d=diasPara(i);return d>=0&&d<=7&&respFalta(i).length})}
+function pintaResp(it){
+  const R=$('#fresp'),dd=diasPara(it);
+  if(!it||!it.dia||!podeResp(it)||dd===null||dd<0){R.hidden=true;return}
+  R.hidden=false;const r=resps[it.id]||{},f=respFalta(it),aberto=isAdmin||dd<=7,dentro=dd>3;
+  $('#frespcampos').hidden=!aberto;$('#resperr').textContent='';
+  ['rsac','rcap','rlim'].forEach((id,ix)=>{const e=$('#'+id);e.value=r[RCAMPOS[ix][0]]||'';e.disabled=false});
+  let nota,cls='';
+  if(!aberto)nota=`Os responsáveis serão designados a partir de ${dataCurta(it,7)} (1 semana antes da atividade).`;
+  else if(!f.length){cls='ok';nota=`✅ Responsáveis definidos${r.porNome?' por '+r.porNome:''}. Você pode ajustar se precisar.`}
+  else if(dentro){cls='urg';nota=`Obrigatório: preencha os três campos até ${dataCurta(it,3)} (3 dias antes). Se ainda não souber, toque em “Preencher depois”.`}
+  else{cls='fim';nota=isAdmin?'⚠️ Faltam responsáveis e o prazo do líder (3 dias antes) já passou.':'⚠️ O prazo para designar (3 dias antes) terminou. Preencha agora ou peça ajuda à liderança.'}
+  R.className='respbox'+(cls?' '+cls:'');$('#frespnota').textContent=nota;
+  $('.respbtns').hidden=!aberto;$('#rdepois').hidden=!(aberto&&dentro&&f.length);$('#rajuda').hidden=!(aberto&&!dentro&&f.length&&!isAdmin);
+}
+async function salvarResp(parcial){
+  const it=items.find(i=>i.id===editId);if(!it||busy)return;
+  const v={atividade:it.id,sacerdocio:$('#rsac').value.trim(),capela:$('#rcap').value.trim(),limpeza:$('#rlim').value.trim()};
+  const falta=RCAMPOS.filter(([k])=>!v[k]);
+  if(!parcial&&falta.length){$('#resperr').textContent=`Preencha: ${falta.map(x=>x[1]).join(', ')}.`+(diasPara(it)>3?' Se ainda não souber, toque em “Preencher depois”.':'');return}
+  if(parcial&&!v.sacerdocio&&!v.capela&&!v.limpeza){closeForm();toast(`Tudo bem! Lembre-se de designar os responsáveis até ${dataCurta(it,3)}.`);return}
+  busy=true;const r=await exec(sb.from('responsaveis').upsert(v,{onConflict:'atividade'}));busy=false;
+  if(!r){$('#resperr').textContent=$('#ferr').textContent;return}
+  resps[it.id]={...(resps[it.id]||{}),...v};closeForm();
+  toast(falta.length?`Salvo. Complete os responsáveis até ${dataCurta(it,3)}.`:'✅ Responsáveis salvos.');carregar();
+}
+$('#rsalvar').addEventListener('click',()=>salvarResp(false));
+$('#rdepois').addEventListener('click',()=>salvarResp(true));
+$('#rajuda').addEventListener('click',()=>{const it=items.find(i=>i.id===editId);if(!it)return;const vals={sacerdocio:$('#rsac').value.trim(),capela:$('#rcap').value.trim(),limpeza:$('#rlim').value.trim()};const f=RCAMPOS.filter(([k])=>!vals[k]),s=quemSou();
+  waAbrir(WHATS_AJUDA,`Olá! Sou ${s.nome||'líder'}${s.pres?', '+s.pres:''}.\nPreciso de ajuda da liderança para designar responsáveis da atividade “${it.nome}” (${quandoTxt(it)}):\n${f.map(([,l,e])=>`${e} ${l}`).join('\n')}\n\nObrigado!`)});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('#frespcampos')){e.preventDefault()}});
 
 /* ================= WHATSAPP ================= */
 function waAbrir(num,txt){window.open('https://wa.me/'+String(num||'').replace(/\D/g,'')+'?text='+encodeURIComponent(txt),'_blank','noopener')}
