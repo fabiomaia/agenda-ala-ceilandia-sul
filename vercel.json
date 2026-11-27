@@ -15,7 +15,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js 'sha256-05xR7lU0Cm3h4zJBenmbQn7VdJ2eXLHPIjglM1Crw3g=' 'sha256-ZO6eW2mcUf1HdJHtpD9jf6bqHSsDrCzNOPhTasCqah4=' 'sha256-fh4ujMHUACWic4mXcm2w0aJdr4M5XoPl2UW3m7BC8D8=' 'sha256-vmTM5P5VPea/jrdSRDGy9uf6FBR7EfOoog/vwCpGbGw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://oawfulvhjuqybnqmeqmi.supabase.co wss://oawfulvhjuqybnqmeqmi.supabase.co https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://oawfulvhjuqybnqmeqmi.supabase.co wss://oawfulvhjuqybnqmeqmi.supabase.co https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "X-Frame-Options",
@@ -36,6 +36,15 @@
         {
           "key": "Cross-Origin-Opener-Policy",
           "value": "same-origin-allow-popups"
+        }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
         }
       ]
     }

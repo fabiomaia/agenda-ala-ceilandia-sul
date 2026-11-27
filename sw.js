@@ -1,9 +1,10 @@
 // Service worker da Agenda da Ala: deixa o site abrir sem internet (só consulta).
 // Guarda apenas os arquivos do site. Os dados das atividades ficam no próprio
 // aparelho, salvos pelo site depois de cada carregamento.
-const VERSAO = 'agenda-v1';
+const VERSAO = 'agenda-v2';
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js';
-const ARQUIVOS = ['/', '/publico/', '/config.js', '/manifest.webmanifest', '/publico/manifest.webmanifest',
+const ARQUIVOS = ['/', '/publico/', '/config.js', '/js/app.js', '/js/publico.js', '/js/tema.js', '/js/tema-inicio.js',
+  '/manifest.webmanifest', '/publico/manifest.webmanifest',
   '/icones/icon-192.png', '/icones/icon-512.png', '/icones/apple-touch-icon.png', '/google-g.svg', SUPABASE_JS];
 
 self.addEventListener('install', e => {
@@ -32,7 +33,7 @@ self.addEventListener('fetch', e => {
   // Biblioteca do Supabase (endereço fixo): primeiro do aparelho.
   if (req.url === SUPABASE_JS) {
     e.respondWith(caches.match(SUPABASE_JS).then(r => r || fetch(req).then(res => {
-      if (res.ok) caches.open(VERSAO).then(c => c.put(SUPABASE_JS, res.clone()));
+      if (res.ok) { const copia = res.clone(); caches.open(VERSAO).then(c => c.put(SUPABASE_JS, copia)); }
       return res;
     })));
     return;
@@ -44,15 +45,16 @@ self.addEventListener('fetch', e => {
   if (req.mode === 'navigate') {
     const k = chavePagina(req.url);
     e.respondWith(fetch(req).then(res => {
-      if (res.ok && k) caches.open(VERSAO).then(c => c.put(k, res.clone()));
+      if (res.ok && k) { const copia = res.clone(); caches.open(VERSAO).then(c => c.put(k, copia)); }
       return res;
     }).catch(() => caches.match(k || '/').then(r => r || caches.match('/'))));
     return;
   }
 
-  // Demais arquivos do site: entrega o guardado e atualiza em segundo plano.
-  e.respondWith(caches.open(VERSAO).then(c => c.match(req, {ignoreSearch: true}).then(guardado => {
-    const rede = fetch(req).then(res => { if (res.ok) c.put(req, res.clone()); return res; }).catch(() => guardado);
-    return guardado || rede;
-  })));
+  // Demais arquivos do site: sempre a versão mais nova (para combinar com a página);
+  // sem internet, a última guardada.
+  e.respondWith(fetch(req).then(res => {
+    if (res.ok) { const copia = res.clone(); caches.open(VERSAO).then(c => c.put(req, copia)); }
+    return res;
+  }).catch(() => caches.match(req, {ignoreSearch: true})));
 });

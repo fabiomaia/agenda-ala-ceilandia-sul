@@ -8,7 +8,9 @@ Funciona com **Supabase** (banco de dados PostgreSQL + login por e-mail e Google
 
 | Arquivo | Para que serve |
 |---|---|
-| `index.html` | O site inteiro (telas, calendário, login). |
+| `index.html` | As telas do site (calendário, login, formulários). |
+| `js/app.js` | Todo o funcionamento do site dos líderes. `js/publico.js` é o da página pública; `js/tema.js` e `js/tema-inicio.js` cuidam do modo escuro. |
+| `vercel.json` | Cabeçalhos de segurança e endereços da agenda (.ics). Não precisa ser regerado ao mudar o site. |
 | `publico/index.html` | Calendário público (sem login) em `/publico/`, só com atividades que têm dia definido. |
 | `supabase/publico.sql` | Libera a leitura pública dessas atividades. Rode uma vez. |
 | `privacidade.html` | Política de privacidade (exigida pelo Google para o login com Google). Troque o e-mail de contato se quiser. |
@@ -106,6 +108,10 @@ Funciona com **Supabase** (banco de dados PostgreSQL + login por e-mail e Google
 ## Como fazer mudanças depois
 Edite o arquivo no GitHub (ícone de lápis) → **Commit changes**. A Vercel publica a nova versão sozinha em menos de um minuto.
 
+Não existe etapa de montagem: os arquivos do GitHub são exatamente o que vai ao ar. Os scripts ficam em arquivos `.js` separados, então a política de segurança (CSP) não precisa ser atualizada a cada mudança.
+
+Quando mudar `apps-script/Lembretes.gs`, cole o código novo no projeto do Apps Script (script.google.com), salve e rode `instalar` de novo.
+
 ## Cuidados com o plano gratuito
 - **Supabase pausa projetos gratuitos parados por cerca de uma semana.** Os dados não se perdem: você recebe um e-mail de aviso e, se pausar, basta abrir o projeto no painel e clicar em **Resume project**.
 - Para guardar uma cópia das atividades: **Table Editor → atividades → Export → CSV**.
@@ -121,6 +127,8 @@ Edite o arquivo no GitHub (ícone de lápis) → **Commit changes**. A Vercel pu
 | 💰 Verbas e 📊 Números | Menu **Números** (só administradores) | Verba anual de cada organização, previsto, gasto real, saldo, responsáveis no prazo, pedidos de ajuda. |
 | 🗓️ Resumo semanal | Robô de e-mails (`apps-script/Lembretes.gs`) | Domingo às 7h, para os administradores. Rode `instalar` de novo depois de atualizar o código do robô. |
 | 📱 App no celular | `manifest.webmanifest`, `publico/manifest.webmanifest`, `sw.js`, pasta `icones/` | Site dos líderes e página pública podem ser instalados na tela inicial (Android: “Instalar app”; iPhone: Safari → Compartilhar → Adicionar à Tela de Início). Sem internet, mostram a última cópia salva no aparelho, só para consulta. |
+| ☁️ Cópia de segurança automática | `apps-script/Lembretes.gs` (função `fazerBackup`) e `supabase/backup.sql` | Domingo às 6h o robô salva todos os dados num .json na pasta “Agenda da Ala - cópias de segurança” do Google Drive do dono e guarda as 12 últimas. A data da última cópia aparece em Membros. |
+| 🧭 Tour pelo site | Botão “Fazer tour”, ao lado de “Sair” | Aparece sozinho no primeiro acesso de cada líder ou administrador aprovado. |
 | ✉️ Entrar sem senha | Tela de login | Link de acesso por e-mail. O e-mail gratuito do Supabase tem limite baixo por hora; para mais envios, configure um SMTP próprio em Authentication → Emails. |
 
 Banco de dados: rode `supabase/planejamento.sql` uma vez (já incluído no fim do `schema.sql`).
