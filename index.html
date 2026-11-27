@@ -90,6 +90,7 @@ nav a[aria-current=page]{background:rgba(255,255,255,.14);opacity:1;font-weight:
 .ag .t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .dot{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
 .chev{color:var(--mute)}
+.ag .dot{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ag .dot::before{display:inline-block;margin-right:6px;vertical-align:1px}
 .empty{color:var(--mute);font-size:14px;padding:6px 2px 4px}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tile{border:1px solid var(--line);border-radius:10px;padding:10px}
@@ -105,7 +106,7 @@ nav a[aria-current=page]{background:rgba(255,255,255,.14);opacity:1;font-weight:
 .year h3{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;margin-bottom:8px}
 .year h3 button{border:0;background:none;font-weight:700;padding:0;font-size:17px}
 .year h3 small{font-size:13px;color:var(--mute);font-weight:500}
-.year li button{grid-template-columns:36px minmax(0,1fr)}.year .badge{width:36px;height:36px}.year .badge b{font-size:14px}
+.year li button{grid-template-columns:36px minmax(0,1fr) 10px;gap:10px}.year .badge{width:36px;height:36px}.year .badge b{font-size:14px}
 .scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
@@ -262,6 +263,24 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .topbar .tema{margin-left:auto;color:var(--ink);border-color:var(--line);background:var(--paper);min-height:40px}
 .tema-mob{display:none;color:var(--sideink);border-color:rgba(255,255,255,.35)}
 @media(max-width:820px){.tema-desk{display:none}.tema-mob{display:inline-flex;margin-left:auto;min-height:36px}}
+.solbox{border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;border:1px solid color-mix(in srgb,var(--o-primaria) 45%,var(--line));background:color-mix(in srgb,var(--o-primaria) 10%,var(--paper))}
+.solbox b{font-weight:700}.solbox.info{border-color:color-mix(in srgb,var(--o-elderes) 40%,var(--line));background:color-mix(in srgb,var(--o-elderes) 8%,var(--paper))}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;background:color-mix(in srgb,var(--o-primaria) 18%,var(--paper));color:var(--ink);white-space:nowrap}
+.tag.del{background:color-mix(in srgb,#c0392b 16%,var(--paper))}
+.hr{font-variant-numeric:tabular-nums;font-weight:600}
+.scard{padding:14px 16px;display:grid;gap:10px}
+.scard .top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.scard .nm{font-weight:800;font-size:16px}
+.diff{width:100%;border-collapse:collapse;font-size:14px}
+.diff td{padding:6px 8px;border-top:1px solid var(--line);text-align:left;white-space:normal}
+.diff td:first-child{color:var(--mute);font-weight:600;width:84px}
+.diff .de{color:var(--mute);text-decoration:line-through}.diff .para{font-weight:700}
+.diff .mud{background:color-mix(in srgb,var(--o-primaria) 10%,transparent)}
+.sbtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.resp{display:grid;gap:8px}
+.resp .linha{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:var(--paper);border:1px solid var(--line)}
+.resp .linha.no{border-color:color-mix(in srgb,#c0392b 35%,var(--line))}
+.danger-pri{background:#c0392b!important;color:#fff!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -332,15 +351,18 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
       <div><label for="fmes">Mês</label><select id="fmes"></select></div>
       <div id="fdiaw"><label for="fdia">Dia <small>(só administrador)</small></label><select id="fdia"></select></div>
     </div>
+    <div id="fsol" class="solbox" hidden></div>
     <p class="small" id="fdianote"></p>
     <p class="small" id="fprazo" hidden style="margin:-4px 0 0;color:#b7791f;font-weight:600"></p>
+    <div><label for="fhora">Horário (24 horas)</label><input id="fhora" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Ex.: 19:00" style="max-width:160px"><p class="small" id="fhoranote" style="margin:6px 0 0"></p></div>
     <div><label for="fnome">Nome da atividade</label><input id="fnome" maxlength="120" autocomplete="off" placeholder="Ex.: Noite de talentos da ala"></div>
     <fieldset><legend class="lbl">Organização</legend><div class="orgs" id="forgs"></div></fieldset>
-    <div><label for="fdet">Detalhes (opcional)</label><textarea id="fdet" rows="2" maxlength="400" placeholder="Local, horário, responsável…"></textarea></div>
+    <div><label for="fdet">Local e observações (opcional)</label><textarea id="fdet" rows="2" maxlength="400" placeholder="Local e observações (opcional)"></textarea></div>
+    <div id="fmotivow" hidden><label for="fmotivo">Motivo do pedido (opcional)</label><input id="fmotivo" maxlength="300" autocomplete="off" placeholder="Ex.: conflito com a conferência de estaca"></div>
     <div class="who" id="fwho"></div>
     <div class="err" id="ferr" role="alert"></div>
     <div class="mfoot">
-      <button class="btn danger" type="button" id="fdel" hidden>Excluir</button><span class="sp"></span>
+      <button class="btn danger" type="button" id="fdel" hidden>Excluir</button><button class="btn" type="button" id="fdesistir" hidden>Desistir do pedido</button><span class="sp"></span>
       <button class="btn" type="button" id="fcancel">Cancelar</button>
       <button class="btn pri" type="submit" id="fsave">Salvar</button>
     </div>
@@ -381,6 +403,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 <div class="overlay" id="dov">
   <div class="card modal" role="dialog" aria-modal="true" aria-labelledby="dt">
     <div><h2 id="dt">Definir dia</h2><p class="small" id="dsub" style="margin:4px 0 0"></p></div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:end"><div><label for="dhora">Horário (24 horas)</label><input id="dhora" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Ex.: 19:00" style="width:130px"></div><p class="small" id="dhoranote" style="margin:0 0 10px">Confira ou ajuste o horário pedido pelo líder e toque no dia.</p></div>
     <div class="dp" id="dgrid"></div>
     <div class="jam" id="djam"></div>
     <div class="mfoot"><button class="btn" type="button" id="deditar">Editar atividade</button><span class="sp"></span><button class="btn" type="button" id="dmes">Ver no calendário</button><button class="btn" type="button" id="dclose">Fechar</button></div>
@@ -390,8 +413,16 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
   <div class="card modal" role="alertdialog" aria-modal="true" aria-labelledby="ct" aria-describedby="cmsg" style="width:min(460px,100%)">
     <h2 id="ct">Prazo muito curto</h2>
     <p id="cmsg" style="margin:0;line-height:1.55"></p>
-    <div class="mfoot"><button class="btn" type="button" id="cno">Escolher outro mês</button><span class="sp"></span><button class="btn pri" type="button" id="cok">Marcar no próximo mês</button></div>
+    <div class="mfoot"><button class="btn" type="button" id="cpno">Escolher outro mês</button><span class="sp"></span><button class="btn pri" type="button" id="cpok">Marcar no próximo mês</button></div>
   </div>
+</div>
+<div class="overlay" id="qov">
+  <form class="card modal" id="qform" novalidate role="dialog" aria-modal="true" aria-labelledby="qt" style="width:min(520px,100%)">
+    <h2 id="qt"></h2>
+    <div id="qbody"></div>
+    <div class="err" id="qerr" role="alert"></div>
+    <div class="mfoot"><button class="btn" type="button" id="qcancel">Voltar</button><span class="sp"></span><button class="btn pri" type="submit" id="qok">Confirmar</button></div>
+  </form>
 </div>
 <div id="toast" role="status"><span id="tmsg"></span><button type="button" id="tbtn" hidden>Desfazer</button></div>
 
@@ -414,7 +445,7 @@ const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
 const ANO=2027,LSM='atividades-ala-2027-mes';
-const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes'];let pendOrg='todas',desigId=null;
+const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes'];let pendOrg='todas',desigId=null,solics=[],formModo='';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
@@ -457,7 +488,9 @@ function traduz(e){
   if(/rate limit|security purposes/i.test(m))return 'Muitas tentativas. Aguarde um minuto e tente de novo.';
   if(/provider is not enabled/i.test(m))return 'O login com Google ainda não foi ativado no Supabase.';
   if(/row-level security|42501/i.test(m))return 'Você não tem permissão para fazer isso.';
-  if(/não existe nesse mês|Prazo muito curto|Este mês já passou/i.test(m))return m;
+  if(/não existe nesse mês|Prazo muito curto|Este mês já passou|já está agendada|Só o administrador|Você só pode pedir|já respondida|Dados da alteração/i.test(m))return m;
+  if(/solicitacoes_uma_pendente|duplicate key/i.test(m))return 'Já existe um pedido pendente para esta atividade. Aguarde a resposta do administrador.';
+  if(/horario_check/i.test(m))return 'Horário inválido. Use o formato 24 horas, de 00:00 a 23:59.';
   if(/Failed to fetch|NetworkError/i.test(m))return 'Sem conexão com o servidor. Verifique a internet.';
   return 'Algo deu errado: '+m;
 }
@@ -492,15 +525,19 @@ function clean(r){
   if(!r)return null;const m=Number(r.mes),org=ORG[r.org],nome=String(r.nome??'').trim().slice(0,140);
   if(!Number.isInteger(m)||m<0||m>11||!org||!nome)return null;
   let dia=Number(r.dia);if(!Number.isInteger(dia)||dia<1||dia>dim(m))dia=0;
-  return{id:String(r.id),mes:m,dia,org:org.k,nome,detalhes:String(r.detalhes??'').slice(0,400),autor:r.autor?String(r.autor):'',autorNome:String(r.autor_nome??'').slice(0,80),criado:Date.parse(r.criado)||0};
+  const h=typeof r.horario==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(r.horario)?r.horario:'';
+  return{id:String(r.id),mes:m,dia,horario:h,org:org.k,nome,detalhes:String(r.detalhes??'').slice(0,400),autor:r.autor?String(r.autor):'',autorNome:String(r.autor_nome??'').slice(0,80),criado:Date.parse(r.criado)||0};
 }
+function cleanSol(r){if(!r||!['alterar','cancelar'].includes(r.tipo))return null;const ob=o=>o&&typeof o==='object'?o:{};const hv=v=>typeof v==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(v)?v:'';const ad=o=>{o=ob(o);const m=Number(o.mes);return{nome:String(o.nome??'').slice(0,140),mes:Number.isInteger(m)&&m>=0&&m<12?m:0,dia:Number.isInteger(Number(o.dia))?Number(o.dia):0,horario:hv(o.horario),org:ORG[o.org]?o.org:'',detalhes:String(o.detalhes??'').slice(0,400)}};
+  return{id:String(r.id),atividade:r.atividade?String(r.atividade):'',tipo:r.tipo,autor:r.autor?String(r.autor):'',autorNome:String(r.autor_nome??'').slice(0,80),antes:ad(r.antes),depois:r.depois?ad(r.depois):null,final:r.final?ad(r.final):null,motivo:String(r.motivo??'').slice(0,300),status:['pendente','aprovado','recusado'].includes(r.status)?r.status:'pendente',resposta:String(r.resposta??'').slice(0,300),criado:Date.parse(r.criado)||0,visto:!!r.visto}}
 function cleanMembro(r){if(!r)return null;return{nome:String(r.nome??'').slice(0,80),org:ORG[r.org]?r.org:'',whats:String(r.whats??'').replace(/\D/g,'').slice(0,15),email:String(r.email??'').slice(0,120),em:Date.parse(r.criado)||0}}
 function cleanAprov(r){if(!r)return null;const st=r.status==='aprovado'||r.status==='recusado'?r.status:null;return st?{status:st,org:ORG[r.org]?r.org:''}:null}
 async function carregar(){
   if(!sb||!myId)return;
-  const q=[sb.from('atividades').select('id,mes,nome,org,detalhes,dia,autor,autor_nome,criado').order('criado'),sb.from('admins').select('user_id,dono')];
+  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado')];
   if(!isDono){q.push(sb.from('perfis').select('*').eq('id',myId).maybeSingle(),sb.from('aprovacoes').select('*').eq('user_id',myId).maybeSingle())}
-  const [a,ad,pf,ap]=await Promise.all(q);
+  const [a,ad,sl,pf,ap]=await Promise.all(q);
+  solics=sl&&!sl.error?(sl.data||[]).map(cleanSol).filter(Boolean):[];
   if(a.error){setStatus('Erro ao carregar',true);toast(traduz(a.error));return}
   acts=(a.data||[]).map(clean).filter(Boolean);items=acts;
   const adm=ad.data||[];adminIds=adm.map(r=>String(r.user_id));
@@ -535,7 +572,10 @@ function papel(){
 const minhaOrg=()=>papel()==='aprovado'?minhaAprov.org:'';
 const podeAdicionar=()=>{const p=papel();return p==='admin'||p==='aprovado'};
 const podeEditar=i=>{const p=papel();return p==='admin'||(p==='aprovado'&&i.autor===myId&&i.org===minhaOrg())};
-const ord=(a,b)=>(a.dia||99)-(b.dia||99)||a.criado-b.criado;
+const ord=(a,b)=>(a.dia||99)-(b.dia||99)||(a.horario||'99').localeCompare(b.horario||'99')||a.criado-b.criado;
+const solPend=id=>solics.find(s=>s.status==='pendente'&&s.atividade===id);
+const validaHora=v=>/^([01]\d|2[0-3]):[0-5]\d$/.test(v);
+function fmtData(m,d){return d?`${d} de ${MESES[m]} (${SEM[new Date(ANO,m,d).getDay()].toLowerCase()})`:`${MESES[m]}, dia a definir`}
 const vis=()=>items.filter(i=>filtro==='todas'||i.org===filtro);
 function normWhats(v){let d=String(v).replace(/\D/g,'');if(d.length===10||d.length===11)d='55'+d;if(/^55\d{10,11}$/.test(d))return d;return String(v).trim().startsWith('+')&&d.length>=11&&d.length<=15?d:null}
 function fmtWhats(d){if(!d)return '';if(d.startsWith('55')&&(d.length===12||d.length===13)){const r=d.slice(4);return `+55 (${d.slice(2,4)}) ${r.slice(0,-4)}-${r.slice(-4)}`}return '+'+d}
@@ -543,7 +583,7 @@ function fmtWhats(d){if(!d)return '';if(d.startsWith('55')&&(d.length===12||d.le
 function setStatus(t,off){const s=$('#status');s.classList.toggle('off',!!off);s.querySelector('span').textContent=t}
 function toast(msg,undo){$('#tmsg').textContent=msg;$('#tbtn').hidden=!undo;$('#toast').style.display='flex';clearTimeout(toastT);toastT=setTimeout(()=>{$('#toast').style.display='none';undoItem=null},undo?7000:4000)}
 function badge(i){return i.dia?`<span class="badge"><b>${i.dia}</b><small>${AB[i.mes]}</small></span>`:`<span class="badge wt"><small>dia a<br>definir</small></span>`}
-function agRow(i){return `<li><button type="button" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} class="${i.id===flash?'pop':''}">${badge(i)}<span><span class="t">${esc(i.nome)}</span><span class="dot o-${i.org}">${ORG[i.org].n}</span></span><svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>`}
+function agRow(i){return `<li><button type="button" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} class="${i.id===flash?'pop':''}">${badge(i)}<span><span class="t">${esc(i.nome)}</span><span class="dot o-${i.org}">${ORG[i.org].n}${i.horario?` · <span class="hr">${i.horario}</span>${i.dia?'':' (a confirmar)'}`:''}</span>${(()=>{const s=solPend(i.id);return s?` <span class="tag${s.tipo==='cancelar'?' del':''}">${s.tipo==='cancelar'?'Cancelamento pendente':'Alteração pendente'}</span>`:''})()}</span><svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></li>`}
 
 /* ================= TELAS ================= */
 function vCalendario(){
@@ -553,7 +593,7 @@ function vCalendario(){
   for(let i=0;i<first;i++)cells+='<div class="cell out"></div>';
   for(let d=1;d<=n;d++){
     const di=list.filter(i=>i.dia===d).sort(ord);
-    const pills=di.slice(0,3).map(i=>`<button type="button" class="pill o-${i.org}" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} title="${esc(i.nome)} · ${ORG[i.org].n}"><span>${esc(i.nome)}</span></button>`).join('')+(di.length>3?`<span class="more">+${di.length-3} mais</span>`:'');
+    const pills=di.slice(0,3).map(i=>`<button type="button" class="pill o-${i.org}" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} title="${i.horario?i.horario+' · ':''}${esc(i.nome)} · ${ORG[i.org].n}"><span>${i.horario?`<b class="hr">${i.horario}</b> `:''}${esc(i.nome)}</span></button>`).join('')+(di.length>3?`<span class="more">+${di.length-3} mais</span>`:'');
     const lab=`${d} de ${MESES[mes]}${di.length?', '+plural(di.length,'atividade','atividades'):''}`;
     cells+=`<div class="cell${di.length?' has':''}${isToday(d)?' today':''}" data-dia="${d}">${isAdmin?`<button type="button" class="dn" data-act="pick" data-d="${d}" aria-label="${lab}. Definir atividade para este dia"><span class="d">${d}</span><span class="plus" aria-hidden="true">+</span></button>`:`<span class="dn" style="pointer-events:none" aria-label="${lab}"><span class="d">${d}</span></span>`}<div class="pills">${pills}</div></div>`;
   }
@@ -631,18 +671,32 @@ function aviso(){
     else if(p==='pendente')h=`<p><b>Cadastro enviado.</b> Aguarde o administrador aprovar para marcar atividades.</p><a class="btn" href="#cadastro">Ver cadastro</a>`;
     else if(p==='recusado'){cls='no';h=`<p><b>Seu cadastro foi recusado.</b> Revise os dados ou fale com o administrador.</p><a class="btn" href="#cadastro">Revisar</a>`}
     else if(isAdmin){
-      const na=items.filter(i=>!i.dia).length,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,partes=[],btns=[];
-      if(na){const ms=[...new Set(items.filter(i=>!i.dia).map(i=>i.mes))].sort((x,y)=>x-y);partes.push(`<b>${plural(na,'atividade aguarda','atividades aguardam')} dia</b> (${ms.map(m=>AB[m]).join(', ')})`);btns.push('<a class="btn pri" href="#pendentes">Definir dias</a>')}
-      if(nm){partes.push(`<b>${plural(nm,'novo líder aguarda','novos líderes aguardam')} aprovação</b>`);btns.push(`<a class="btn${na?'':' pri'}" href="#membros">Ver cadastros</a>`)}
+      const na=items.filter(i=>!i.dia).length,ns=solics.filter(s=>s.status==='pendente').length,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,partes=[],btns=[];
+      if(ns){partes.push(`<b>${plural(ns,'pedido de alteração/cancelamento','pedidos de alteração/cancelamento')}</b> dos líderes`);btns.push('<a class="btn pri" href="#pendentes">Ver pedidos</a>')}
+      if(na){const ms=[...new Set(items.filter(i=>!i.dia).map(i=>i.mes))].sort((x,y)=>x-y);partes.push(`<b>${plural(na,'atividade aguarda','atividades aguardam')} dia</b> (${ms.map(m=>AB[m]).join(', ')})`);if(!ns)btns.push('<a class="btn pri" href="#pendentes">Definir dias</a>')}
+      if(nm){partes.push(`<b>${plural(nm,'novo líder aguarda','novos líderes aguardam')} aprovação</b>`);btns.push(`<a class="btn${na||ns?'':' pri'}" href="#membros">Ver cadastros</a>`)}
       if(partes.length)h=`<p>🔔 ${partes.join(' · ')}.</p><div class="notif">${btns.join('')}</div>`;
+    }else if(p==='aprovado'){
+      const resp=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto),pend=solics.filter(s=>s.autor===myId&&s.status==='pendente');
+      if(resp.length){
+        h=`<div class="resp" style="width:100%"><p><b>🔔 O administrador respondeu ${resp.length===1?'ao seu pedido':'aos seus pedidos'}:</b></p>${resp.map(s=>{const nm=esc((s.final||s.depois||s.antes).nome||s.antes.nome);let t;
+          if(s.status==='recusado')t=`❌ <b>${s.tipo==='cancelar'?'Cancelamento':'Alteração'} recusado(a)</b>: “${esc(s.antes.nome)}” continua como estava.`;
+          else if(s.tipo==='cancelar')t=`✅ <b>Cancelamento aprovado</b>: “${esc(s.antes.nome)}” foi retirada do calendário.`;
+          else{const f=s.final||s.depois;t=`✅ <b>Alteração aprovada</b>: “${nm}” agora em <b>${fmtData(f.mes,f.dia)}${f.horario?' às '+f.horario:''}</b>.`}
+          return `<div class="linha${s.status==='recusado'?' no':''}"><span>${t}${s.resposta?`<br><span class="small">Resposta: ${esc(s.resposta)}</span>`:''}</span>${s.status==='aprovado'&&s.tipo==='alterar'?`<button type="button" class="btn" data-vermes="${(s.final||s.depois).mes}">Ver no calendário</button>`:''}</div>`}).join('')}<div class="notif"><button type="button" class="btn pri" id="vistoBtn">Ok, entendi</button></div></div>`;
+      }else if(pend.length)h=`<p>⏳ ${plural(pend.length,'pedido seu aguarda','pedidos seus aguardam')} aprovação do administrador.</p>`;
     }
   }
   a.className='aviso'+(cls?' '+cls:'');a.hidden=!h;a.innerHTML=h;
 }
+$('#aviso').addEventListener('click',async e=>{
+  const v=e.target.closest('[data-vermes]');if(v){mes=Number(v.dataset.vermes);persistMes();location.hash='calendario';render();return}
+  if(e.target.id==='vistoBtn'){const ids=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).map(s=>s.id);solics=solics.filter(s=>!ids.includes(s.id));render();if(ids.length)await exec(sb.from('solicitacoes').update({visto:true}).in('id',ids))}
+});
 function notifs(){
-  const na=isAdmin?items.filter(i=>!i.dia).length:0,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0;
+  const na=isAdmin?items.filter(i=>!i.dia).length+solics.filter(s=>s.status==='pendente').length:0,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,nr=!isAdmin?solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).length:0;
   $('#navpend').hidden=!isAdmin;$('#pendcnt').hidden=!na;$('#pendcnt').textContent=na;
-  const t='Calendário de Atividades Ala Ceilândia Sul 2027',n=na+nm;document.title=n?`(${n}) ${t}`:t;
+  const t='Calendário de Atividades Ala Ceilândia Sul 2027',n=na+nm+nr;document.title=n?`(${n}) ${t}`:t;
 }
 function vPendentes(){
   if(!isAdmin)return `<div class="card cad"><p class="small">Só administradores veem esta tela.</p></div>`;
@@ -650,18 +704,41 @@ function vPendentes(){
   const lista=todos.filter(i=>pendOrg==='todas'||i.org===pendOrg).sort((a,b)=>a.mes-b.mes||a.criado-b.criado);
   const meses=[...new Set(lista.map(i=>i.mes))];
   const chips=`<div class="chips">${[['todas','Todas',todos.length],...ORGS.filter(o=>cnt[o.k]).map(o=>[o.k,o.n,cnt[o.k]])].map(([k,n,c])=>`<label class="chip"><input type="radio" name="pfilt" value="${k}"${pendOrg===k?' checked':''}><span>${k==='todas'?'':`<i style="width:9px;height:9px;border-radius:50%;background:var(--o-${k});margin-right:8px;display:inline-block"></i>`}${n} · ${c}</span></label>`).join('')}</div>`;
-  if(!todos.length)return `<div class="card cad"><h2>Tudo em dia ✓</h2><p class="small">Nenhuma atividade aguardando dia. Quando um líder marcar uma atividade, ela aparece aqui com o mês escolhido.</p></div>`;
-  return `<div class="pend">
+  const sp=solics.filter(s=>s.status==='pendente');
+  const pedidos=sp.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Pedidos dos líderes <span class="small">(${sp.length})</span></h3><div class="mems" style="margin:0">${sp.map(cardPedido).join('')}</div></section>`:'';
+  if(!todos.length)return `<div class="pend">${pedidos}<div class="card cad"><h2>${sp.length?'Nenhuma atividade aguardando dia':'Tudo em dia ✓'}</h2><p class="small">Quando um líder marcar uma atividade, ela aparece aqui com o mês escolhido.</p></div></div>`;
+  return `<div class="pend">${pedidos}
     <div class="ptiles"><div class="tile"><b>${todos.length}</b><span>Aguardando dia</span></div><div class="tile"><b>${new Set(todos.map(i=>i.mes)).size}</b><span>Meses</span></div><div class="tile"><b>${Object.keys(cnt).length}</b><span>Organizações</span></div></div>
     ${chips}
     <p class="small" style="margin:0">Toque numa atividade para escolher o dia dentro do mês que o líder pediu.</p>
-    ${meses.map(m=>{const l=lista.filter(i=>i.mes===m);return `<section class="pmes"><h3>${MESES[m]} <small>${plural(l.length,'atividade','atividades')}</small></h3>${l.map(i=>`<button type="button" class="prow o-${i.org}" data-act="designar" data-id="${esc(i.id)}"><span class="bar"></span><span><span class="t">${esc(i.nome)}</span><span class="s"><span class="dot o-${i.org}">${ORG[i.org].n}</span>${i.autorNome?' · marcada por '+esc(i.autorNome):''}${i.detalhes?' · '+esc(i.detalhes.slice(0,80))+(i.detalhes.length>80?'…':''):''}</span></span><span class="go">Definir dia →</span></button>`).join('')}</section>`}).join('')}
+    ${meses.map(m=>{const l=lista.filter(i=>i.mes===m);return `<section class="pmes"><h3>${MESES[m]} <small>${plural(l.length,'atividade','atividades')}</small></h3>${l.map(i=>`<button type="button" class="prow o-${i.org}" data-act="designar" data-id="${esc(i.id)}"><span class="bar"></span><span><span class="t">${esc(i.nome)}</span><span class="s"><span class="dot o-${i.org}">${ORG[i.org].n}</span>${i.horario?' · <span class="hr">'+i.horario+'</span> (pedido)':''}${i.autorNome?' · marcada por '+esc(i.autorNome):''}${i.detalhes?' · '+esc(i.detalhes.slice(0,80))+(i.detalhes.length>80?'…':''):''}</span></span><span class="go">Definir dia →</span></button>`).join('')}</section>`}).join('')}
   </div>`;
+}
+function cardPedido(s){
+  const A=s.antes,D=s.depois,canc=s.tipo==='cancelar',cel=(x,y,f)=>{const mud=!canc&&f(x)!==f(y);return `<td>${mud?`<span class="de">${f(x)}</span> → <span class="para">${f(y)}</span>`:f(x)}</td>`},row=(lab,x,y,f)=>{const mud=!canc&&f(x)!==f(y);return `<tr class="${mud?'mud':''}"><td>${lab}</td>${cel(x,y,f)}</tr>`};
+  const fm=o=>MESES[o.mes],fd=o=>o.dia?String(o.dia):'a definir',fh=o=>o.horario||'—',fn=o=>esc(o.nome),fl=o=>esc(o.detalhes||'—');
+  const Dd=D?{...D,dia:D.mes===A.mes?A.dia:0}:A;
+  return `<div class="card scard" data-sol="${esc(s.id)}"><div class="top"><span><span class="tag${canc?' del':''}">${canc?'Cancelamento':'Alteração'}</span> <span class="nm">${esc(A.nome)}</span></span><span class="dot o-${A.org}">${ORG[A.org]?ORG[A.org].n:''}</span></div>
+    <p class="small" style="margin:0">Pedido por ${esc(s.autorNome||'líder')} em ${new Date(s.criado).toLocaleDateString('pt-BR')}${s.motivo?` · motivo: “${esc(s.motivo)}”`:''}</p>
+    <table class="diff">${row('Mês',A,Dd,fm)}${row('Dia',A,Dd,fd)}${row('Horário',A,Dd,fh)}${row('Nome',A,Dd,fn)}${row('Local/obs.',A,Dd,fl)}</table>
+    ${!canc&&D.mes!==A.mes?'<p class="small" style="margin:0">O mês mudou: ao aprovar, escolha o novo dia.</p>':''}
+    <div class="sbtns"><button type="button" class="btn" data-sact="recusar">Recusar</button><button type="button" class="btn pri${canc?' danger-pri':''}" data-sact="aprovar">${canc?'Confirmar exclusão':'Aprovar alteração'}</button></div></div>`;
+}
+function responderPedido(id,acao){
+  const s=solics.find(x=>x.id===id);if(!s)return;
+  const rpc=async(ok,dia,hora,resp)=>{const r=await exec(sb.rpc('resolver_solicitacao',{p_id:id,p_aprovar:ok,p_dia:dia||null,p_horario:hora===undefined?null:hora,p_resposta:resp||''}));if(!r){$('#qerr').textContent=$('#ferr').textContent;return false}
+    toast(ok?(s.tipo==='cancelar'?'Cancelamento confirmado. O líder será avisado.':'Alteração aprovada. O líder será avisado.'):'Pedido recusado. O líder será avisado.');carregar();return true};
+  if(acao==='recusar')return pergunta({titulo:'Recusar pedido',html:`<p style="margin:0 0 12px">Recusar o pedido de ${s.tipo==='cancelar'?'cancelamento':'alteração'} de <b>${esc(s.antes.nome)}</b>? A atividade continua como está.</p><label for="qresp">Resposta ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off">`,ok:'Recusar pedido',acao:()=>rpc(false,null,undefined,$('#qresp').value.trim())});
+  if(s.tipo==='cancelar')return pergunta({titulo:'Confirmar exclusão',html:`<p style="margin:0 0 12px">Excluir <b>${esc(s.antes.nome)}</b> (${fmtData(s.antes.mes,s.antes.dia)}${s.antes.horario?' às '+s.antes.horario:''})? Ela sai do calendário e do calendário público.</p><label for="qresp">Mensagem ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off">`,ok:'Excluir atividade',perigo:true,acao:()=>rpc(true,null,undefined,$('#qresp').value.trim())});
+  const D=s.depois,m=D.mes,diaIni=m===s.antes.mes?s.antes.dia:0;
+  const ops='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1,oc=items.filter(x=>x.mes===m&&x.dia===d&&x.id!==s.atividade).length;return `<option value="${d}"${d===diaIni?' selected':''}>${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}${oc?` (${oc} já marcada${oc>1?'s':''})`:''}</option>`}).join('');
+  pergunta({titulo:'Aprovar alteração',html:`<p style="margin:0 0 12px"><b>${esc(D.nome)}</b> em <b>${MESES[m]}</b>. Confira o dia e o horário antes de aprovar.</p><div class="two"><div><label for="qdia">Dia</label><select id="qdia">${ops}</select></div><div><label for="qhora">Horário (24 horas)</label><input id="qhora" inputmode="numeric" maxlength="5" value="${esc(D.horario||'')}" placeholder="Ex.: 19:00"></div></div><div style="margin-top:12px"><label for="qresp">Mensagem ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off"></div>`,ok:'Aprovar alteração',
+    acao:()=>{const h=$('#qhora').value.trim();if(h&&!validaHora(h)){$('#qerr').textContent='Horário inválido: use 24 horas, de 00:00 a 23:59.';return false}return rpc(true,Number($('#qdia').value)||null,h,$('#qresp').value.trim())}});
 }
 function openDesignar(id){
   const it=items.find(i=>i.id===id);if(!it||!isAdmin)return;desigId=id;
   const m=it.mes,first=new Date(ANO,m,1).getDay(),n=dim(m),marcadas=items.filter(i=>i.mes===m&&i.dia).sort(ord);
-  $('#dt').textContent=it.nome;
+  $('#dt').textContent=it.nome;$('#dhora').value=it.horario||'';
   $('#dsub').innerHTML=`<span class="dot o-${it.org}">${ORG[it.org].n}</span> · escolha o dia em <b>${MESES[m]} de ${ANO}</b>`;
   let g=SEM.map(s=>`<span class="w">${s}</span>`).join('');for(let i=0;i<first;i++)g+='<span></span>';
   for(let d=1;d<=n;d++){const di=marcadas.filter(i=>i.dia===d),dw=new Date(ANO,m,d).getDay();
@@ -670,7 +747,8 @@ function openDesignar(id){
   $('#djam').innerHTML=marcadas.length?`<b style="color:var(--ink)">Já marcadas em ${MESES[m]}:</b>${marcadas.map(i=>`<span>${i.dia} (${SEM[new Date(ANO,m,i.dia).getDay()].toLowerCase()}) · ${esc(i.nome)} · ${ORG[i.org].n}</span>`).join('')}`:`<span>Nenhuma atividade com dia em ${MESES[m]} ainda.</span>`;
   $('#dov').classList.add('on');setTimeout(()=>{const b=$('#dgrid button');if(b)b.focus()},30);
 }
-$('#dgrid').addEventListener('click',async e=>{const b=e.target.closest('button[data-dia]');if(!b||!desigId)return;const id=desigId;$('#dov').classList.remove('on');desigId=null;await moverPara(id,Number(b.dataset.dia))});
+$('#dhora').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=d.length>2?d.slice(0,2)+':'+d.slice(2):d});
+$('#dgrid').addEventListener('click',async e=>{const b=e.target.closest('button[data-dia]');if(!b||!desigId)return;const h=$('#dhora').value.trim();if(h&&!validaHora(h)){$('#dhoranote').textContent='Horário inválido: use 24 horas, de 00:00 a 23:59.';$('#dhoranote').style.color='#c0392b';$('#dhora').focus();return}$('#dhoranote').style.color='';const id=desigId;$('#dov').classList.remove('on');desigId=null;await moverPara(id,Number(b.dataset.dia),h)});
 $('#dclose').addEventListener('click',()=>{$('#dov').classList.remove('on');desigId=null});
 $('#dov').addEventListener('click',e=>{if(e.target===$('#dov')){$('#dov').classList.remove('on');desigId=null}});
 $('#deditar').addEventListener('click',()=>{const it=items.find(i=>i.id===desigId);$('#dov').classList.remove('on');if(it)openForm(it)});
@@ -704,12 +782,12 @@ async function exec(promise,msgErro){
   try{const r=await promise;if(r&&r.error){const t=traduz(r.error);$('#ferr').textContent=t;toast(msgErro||t);return null}return r||{}}
   catch(e){const t=traduz(e);$('#ferr').textContent=t;toast(t);return null}
 }
-async function setDia(id,dia){if(!isAdmin)return false;return !!await exec(sb.from('atividades').update({dia:dia||null}).eq('id',id))}
-async function moverPara(id,dia){
+async function setDia(id,dia,hora){if(!isAdmin)return false;const up={dia:dia||null};if(hora!==undefined)up.horario=hora||null;return !!await exec(sb.from('atividades').update(up).eq('id',id))}
+async function moverPara(id,dia,hora){
   const it=items.find(i=>i.id===id);if(!it)return;
-  if((dia||0)===it.dia)return;
-  it.dia=dia||0;render();
-  if(await setDia(id,dia)){flash=id;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}`:`“${it.nome}” voltou para aguardando data`)}
+  if((dia||0)===it.dia&&(hora===undefined||hora===(it.horario||'')))return;
+  it.dia=dia||0;if(hora!==undefined)it.horario=hora;render();
+  if(await setDia(id,dia,hora)){flash=id;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}${it.horario?' às '+it.horario:''}`:`“${it.nome}” voltou para aguardando data`)}
   agendar();
 }
 
@@ -726,67 +804,106 @@ function prazoNota(){const m=Number($('#fmes').value),s=statusMes(m),el=$('#fpra
   el.textContent=isAdmin||mesmo||s==='ok'?'':s==='passado'?'Este mês já passou. Escolha outro mês.':`Prazo curto: faltam ${plural(faltamDias(m),'dia','dias')} para o fim de ${MESES[m]}.`;el.hidden=!el.textContent}
 function openForm(it){
   if(!it&&!podeAdicionar())return;
-  const pode=!it||podeEditar(it),mo=minhaOrg();
+  const pode=!it||podeEditar(it),mo=minhaOrg(),sp=it?solPend(it.id):null;
+  formModo=!it?'novo':!pode?'ver':isAdmin?'admin':sp?'pendente':it.dia?'pedido':'direto';
   editId=it?it.id:null;$('#ferr').textContent='';
-  $('#mt').textContent=!it?'Nova atividade':pode?'Editar atividade':'Atividade';
+  $('#mt').textContent={novo:'Nova atividade',ver:'Atividade',admin:'Editar atividade',pendente:'Pedido em análise',pedido:'Pedir alteração',direto:'Editar atividade'}[formModo];
   let mm=it?it.mes:mes;mesOpts(it?it.mes:-1);if(!it&&statusMes(mm)!=='ok'){const p=proximoMes(mm)>=0?proximoMes(mm):primeiroMesOk();if(p>=0)mm=p}
-  $('#fmes').value=String(mm);diaOpts(mm,it?it.dia:0);
+  const fonte=sp&&sp.depois?sp.depois:it;
+  $('#fmes').value=String(sp&&sp.depois?sp.depois.mes:mm);diaOpts(mm,it?it.dia:0);
   $('#fdiaw').hidden=!isAdmin;$('#fdatas').style.gridTemplateColumns=isAdmin?'':'minmax(0,1fr)';
-  $('#fdianote').textContent=isAdmin?'':it&&it.dia?`Dia definido pelo administrador: ${it.dia} de ${MESES[it.mes]}. Se mudar o mês, o dia volta a ficar a definir.`:'O dia será definido pelo administrador.';
-  $('#fnome').value=it?it.nome:'';$('#fdet').value=it?it.detalhes:'';
-  document.querySelectorAll('#form input,#form select,#form textarea').forEach(e=>e.disabled=!pode);
-  document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(mo&&pode&&!isAdmin)r.disabled=r.value!==mo});
-  $('#fdel').hidden=!it||!pode;$('#fsave').hidden=!pode;
+  $('#fdianote').textContent=isAdmin||formModo==='pedido'||formModo==='pendente'?'':'O dia será definido pelo administrador.';
+  $('#fnome').value=fonte?fonte.nome:'';$('#fdet').value=fonte?fonte.detalhes:'';$('#fhora').value=fonte?fonte.horario||'':'';$('#fmotivo').value='';
+  $('#fhoranote').textContent=isAdmin?'Formato 24 horas, por exemplo 19:00. Deixe vazio se ainda não houver horário.':'Formato 24 horas, por exemplo 19:00. O horário passa por revisão do administrador antes de ser aprovado.';
+  const sol=$('#fsol');sol.hidden=true;sol.className='solbox';
+  if(formModo==='pedido'){sol.hidden=false;sol.className='solbox info';sol.innerHTML=`Esta atividade já está agendada para <b>${fmtData(it.mes,it.dia)}${it.horario?' às '+it.horario:''}</b>. Alterações e cancelamento <b>só valem depois da aprovação do administrador</b>.`}
+  if(formModo==='pendente'){sol.hidden=false;sol.innerHTML=sp.tipo==='cancelar'?`<b>Pedido de cancelamento enviado</b> em ${new Date(sp.criado).toLocaleDateString('pt-BR')}. Pendente de aprovação do administrador.`:`<b>Pedido de alteração enviado</b> em ${new Date(sp.criado).toLocaleDateString('pt-BR')}. Pendente de aprovação do administrador. Abaixo estão os dados que você pediu.`}
+  if(formModo==='direto'){sol.hidden=false;sol.className='solbox info';sol.innerHTML='Esta atividade ainda está <b>pendente de aprovação do administrador</b>. Suas alterações continuam em análise até ele definir o dia.'}
+  const editavel=['novo','admin','pedido','direto'].includes(formModo);
+  document.querySelectorAll('#form input,#form select,#form textarea').forEach(e=>e.disabled=!editavel);
+  document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(formModo==='pedido')r.disabled=true;else if(mo&&editavel&&!isAdmin)r.disabled=r.value!==mo});
+  $('#fmotivow').hidden=formModo!=='pedido';
+  $('#fdel').hidden=!['admin','pedido','direto'].includes(formModo);$('#fdel').textContent=formModo==='pedido'?'Pedir cancelamento':'Excluir';
+  $('#fsave').hidden=!editavel;$('#fsave').textContent=formModo==='pedido'?'Enviar pedido':'Salvar';
+  $('#fdesistir').hidden=formModo!=='pendente';
   prazoNota();
   $('#fwho').textContent=it?(it.autor===myId?'Marcada por você':it.autorNome?'Marcada por '+it.autorNome:''):'';
-  $('#ov').classList.add('on');setTimeout(()=>$(pode?'#fnome':'#fcancel').focus(),30);
+  $('#ov').classList.add('on');setTimeout(()=>$(editavel?'#fnome':'#fcancel').focus(),30);
 }
 function closeForm(){$('#ov').classList.remove('on');editId=null}
+$('#fhora').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=d.length>2?d.slice(0,2)+':'+d.slice(2):d});
 $('#fmes').addEventListener('change',()=>{diaOpts(Number($('#fmes').value),Number($('#fdia').value));prazoNota()});
 $('#form').addEventListener('submit',async ev=>{
   ev.preventDefault();if(busy)return;$('#ferr').textContent='';
-  const nome=$('#fnome').value.trim(),m=Number($('#fmes').value),org=(document.querySelector('input[name=org]:checked')||{}).value;
+  const nome=$('#fnome').value.trim(),m=Number($('#fmes').value),org=(document.querySelector('input[name=org]:checked')||{}).value,hora=$('#fhora').value.trim();
   if(!nome){$('#ferr').textContent='Dê um nome à atividade.';$('#fnome').focus();return}
+  if(hora&&!validaHora(hora)){$('#ferr').textContent='Horário inválido. Use o formato 24 horas, de 00:00 a 23:59 (ex.: 19:00).';$('#fhora').focus();return}
   if(!org){$('#ferr').textContent='Escolha a organização.';(document.querySelector('input[name=org]:not(:disabled)')||$('#fnome')).focus();return}
   if(!isAdmin&&org!==minhaOrg()){$('#ferr').textContent='Você só pode marcar atividades da sua organização.';return}
   const it=items.find(i=>i.id===editId),mudouMes=!it||it.mes!==m,s=statusMes(m);
+  if(formModo==='pedido'&&it.mes===m&&it.nome===nome&&(it.horario||'')===hora&&it.detalhes===$('#fdet').value.trim()){$('#ferr').textContent='Nada foi alterado. Mude o mês, o horário, o nome ou o local antes de enviar o pedido.';return}
   if(!isAdmin&&mudouMes&&s==='passado'){$('#ferr').textContent='Este mês já passou. Escolha outro mês.';$('#fmes').focus();return}
-  if(!isAdmin&&mudouMes&&s==='curto'){confirmarPrazo(m);return}
-  await salvarAtividade(m);
+  const seguir=mm=>formModo==='pedido'?enviarPedido(mm):salvarAtividade(mm);
+  if(!isAdmin&&mudouMes&&s==='curto'){confirmarPrazo(m,seguir);return}
+  await seguir(m);
 });
-function confirmarPrazo(m){
+async function enviarPedido(m){
+  const it=items.find(i=>i.id===editId);if(!it)return;
+  const depois={nome:$('#fnome').value.trim(),mes:m,horario:$('#fhora').value.trim(),detalhes:$('#fdet').value.trim()};
+  busy=true;$('#fsave').disabled=true;
+  const r=await exec(sb.from('solicitacoes').insert({atividade:it.id,tipo:'alterar',depois,motivo:$('#fmotivo').value.trim()}));
+  busy=false;$('#fsave').disabled=false;
+  if(r){closeForm();toast('Pedido de alteração enviado — pendente de aprovação do administrador');carregar()}
+}
+async function pedirCancelamento(it){
+  pergunta({titulo:'Pedir cancelamento',html:`<p style="margin:0 0 12px">Pedir o cancelamento de <b>${esc(it.nome)}</b> (${fmtData(it.mes,it.dia)}${it.horario?' às '+it.horario:''})?</p><p class="small" style="margin:0 0 12px">A atividade continua no calendário até o administrador aprovar o cancelamento.</p><label for="amot">Motivo (opcional)</label><input id="amot" maxlength="300" autocomplete="off">`,ok:'Enviar pedido',perigo:true,
+    acao:async()=>{const r=await exec(sb.from('solicitacoes').insert({atividade:it.id,tipo:'cancelar',motivo:$('#amot').value.trim()}));if(!r)return false;closeForm();toast('Pedido de cancelamento enviado — pendente de aprovação do administrador');carregar();return true}});
+}
+let prazoCb=null;
+function confirmarPrazo(m,cb){prazoCb=cb||salvarAtividade;
   const p=proximoMes(m),f=faltamDias(m);
   $('#ct').textContent='Prazo muito curto';
-  $('#cmsg').innerHTML=`Faltam só <b>${plural(f,'dia','dias')}</b> para o fim de <b>${MESES[m]}</b>. A atividade está com prazo muito curto para ser organizada e executada.`+(p>=0?`<br><br>Deseja marcar para <b>${MESES[p]}</b>, o próximo mês disponível?`:'<br><br>Não há mais meses disponíveis em '+ANO+'. Fale com o administrador.');
-  $('#cok').hidden=p<0;$('#cok').textContent=p>=0?`Marcar em ${MESES[p]}`:'';$('#cok').dataset.m=p;
-  $('#cno').textContent=p>=0?'Escolher outro mês':'Entendi';
-  $('#cov').classList.add('on');setTimeout(()=>$(p>=0?'#cok':'#cno').focus(),30);
+  $('#cmsg').innerHTML=`Faltam só <b>${plural(f,'dia','dias')}</b> para o fim de <b>${MESES[m]}</b>. A atividade está com prazo muito curto para ser organizada e executada.`+(p>=0?`<br><br>Deseja ${formModo==='pedido'?'pedir a mudança':'marcar'} para <b>${MESES[p]}</b>, o próximo mês disponível?`:'<br><br>Não há mais meses disponíveis em '+ANO+'. Fale com o administrador.');
+  $('#cpok').hidden=p<0;$('#cpok').textContent=p>=0?`Marcar em ${MESES[p]}`:'';$('#cpok').dataset.m=p;
+  $('#cpno').textContent=p>=0?'Escolher outro mês':'Entendi';
+  $('#cov').classList.add('on');setTimeout(()=>$(p>=0?'#cpok':'#cpno').focus(),30);
 }
-$('#cok').addEventListener('click',async()=>{const p=Number($('#cok').dataset.m);$('#cov').classList.remove('on');if(p>=0){$('#fmes').value=String(p);diaOpts(p,0);prazoNota();await salvarAtividade(p)}});
-$('#cno').addEventListener('click',()=>{$('#cov').classList.remove('on');$('#fmes').focus()});
+$('#cpok').addEventListener('click',async()=>{const p=Number($('#cpok').dataset.m);$('#cov').classList.remove('on');if(p>=0){$('#fmes').value=String(p);diaOpts(p,0);prazoNota();await (prazoCb||salvarAtividade)(p)}});
+$('#cpno').addEventListener('click',()=>{$('#cov').classList.remove('on');$('#fmes').focus()});
 $('#cov').addEventListener('click',e=>{if(e.target===$('#cov'))$('#cov').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#cov').classList.remove('on')});
 async function salvarAtividade(m){
   const nome=$('#fnome').value.trim(),org=(document.querySelector('input[name=org]:checked')||{}).value,detalhes=$('#fdet').value.trim();
   const dia=isAdmin?Number($('#fdia').value)||0:null;
-  const row={mes:m,nome,org,detalhes};if(isAdmin)row.dia=dia||null;
+  const row={mes:m,nome,org,detalhes,horario:$('#fhora').value.trim()||null};if(isAdmin)row.dia=dia||null;
   busy=true;$('#fsave').disabled=true;const era=editId;let r;
   if(era)r=await exec(sb.from('atividades').update(row).eq('id',era).select('id'));
   else r=await exec(sb.from('atividades').insert(row).select('id').single());
   busy=false;$('#fsave').disabled=false;
   if(r){const id=era||(r.data&&r.data.id);if(era&&Array.isArray(r.data)&&!r.data.length){$('#ferr').textContent='Você não tem permissão para editar esta atividade.';return}
-    flash=id;toast(era?'Atividade atualizada':`Marcada em ${MESES[m]}`+(isAdmin&&dia?` (dia ${dia})`:' — aguardando data'));closeForm();if(view==='calendario')mes=m;persistMes();carregar()}
+    flash=id;toast(era?(isAdmin?'Atividade atualizada':'Atividade atualizada — continua pendente de aprovação do administrador'):`Marcada em ${MESES[m]}`+(isAdmin&&dia?` (dia ${dia})`:' — pendente de aprovação do administrador'));closeForm();if(view==='calendario')mes=m;persistMes();carregar()}
 }
 $('#fdel').addEventListener('click',async()=>{
   const it=items.find(a=>a.id===editId);if(!it)return;
+  if(formModo==='pedido'){pedirCancelamento(it);return}
   const r=await exec(sb.from('atividades').delete().eq('id',it.id).select('id'));
   if(!r)return;if(Array.isArray(r.data)&&!r.data.length){$('#ferr').textContent='Você não tem permissão para excluir esta atividade.';return}
   closeForm();undoItem=it;toast(`“${it.nome}” excluída`,true);carregar();
 });
 $('#tbtn').addEventListener('click',async()=>{if(!undoItem)return;const it=undoItem;undoItem=null;$('#toast').style.display='none';
-  const row={id:it.id,mes:it.mes,nome:it.nome,org:it.org,detalhes:it.detalhes};if(isAdmin&&it.dia)row.dia=it.dia;
+  const row={id:it.id,mes:it.mes,nome:it.nome,org:it.org,detalhes:it.detalhes,horario:it.horario||null};if(isAdmin&&it.dia)row.dia=it.dia;
   if(await exec(sb.from('atividades').insert(row)))carregar()});
 $('#fcancel').addEventListener('click',closeForm);
+$('#fdesistir').addEventListener('click',async()=>{const it=items.find(i=>i.id===editId),sp=it&&solPend(it.id);if(!sp)return;
+  const r=await exec(sb.from('solicitacoes').delete().eq('id',sp.id).select('id'));if(r){closeForm();toast('Pedido retirado. A atividade continua como estava.');carregar()}});
+/* ---- janela de confirmação genérica ---- */
+let perguntaAcao=null;
+function pergunta(o){$('#qt').textContent=o.titulo;$('#qbody').innerHTML=o.html||'';$('#qerr').textContent='';$('#qok').textContent=o.ok||'Confirmar';$('#qok').className='btn '+(o.perigo?'pri danger-pri':'pri');perguntaAcao=o.acao;$('#qov').classList.add('on');setTimeout(()=>{const f=$('#qbody input,#qbody select');(f||$('#qok')).focus()},30)}
+$('#qform').addEventListener('submit',async e=>{e.preventDefault();if(!perguntaAcao||busy)return;busy=true;$('#qok').disabled=true;let ok=false;try{ok=await perguntaAcao()}catch(err){ok=false}busy=false;$('#qok').disabled=false;if(ok!==false)$('#qov').classList.remove('on');else if(!$('#qerr').textContent)$('#qerr').textContent=$('#ferr').textContent||'Não foi possível concluir.'});
+$('#qcancel').addEventListener('click',()=>$('#qov').classList.remove('on'));
+$('#qov').addEventListener('click',e=>{if(e.target===$('#qov'))$('#qov').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#qov').classList.remove('on')});
+$('#qbody').addEventListener('input',e=>{if(e.target.id==='qhora'){const d=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=d.length>2?d.slice(0,2)+':'+d.slice(2):d}});
 $('#ov').addEventListener('click',e=>{if(e.target===$('#ov'))closeForm()});
 
 /* ---- cadastro e aprovações ---- */
@@ -850,6 +967,7 @@ document.addEventListener('keydown',e=>{
   if(view==='calendario'&&!document.querySelector('.overlay.on')&&$('#auth').hidden&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key==='ArrowLeft'&&mes>0){mes--;persistMes();render()}if(e.key==='ArrowRight'&&mes<11){mes++;persistMes();render()}}});
 function persistMes(){try{localStorage.setItem(LSM,String(mes))}catch(e){}}
 V.addEventListener('click',e=>{
+  const sa=e.target.closest('[data-sact]');if(sa&&isAdmin){responderPedido(sa.closest('[data-sol]').dataset.sol,sa.dataset.sact);return}
   const dz=e.target.closest('[data-act=designar]');if(dz&&isAdmin){openDesignar(dz.dataset.id);return}
   const mb=e.target.closest('[data-mem]');if(mb&&isDono){acaoMembro(mb);return}
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
@@ -863,7 +981,7 @@ $('#novo').addEventListener('click',()=>openForm(null));
 $('#filtro').addEventListener('change',e=>{filtro=e.target.value;render()});
 $('#copiar').addEventListener('click',async()=>{
   const txt=`Atividades Ala Ceilândia Sul · ${ANO}`+(filtro!=='todas'?` · ${ORG[filtro].n}`:'')+'\n'+MESES.map((m,mi)=>{const l=vis().filter(i=>i.mes===mi).sort(ord);
-    return `\n${m}\n`+(l.length?l.map(i=>`• ${i.dia?String(i.dia).padStart(2,'0')+'/'+String(mi+1).padStart(2,'0'):'dia a definir'} — ${i.nome} (${ORG[i.org].n})${i.detalhes?' — '+i.detalhes:''}`).join('\n'):'• (nenhuma atividade)')}).join('\n');
+    return `\n${m}\n`+(l.length?l.map(i=>`• ${i.dia?String(i.dia).padStart(2,'0')+'/'+String(mi+1).padStart(2,'0'):'dia a definir'}${i.horario?' às '+i.horario:''} — ${i.nome} (${ORG[i.org].n})${i.detalhes?' — '+i.detalhes:''}`).join('\n'):'• (nenhuma atividade)')}).join('\n');
   try{await navigator.clipboard.writeText(txt);toast('Lista copiada — cole no e-mail ou no WhatsApp')}catch(e){toast('Não foi possível copiar neste navegador')}
 });
 window.addEventListener('hashchange',route);
@@ -924,7 +1042,7 @@ function drawGrid(c,x,y,w,h,m,list,s){
     const top=cy+28*s,bottom=cy+ch-6*s,px=cx+5*s,pw=cw-10*s,lhT=15*s;let py=top,shown=0;
     fnt(c,600,12.5*s);
     for(let j=0;j<di.length;j++){
-      const it=di[j],ln=wrap(c,it.nome,pw-22*s,2),ph=ln.length*lhT+8*s,rest=di.length-j-1;
+      const it=di[j],ln=wrap(c,(it.horario?it.horario+' ':'')+it.nome,pw-22*s,2),ph=ln.length*lhT+8*s,rest=di.length-j-1;
       const need=py+ph+(rest?18*s:0);
       if(need>bottom&&!(rest===0&&py+ph<=bottom)){break}
       c.fillStyle=rgba(COR[it.org],.16);rr(c,px,py,pw,ph,5*s);c.fill();
@@ -951,7 +1069,7 @@ function drawList(c,x,y,w,list,s,maxH,dry){
       c.fillStyle=PINE;rr(c,x,cy,bw,bw,10*s);c.fill();c.fillStyle='#fff';c.textAlign='center';
       fnt(c,800,21*s);c.fillText(String(it.dia),x+bw/2,cy+26*s);fnt(c,600,11*s);c.fillText(SEM[new Date(ANO,it.mes,it.dia).getDay()].toLowerCase(),x+bw/2,cy+43*s);c.textAlign='left';
       let ty=cy+17*s;fnt(c,700,16*s);c.fillStyle=INK;nl.forEach(l=>{c.fillText(l,tx,ty);ty+=21*s});
-      c.fillStyle=COR[it.org];c.beginPath();c.arc(tx+5*s,ty-4*s,5*s,0,7);c.fill();fnt(c,600,13.5*s);c.fillStyle=MUTE;c.fillText(ORG[it.org].n,tx+15*s,ty);ty+=20*s;
+      c.fillStyle=COR[it.org];c.beginPath();c.arc(tx+5*s,ty-4*s,5*s,0,7);c.fill();fnt(c,600,13.5*s);c.fillStyle=MUTE;c.fillText(ORG[it.org].n+(it.horario?' · '+it.horario:''),tx+15*s,ty);ty+=20*s;
       fnt(c,400,13.5*s);dl.forEach(l=>{c.fillText(l,tx,ty);ty+=18*s});
     }
     cy+=ih;
