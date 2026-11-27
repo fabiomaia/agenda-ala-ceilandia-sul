@@ -120,6 +120,7 @@ Edite o arquivo no GitHub (ícone de lápis) → **Commit changes**. A Vercel pu
 | 📝 Relatório | Dentro da atividade, depois que ela acontece | Presença, gasto real e observações. O robô pede o relatório no dia seguinte. |
 | 💰 Verbas e 📊 Números | Menu **Números** (só administradores) | Verba anual de cada organização, previsto, gasto real, saldo, responsáveis no prazo, pedidos de ajuda. |
 | 🗓️ Resumo semanal | Robô de e-mails (`apps-script/Lembretes.gs`) | Domingo às 7h, para os administradores. Rode `instalar` de novo depois de atualizar o código do robô. |
+| 📱 App no celular | `manifest.webmanifest`, `publico/manifest.webmanifest`, `sw.js`, pasta `icones/` | Site dos líderes e página pública podem ser instalados na tela inicial (Android: “Instalar app”; iPhone: Safari → Compartilhar → Adicionar à Tela de Início). Sem internet, mostram a última cópia salva no aparelho, só para consulta. |
 | ✉️ Entrar sem senha | Tela de login | Link de acesso por e-mail. O e-mail gratuito do Supabase tem limite baixo por hora; para mais envios, configure um SMTP próprio em Authentication → Emails. |
 
 Banco de dados: rode `supabase/planejamento.sql` uma vez (já incluído no fim do `schema.sql`).

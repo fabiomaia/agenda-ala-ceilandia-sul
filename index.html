@@ -6,6 +6,14 @@
 <script>try{var t=localStorage.getItem('tema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calendário de Atividades Ala Ceilândia Sul 2027</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#163f3a">
+<link rel="icon" type="image/png" sizes="48x48" href="/icones/favicon-48.png">
+<link rel="apple-touch-icon" href="/icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Agenda da Ala">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
@@ -401,6 +409,11 @@ details.respbox .sumt{font-weight:700;font-size:15.5px}
 .mbars .mb i{display:block;width:min(28px,70%);background:var(--pri);border-radius:4px 4px 0 0;min-height:2px}
 .mbars .mb b{font-size:12.5px;font-variant-numeric:tabular-nums}.mbars .mb small{font-size:12px;color:var(--mute)}
 .ntiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.instalar{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--paper);margin-top:2px}
+.instalar img{border-radius:11px;flex:none}.instalar .itx{flex:1;min-width:200px;display:grid;gap:2px}.instalar .itx span{font-size:13.5px;color:var(--mute)}
+.instalar .ibt{display:flex;gap:12px;align-items:center}
+.status.off{color:#b7791f}
+.passos{margin:0;padding-left:20px;display:grid;gap:8px}.passos li{line-height:1.45}
 .chavebox{display:flex;gap:8px;margin-top:8px}.chavebox input{flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
@@ -467,6 +480,7 @@ details.respbox .sumt{font-weight:700;font-size:15.5px}
       </div>
     </div>
     <div class="aviso" id="aviso" hidden></div>
+    <div class="instalar" id="instalar" hidden><img src="/icones/icon-192.png" alt="" width="44" height="44"><div class="itx"><b>Instale o app da agenda</b><span>Abre direto da tela inicial do celular e funciona sem internet para consulta.</span></div><div class="ibt"><button type="button" class="btn pri" id="instbtn">Instalar</button><button type="button" class="lnk" id="instnao">Agora não</button></div></div>
     <div id="view"></div>
   </div>
 </div>
@@ -622,7 +636,7 @@ const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
 const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a',estaca:'a',geral:'a'};
 const ORGS_LID=ORGS.filter(o=>!ehEspecial(o.k));
 const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
-let ANO=2027,PRAZO='';const LSM='atividades-ala-2027-mes';
+let ANO=2027,PRAZO='';const LSM='atividades-ala-2027-mes',LSOFF='agenda-copia';let offline=false;
 const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes','historico','numeros'];let planos={},rels={},verbas={},espRes=[],ajudas=[],ajudasOk=false,planoTmp=null;let resps={},WHATS_AJUDA='',abrirDepois=null,chaveCriada=null,hist=[],histLim=200,histOrg='todas',histCarregando=false,histErro='';let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -696,7 +710,7 @@ $('#aform').addEventListener('submit',async ev=>{
   }catch(e){err.textContent=traduz(e)}
   busy=false;$('#asubmit').disabled=false;
 });
-$('#sair').addEventListener('click',async()=>{await sb.auth.signOut()});
+$('#sair').addEventListener('click',async()=>{try{localStorage.removeItem(LSOFF)}catch(e){}if(offline&&!sessao){offline=false;saiu();return}await sb.auth.signOut()});
 $('#alink').addEventListener('click',async()=>{
   if(busy)return;const email=$('#aemail').value.trim(),err=$('#aerr'),ok=$('#aok');err.textContent='';ok.textContent='';
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent='Digite seu e-mail acima e toque de novo em “Entrar com link”.';$('#aemail').focus();return}
@@ -738,7 +752,8 @@ async function carregar(){
   espRes=er&&!er.error?(er.data||[]).map(r=>({id:String(r.atividade),mes:Number(r.mes),dia:Number(r.dia)||0,horario:typeof r.horario==='string'?r.horario.slice(0,5):'',nome:String(r.nome||'').slice(0,140),org:ORG[r.org]?r.org:'geral',espacos:(Array.isArray(r.espacos)?r.espacos:[]).filter(e=>ESP[e])})):[];
   solics=sl&&!sl.error?(sl.data||[]).map(cleanSol).filter(Boolean):[];
   avisosL=av&&!av.error?(av.data||[]).map(cleanAviso).filter(Boolean):[];
-  if(a.error){setStatus('Erro ao carregar',true);toast(traduz(a.error));return}
+  if(a.error){if(/Failed to fetch|NetworkError|Load failed|fetch/i.test(String(a.error.message||''))&&usarCopia())return;setStatus('Erro ao carregar',true);toast(traduz(a.error));return}
+  offline=false;
   acts=(a.data||[]).filter(r=>r.ano==null||Number(r.ano)===ANO).map(clean).filter(Boolean);items=acts;
   const adm=ad.data||[];adminIds=adm.map(r=>String(r.user_id));
   const eraDono=isDono;isDono=adm.some(r=>String(r.user_id)===myId&&r.dono);isAdmin=adminIds.includes(myId);
@@ -752,6 +767,7 @@ async function carregar(){
     if(!meuCad&&!isAdmin&&!autoCad&&!location.hash){autoCad=true;location.hash='cadastro'}
   }
   carregado=true;setStatus('Sincronizado');render();
+  try{localStorage.setItem(LSOFF,JSON.stringify({uid:myId,ts:Date.now(),atividades:a.data||[],admins:ad.data||[],config:cf&&!cf.error?cf.data:[],meuCad:isDono?null:meuCad,minhaAprov:isDono?null:minhaAprov}))}catch(e){}
   if(view==='historico'&&isAdmin)carregarHist();
   if(view==='numeros'&&isAdmin)carregarAjudas();
   if(abrirDepois){const it=items.find(i=>i.id===abrirDepois);abrirDepois=null;if(it){if(it.mes!==mes){mes=it.mes;persistMes();render()}openForm(it)}}
@@ -778,7 +794,7 @@ const minhaOrg=()=>papel()==='aprovado'?minhaAprov.org:'';
 function aplicarConfig(rows){(rows||[]).forEach(r=>{if(r.chave==='ano'){const n=Number(r.valor);if(Number.isInteger(n)&&n>=2026&&n<=2100)ANO=n}if(r.chave==='prazo')PRAZO=typeof r.valor==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.valor)?r.valor:''})}
 function prazoStatus(){if(!PRAZO)return null;const p=new Date(PRAZO+'T00:00:00'),dias=Math.round((p-hojeData())/864e5);return{dias,fim:dias<0,data:p.toLocaleDateString('pt-BR')}}
 const prazoFechado=()=>{const s=prazoStatus();return !isAdmin&&!!s&&s.fim};
-const podeAdicionar=()=>{const p=papel();return p==='admin'||(p==='aprovado'&&!prazoFechado())};
+const podeAdicionar=()=>{const p=papel();return !offline&&(p==='admin'||(p==='aprovado'&&!prazoFechado()))};
 function pintaPrazo(){
   const el=$('#prazoinfo'),s=prazoStatus(),p=papel();
   if(!s||!myId||!['calendario','ano','organizacoes'].includes(view)||!['admin','aprovado'].includes(p)){el.hidden=true;return}
@@ -1057,8 +1073,8 @@ function render(){
   $('#role').textContent=p==='admin'?(isDono?'Administrador (dono)':'Administrador'):p==='aprovado'?'Líder · '+ORG[minhaOrg()].n:p==='carregando'?'…':'Líder (sem aprovação)';
   $('#sub').textContent=view==='historico'?'Quem criou, mudou ou excluiu cada atividade, e quando. Só administradores veem esta tela.':view==='numeros'?'Atividades, responsáveis, relatórios e orçamento de cada organização. Só administradores veem esta tela.':p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades ${daOrg(minhaOrg())}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
   $('#novo').disabled=!podeAdicionar();$('#novo').title=prazoFechado()&&papel()==='aprovado'?'O prazo para propor atividades terminou':'';
-  pintaPrazo();
-  $('#meemail').textContent=meEmail;
+  pintaPrazo();pintaInstalar();
+  $('#meemail').textContent=meEmail||(offline?'modo sem internet':'');
   aviso();
   const ae=document.activeElement,keep=ae&&((view==='cadastro'&&ae.closest('#cadform'))||(view==='membros'&&ae.closest('#cfgform'))||(view==='numeros'&&ae.closest('#verbaform')));
   if(!keep)$('#view').innerHTML=view==='ano'?vAno():view==='organizacoes'?vOrg():view==='cadastro'?vCadastro():view==='membros'?vMembros():view==='pendentes'?vPendentes():view==='historico'?vHistorico():view==='numeros'?vNumeros():vCalendario();
@@ -1781,14 +1797,41 @@ function bvFechar(){
 $('#bv').addEventListener('click',()=>{if(bvEstado==='mostrando')bvFechar()});
 document.addEventListener('keydown',e=>{if(bvEstado==='mostrando'&&(e.key==='Enter'||e.key===' '||e.key==='Escape')){e.preventDefault();bvFechar()}});
 
+/* ================= APP NO CELULAR (PWA) ================= */
+function lerCopia(){try{const c=JSON.parse(localStorage.getItem(LSOFF)||'null');return c&&c.uid&&Array.isArray(c.atividades)?c:null}catch(e){return null}}
+function usarCopia(uid){
+  const c=lerCopia();if(!c||(uid||myId)!==c.uid)return false;
+  if(!myId){myId=c.uid}
+  aplicarConfig(c.config);acts=c.atividades.filter(r=>r.ano==null||Number(r.ano)===ANO).map(clean).filter(Boolean);items=acts;
+  const adm=Array.isArray(c.admins)?c.admins:[];adminIds=adm.map(r=>String(r.user_id));isDono=adm.some(r=>String(r.user_id)===myId&&r.dono);isAdmin=adminIds.includes(myId);
+  meuCad=isDono?null:(c.meuCad||null);minhaAprov=isDono?null:(c.minhaAprov||null);
+  offline=true;carregado=true;mostrarApp();
+  setStatus('Sem internet · cópia de '+new Date(c.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}),true);
+  render();toast('📴 Sem internet: mostrando a última cópia salva neste aparelho. Para marcar ou alterar, conecte-se.');return true}
+window.addEventListener('online',()=>{if(offline){if(sessao)carregar();else location.reload()}});
+let pedidoInstalar=null;
+const emApp=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+const ehIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function pintaInstalar(){let fechado=false;try{fechado=!!localStorage.getItem('instalarFechado')}catch(e){}
+  $('#instalar').hidden=!(myId&&!emApp()&&!fechado&&(pedidoInstalar||ehIOS))}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();pedidoInstalar=e;pintaInstalar()});
+window.addEventListener('appinstalled',()=>{pedidoInstalar=null;try{localStorage.setItem('instalarFechado','instalado')}catch(e){}pintaInstalar();toast('📱 App instalado! Procure o ícone “Agenda da Ala” na tela inicial.')});
+$('#instnao').addEventListener('click',()=>{try{localStorage.setItem('instalarFechado',String(Date.now()))}catch(e){}pintaInstalar()});
+$('#instbtn').addEventListener('click',async()=>{
+  if(pedidoInstalar){const p=pedidoInstalar;pedidoInstalar=null;p.prompt();try{const r=await p.userChoice;if(r&&r.outcome!=='accepted')pedidoInstalar=null}catch(e){}pintaInstalar();return}
+  const safari=!/CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(navigator.userAgent);
+  pergunta({titulo:'📱 Instalar no iPhone',html:safari?`<ol class="passos"><li>Toque no botão <b>Compartilhar</b> (o quadrado com a seta para cima), na barra do Safari.</li><li>Role e toque em <b>Adicionar à Tela de Início</b>.</li><li>Confirme em <b>Adicionar</b>. O ícone <b>Agenda da Ala</b> aparece na tela inicial.</li></ol>`:`<p style="margin:0 0 10px">No iPhone, o app só pode ser instalado pelo <b>Safari</b>.</p><ol class="passos"><li>Copie o endereço do site e abra no Safari.</li><li>Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>.</li></ol>`,ok:'Entendi',acao:async()=>true});
+});
+if('serviceWorker' in navigator)window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})});
+
 /* ================= INÍCIO ================= */
 function entrou(s){
   const novo=!sessao||sessao.user.id!==s.user.id;sessao=s;myId=s.user.id;meEmail=s.user.email||'';
   const md=s.user.user_metadata||{};meNome=String(md.full_name||md.name||'').slice(0,80);
   if(novo){let ver=false;try{const k=bvChave(s);ver=localStorage.getItem('bvLogin')!==k;localStorage.setItem('bvLogin',k)}catch(e){}if(ver)bvAbrir()}
-  mostrarApp();if(novo){carregado=false;meuCad=undefined;minhaAprov=undefined;isDono=false;isAdmin=false;membros={};aprovs={};render();carregar();ouvir()}
+  mostrarApp();if(offline&&!novo)carregar();if(novo){carregado=false;meuCad=undefined;minhaAprov=undefined;isDono=false;isAdmin=false;membros={};aprovs={};render();carregar();ouvir()}
 }
-function saiu(){if(bvEstado){bvEstado=null;clearTimeout(bvT);$('#bv').hidden=true}sessao=null;myId=null;acts=[];items=[];carregado=false;isAdmin=false;isDono=false;if(canal){sb.removeChannel(canal);canal=null}authModo('entrar');mostrarLogin()}
+function saiu(){offline=false;if(bvEstado){bvEstado=null;clearTimeout(bvT);$('#bv').hidden=true}sessao=null;myId=null;acts=[];items=[];carregado=false;isAdmin=false;isDono=false;if(canal){sb.removeChannel(canal);canal=null}authModo('entrar');mostrarLogin()}
 function init(){
   route();
   if(!sb){
@@ -1799,7 +1842,9 @@ function init(){
   sb.auth.onAuthStateChange((ev,s)=>{
     setTimeout(()=>{
       if(ev==='PASSWORD_RECOVERY'){if(s)sessao=s;mostrarLogin();authModo('nova');return}
-      if(s&&s.user){if(amodo!=='nova')entrou(s)}else saiu();
+      if(s&&s.user){if(amodo!=='nova')entrou(s)}
+      else if(ev==='INITIAL_SESSION'&&!navigator.onLine&&lerCopia()){usarCopia(lerCopia().uid)}
+      else saiu();
     },0);
   });
 }
