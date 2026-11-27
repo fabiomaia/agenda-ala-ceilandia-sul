@@ -282,7 +282,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .resp .linha.no{border-color:color-mix(in srgb,#c0392b 35%,var(--line))}
 .danger-pri{background:#c0392b!important;color:#fff!important}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
 <script src="config.js"></script>
 </head>
 <body>
@@ -294,7 +294,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
     <div id="abody">
       <div class="tabs" role="tablist" id="atabs"><button type="button" role="tab" data-tab="entrar" aria-selected="true">Entrar</button><button type="button" role="tab" data-tab="criar" aria-selected="false">Criar conta</button></div>
       <div style="display:grid;gap:14px;margin-top:14px" id="agoogw">
-        <button class="btn google" type="button" id="agoogle"><img src="google-g.svg" alt="" width="20" height="20" onerror="this.remove()"><span>Continuar com Google</span></button>
+        <button class="btn google" type="button" id="agoogle"><img src="google-g.svg" alt="" width="20" height="20"><span>Continuar com Google</span></button>
         <div class="or"><span>ou com e-mail</span></div>
       </div>
       <form id="aform" novalidate>
@@ -474,7 +474,7 @@ function authModo(m){
   $('#atabs').hidden=m==='esqueci'||m==='nova';$('#agoogw').hidden=m==='esqueci'||m==='nova';
   $('#aemailw').hidden=m==='nova';$('#asenhaw').hidden=m==='esqueci';
   $('#asenha').autocomplete=m==='entrar'?'current-password':'new-password';
-  $('#asenha').previousElementSibling.textContent=m==='nova'?'Nova senha (mínimo 6 caracteres)':m==='criar'?'Crie uma senha (mínimo 6 caracteres)':'Senha';
+  $('#asenha').previousElementSibling.textContent=m==='nova'?'Nova senha (mínimo 8 caracteres, com letras e números)':m==='criar'?'Crie uma senha (mínimo 8 caracteres, com letras e números)':'Senha';
   $('#asubmit').textContent={entrar:'Entrar',criar:'Criar conta',esqueci:'Enviar link para redefinir',nova:'Salvar nova senha'}[m];
   $('#aesqueci').textContent=m==='esqueci'?'Voltar para entrar':'Esqueci minha senha';$('#aesqueci').hidden=m==='nova'||m==='criar';
   $('#atop').textContent={entrar:'Entre para ver e marcar as atividades da sua organização.',criar:'Crie sua conta. Depois você preenche o cadastro de líder.',esqueci:'Informe seu e-mail e enviaremos um link para criar uma nova senha.',nova:'Escolha uma nova senha para sua conta.'}[m];
@@ -484,7 +484,7 @@ function traduz(e){
   if(/Invalid login credentials/i.test(m))return 'E-mail ou senha incorretos.';
   if(/already registered|already exists/i.test(m))return 'Este e-mail já tem conta. Use “Entrar”.';
   if(/Email not confirmed/i.test(m))return 'Confirme seu e-mail pelo link que enviamos antes de entrar.';
-  if(/Password should be at least|weak/i.test(m))return 'A senha precisa ter pelo menos 6 caracteres.';
+  if(/Password should be at least|weak|should contain/i.test(m))return 'Senha fraca: use pelo menos 8 caracteres, com letras e números.';
   if(/rate limit|security purposes/i.test(m))return 'Muitas tentativas. Aguarde um minuto e tente de novo.';
   if(/provider is not enabled/i.test(m))return 'O login com Google ainda não foi ativado no Supabase.';
   if(/row-level security|42501/i.test(m))return 'Você não tem permissão para fazer isso.';
@@ -504,7 +504,8 @@ $('#aform').addEventListener('submit',async ev=>{
   ev.preventDefault();if(busy)return;
   const email=$('#aemail').value.trim(),senha=$('#asenha').value,err=$('#aerr'),ok=$('#aok');err.textContent='';ok.textContent='';
   if(amodo!=='nova'&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent='Digite um e-mail válido.';$('#aemail').focus();return}
-  if(amodo!=='esqueci'&&senha.length<6){err.textContent='A senha precisa ter pelo menos 6 caracteres.';$('#asenha').focus();return}
+  if(amodo==='entrar'&&!senha){err.textContent='Digite sua senha.';$('#asenha').focus();return}
+  if((amodo==='criar'||amodo==='nova')&&(senha.length<8||!/[A-Za-z]/.test(senha)||!/\d/.test(senha))){err.textContent='Senha fraca: use pelo menos 8 caracteres, com letras e números.';$('#asenha').focus();return}
   busy=true;$('#asubmit').disabled=true;let r;
   try{
     if(amodo==='entrar')r=await sb.auth.signInWithPassword({email,password:senha});
@@ -665,7 +666,25 @@ function vMembros(){
    +(mud.length?sec('Pedidos de mudança de organização',mud,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">De ${ORG[aprovs[id].org].n} para <b style="display:inline;font-size:14px">${ORG[membros[id].org].n}</b></div><div class="ctl"><button class="btn pri" type="button" data-mem="mudar">Aceitar mudança</button></div></div>`,''):'')
    +sec('Líderes aprovados',apr,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div><span class="dot o-${aprovs[id].org}" style="color:var(--ink);font-size:14px">${ORG[aprovs[id].org].n}</span></div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(aprovs[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Salvar</button><button class="btn" type="button" data-mem="${adminIds.includes(id)?'desadmin':'admin'}">${adminIds.includes(id)?'Tirar de administrador':'Tornar administrador'}</button><button class="btn danger" type="button" data-mem="remover">Remover</button></div></div>`,'Ninguém aprovado ainda.')
    +(rec.length?sec('Recusados',rec,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Pediu: ${membros[id].org?ORG[membros[id].org].n:'—'}</div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(membros[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Aprovar</button><button class="btn danger" type="button" data-mem="remover">Apagar</button></div></div>`,''):'')
-   +`<p class="small">Administradores definem os dias e editam qualquer atividade; só você aprova cadastros e vê os contatos. “Remover” apaga o cadastro e a aprovação: a pessoa continua com a conta de login, mas precisa se cadastrar de novo e ser aprovada para marcar atividades.</p>`;
+   +`<p class="small">Administradores definem os dias e editam qualquer atividade; só você aprova cadastros e vê os contatos. “Remover” apaga o cadastro e a aprovação: a pessoa continua com a conta de login, mas precisa se cadastrar de novo e ser aprovada para marcar atividades.</p>`
+   +backupHtml();
+}
+function backupHtml(){
+  let ult='';try{const t=Number(localStorage.getItem('ultimoBackup'));if(t)ult=new Date(t).toLocaleDateString('pt-BR')}catch(e){}
+  return `<div class="card cad" style="margin-top:18px"><h3 style="font-size:17px;margin:0 0 6px">Cópia de segurança</h3><p class="small" style="margin:0 0 12px">Baixa um arquivo com todas as atividades, pedidos, cadastros e aprovações. O plano gratuito do Supabase não guarda backups que você possa restaurar, então baixe uma cópia de vez em quando (por exemplo, uma vez por mês). <b>O arquivo tem WhatsApp e e-mail dos líderes: guarde em local seguro e não compartilhe.</b></p><div class="notif" style="justify-content:flex-start;align-items:center;gap:12px"><button type="button" class="btn pri" id="backupBtn">Baixar cópia dos dados</button><span class="small">${ult?'Última cópia baixada neste aparelho: '+esc(ult):'Nenhuma cópia baixada neste aparelho ainda.'}</span></div></div>`;
+}
+async function baixarBackup(){
+  if(!isDono||busy)return;busy=true;const b=$('#backupBtn');if(b){b.disabled=true;b.textContent='Preparando…'}
+  try{
+    const tabs=['atividades','solicitacoes','perfis','aprovacoes','admins'],dados={};
+    for(const t of tabs){const r=await sb.from(t).select('*').limit(5000);if(r.error)throw r.error;dados[t]=r.data||[]}
+    const hoje=new Date(),d=hoje.toISOString().slice(0,10);
+    const arq={site:'Calendário de Atividades Ala Ceilândia Sul 2027',gerado:hoje.toISOString(),versao:1,contagem:Object.fromEntries(tabs.map(t=>[t,dados[t].length])),tabelas:dados};
+    baixar(new Blob([JSON.stringify(arq,null,2)],{type:'application/json'}),`backup-calendario-ala-${d}.json`);
+    try{localStorage.setItem('ultimoBackup',String(hoje.getTime()))}catch(e){}
+    toast(`Cópia baixada: ${plural(dados.atividades.length,'atividade','atividades')}, ${plural(dados.perfis.length,'cadastro','cadastros')}.`);
+  }catch(e){toast('Não foi possível baixar a cópia: '+traduz(e))}
+  finally{busy=false;render()}
 }
 function aviso(){
   const p=papel(),a=$('#aviso');let h='',cls='';
@@ -974,6 +993,7 @@ document.addEventListener('keydown',e=>{
   if(view==='calendario'&&!document.querySelector('.overlay.on')&&$('#auth').hidden&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key==='ArrowLeft'&&mes>0){mes--;persistMes();render()}if(e.key==='ArrowRight'&&mes<11){mes++;persistMes();render()}}});
 function persistMes(){try{localStorage.setItem(LSM,String(mes))}catch(e){}}
 V.addEventListener('click',e=>{
+  if(e.target.closest('#backupBtn')){baixarBackup();return}
   const sa=e.target.closest('[data-sact]');if(sa&&isAdmin){responderPedido(sa.closest('[data-sol]').dataset.sol,sa.dataset.sact);return}
   const dz=e.target.closest('[data-act=designar]');if(dz&&isAdmin){openDesignar(dz.dataset.id);return}
   const mb=e.target.closest('[data-mem]');if(mb&&isDono){acaoMembro(mb);return}
