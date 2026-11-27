@@ -20,9 +20,9 @@
 :root{color-scheme:light dark;
 --pine:#163f3a;
 }
-:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--pri:#163f3a;--field:#f7f9f9;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2;--field:#10181a;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66}}
-:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2;--field:#10181a;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66}
+:root{--bg:#f3f5f5;--paper:#fff;--ink:#17211f;--mute:#62716e;--line:#e1e6e5;--pri:#163f3a;--field:#f7f9f9;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24;--o-estaca:#0e7490;--o-geral:#475569}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2;--field:#10181a;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--o-estaca:#5fc8de;--o-geral:#a9b6c9}}
+:root[data-theme=dark]{--bg:#0c1214;--paper:#151e21;--ink:#e5ecea;--mute:#98aaa6;--line:#243237;--pri:#5fb3a2;--field:#10181a;--o-primaria:#f0c040;--o-socorro:#c79be0;--o-elderes:#7fa8ec;--o-rapazes:#6fcf97;--o-mocas:#f08bb0;--o-escola:#f19a66;--o-estaca:#5fc8de;--o-geral:#a9b6c9}
 
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
@@ -41,7 +41,7 @@ h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:800;letter-spac
 .nx .o{font-size:13px;opacity:.85;display:flex;align-items:center;gap:6px}
 .nx .o::before,.dot::before,.chip i,.leg i{content:"";width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
 .nxh{font-size:13px;font-weight:700;letter-spacing:.01em;margin:26px 0 -12px;opacity:.85}
-.o-primaria{--c:var(--o-primaria)}.o-socorro{--c:var(--o-socorro)}.o-elderes{--c:var(--o-elderes)}.o-rapazes{--c:var(--o-rapazes)}.o-mocas{--c:var(--o-mocas)}.o-escola{--c:var(--o-escola)}
+.o-primaria{--c:var(--o-primaria)}.o-socorro{--c:var(--o-socorro)}.o-elderes{--c:var(--o-elderes)}.o-rapazes{--c:var(--o-rapazes)}.o-mocas{--c:var(--o-mocas)}.o-escola{--c:var(--o-escola)}.o-estaca{--c:var(--o-estaca)}.o-geral{--c:var(--o-geral)}
 .nx .o{--c:inherit}
 .bar{display:flex;flex-wrap:wrap;gap:8px;padding:22px 0 18px}
 .chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink);font:500 14px Inter,sans-serif;cursor:pointer}
@@ -107,9 +107,9 @@ footer a{color:var(--pri);font-weight:600}
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const AB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
+const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'},{k:'estaca',n:'Estaca Ceilândia'},{k:'geral',n:'Igreja Geral'}];
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
-const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a'};
+const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a',estaca:'a',geral:'a'};
 const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
 let ANO=2027;const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
