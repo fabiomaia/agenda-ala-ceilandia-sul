@@ -1223,6 +1223,7 @@ function passosTour(){
     if(isDono)P.push({el:'#navmem',t:'👥 Membros',d:'Aprove os líderes, nomeie administradores e ajuste as configurações: ano, prazo, WhatsApp de ajuda, robô de e-mails e cópia dos dados.'});
   }
   P.push({el:'.tema-desk, .tema-mob',t:'🌙 Modo escuro',d:'Alterne entre claro e escuro quando quiser. O site lembra a sua escolha.'});
+  P.push({el:'.paleta-desk, .paleta-mob',t:'🖌️ Cores do site',d:'Escolha a paleta que for mais confortável para você: Pinho, Terracota, Oliva, Azul-noite ou Ameixa. Cada pessoa escolhe a sua, e ela vale também no modo escuro.'});
   P.push({el:'#tourbtn',t:'✨ Tudo pronto!',d:'Quando quiser rever este passeio, toque em “Fazer tour” aqui embaixo. Bom trabalho!',fim:true});
   return P.filter(p=>!p.el||primeiro(p.el));
 }
