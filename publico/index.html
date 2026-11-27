@@ -109,6 +109,8 @@ const AB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez
 const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
+const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a'};
+const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
 const ANO=2027,$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
@@ -133,7 +135,7 @@ function render(){
   const prox=v.filter(a=>new Date(ANO,a.mes,a.dia)>=hoje).slice(0,3);
   $('#nextw').innerHTML=prox.length?`<p class="nxh">Próximas atividades${filtro!=='todas'?' · '+ORG[filtro].n:''}</p><div class="next">${prox.map(a=>`<div class="nx"><div class="b"><b>${a.dia}</b><small>${AB[a.mes]} · ${wd(a.mes,a.dia)}</small></div><div><div class="t">${esc(a.nome)}</div><div class="o o-${a.org}" style="--c:var(--o-${a.org})">${ORG[a.org].n}${a.horario?' · '+a.horario:''}</div></div></div>`).join('')}</div>`:'';
   if(!carregou){$('#grid').innerHTML='';return}
-  $('#msg').innerHTML=v.length?'':`<div class="msg">${acts.length?'Nenhuma atividade com data para '+ORG[filtro].n+' ainda.':'Nenhuma atividade com data definida ainda. Volte em breve.'}</div>`;
+  $('#msg').innerHTML=v.length?'':`<div class="msg">${acts.length?'Nenhuma atividade com data para '+aOrg(filtro)+' ainda.':'Nenhuma atividade com data definida ainda. Volte em breve.'}</div>`;
   $('#grid').innerHTML=MESES.map((nm,m)=>{
     const l=v.filter(a=>a.mes===m),first=new Date(ANO,m,1).getDay(),n=dim(m);
     let cal=SEM.map(s=>`<span class="w">${s[0]}</span>`).join('');
