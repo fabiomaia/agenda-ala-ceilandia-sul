@@ -1283,8 +1283,8 @@ function bvAbrir(){
 function bvTexto(){
   if(bvEstado!=='esperando')return;bvEstado='mostrando';clearTimeout(bvT);
   const s=quemSou();
-  if(s.pres){$('#bv1').textContent=s.saud+',';$('#bv2').textContent=s.pres+',';$('#bv3').textContent=s.nome}
-  else{$('#bv1').textContent=s.saud+',';$('#bv2').textContent=(s.nome||'que bom ter você aqui')+(s.nome?'!':'');$('#bv3').textContent=papel()==='admin'?s.tit:'Calendário de Atividades Ala Ceilândia Sul '+ANO}
+  if(s.pres){$('#bv1').textContent=s.saud;$('#bv2').textContent=s.pres;$('#bv3').textContent=s.nome}
+  else{$('#bv1').textContent=s.saud;$('#bv2').textContent=(s.nome||'que bom ter você aqui')+(s.nome?'!':'');$('#bv3').textContent=papel()==='admin'?s.tit:'Calendário de Atividades Ala Ceilândia Sul '+ANO}
   $('#bv').classList.add('txt');bvT=setTimeout(bvFechar,2800);
 }
 function bvFechar(){
