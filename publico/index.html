@@ -78,6 +78,7 @@ footer a{color:var(--pri);font-weight:600}
 .tema:hover{opacity:1}.tema:focus-visible{outline:3px solid #7fa8ec;outline-offset:2px}
 .tema svg{display:none;flex:none}.tema[data-t=light] .i-light,.tema[data-t=dark] .i-dark{display:block}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+.hr{font-variant-numeric:tabular-nums;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -120,7 +121,8 @@ $('#legend').innerHTML=ORGS.map(o=>`<span class="leg o-${o.k}"><i></i>${o.n}</sp
 
 function clean(r){const m=Number(r.mes),d=Number(r.dia),org=ORG[r.org],nome=String(r.nome??'').trim().slice(0,140);
   if(!Number.isInteger(m)||m<0||m>11||!Number.isInteger(d)||d<1||d>dim(m)||!org||!nome)return null;
-  return{id:String(r.id),mes:m,dia:d,org:org.k,nome,detalhes:String(r.detalhes??'').slice(0,400)}}
+  const h=typeof r.horario==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(r.horario)?r.horario:'';
+  return{id:String(r.id),mes:m,dia:d,horario:h,org:org.k,nome,detalhes:String(r.detalhes??'').slice(0,400)}}
 const wd=(m,d)=>SEM[new Date(ANO,m,d).getDay()].toLowerCase();
 function render(){
   const cnt={};acts.forEach(a=>cnt[a.org]=(cnt[a.org]||0)+1);
@@ -129,7 +131,7 @@ function render(){
   const v=acts.filter(a=>filtro==='todas'||a.org===filtro);
   const now=new Date(),hoje=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   const prox=v.filter(a=>new Date(ANO,a.mes,a.dia)>=hoje).slice(0,3);
-  $('#nextw').innerHTML=prox.length?`<p class="nxh">Próximas atividades${filtro!=='todas'?' · '+ORG[filtro].n:''}</p><div class="next">${prox.map(a=>`<div class="nx"><div class="b"><b>${a.dia}</b><small>${AB[a.mes]} · ${wd(a.mes,a.dia)}</small></div><div><div class="t">${esc(a.nome)}</div><div class="o o-${a.org}" style="--c:var(--o-${a.org})">${ORG[a.org].n}</div></div></div>`).join('')}</div>`:'';
+  $('#nextw').innerHTML=prox.length?`<p class="nxh">Próximas atividades${filtro!=='todas'?' · '+ORG[filtro].n:''}</p><div class="next">${prox.map(a=>`<div class="nx"><div class="b"><b>${a.dia}</b><small>${AB[a.mes]} · ${wd(a.mes,a.dia)}</small></div><div><div class="t">${esc(a.nome)}</div><div class="o o-${a.org}" style="--c:var(--o-${a.org})">${ORG[a.org].n}${a.horario?' · '+a.horario:''}</div></div></div>`).join('')}</div>`:'';
   if(!carregou){$('#grid').innerHTML='';return}
   $('#msg').innerHTML=v.length?'':`<div class="msg">${acts.length?'Nenhuma atividade com data para '+ORG[filtro].n+' ainda.':'Nenhuma atividade com data definida ainda. Volte em breve.'}</div>`;
   $('#grid').innerHTML=MESES.map((nm,m)=>{
@@ -137,8 +139,8 @@ function render(){
     let cal=SEM.map(s=>`<span class="w">${s[0]}</span>`).join('');
     for(let i=0;i<first;i++)cal+='<span></span>';
     for(let d=1;d<=n;d++){const di=l.filter(a=>a.dia===d),isH=now.getFullYear()===ANO&&now.getMonth()===m&&now.getDate()===d;
-      cal+=`<span class="d${di.length?' on':''}${isH?' hoje':''}" ${di.length?`title="${esc(di.map(a=>a.nome).join(' · '))}"`:''}>${d}<span class="ds">${di.slice(0,4).map(a=>`<i class="o-${a.org}"></i>`).join('')}</span></span>`}
-    return `<section class="mes${l.length?'':' vazio'}" aria-label="${nm} de ${ANO}"><div class="mh"><h2>${nm}</h2><span>${l.length?plural(l.length,'atividade','atividades'):'sem atividades'}</span></div><div class="cal" aria-hidden="true">${cal}</div>${l.length?`<ul>${l.map(a=>`<li><span class="bd"><b>${a.dia}</b><small>${wd(a.mes,a.dia)}</small></span><div><div class="nm">${esc(a.nome)}</div><span class="dot o-${a.org}">${ORG[a.org].n}</span>${a.detalhes?`<p class="dt">${esc(a.detalhes)}</p>`:''}</div></li>`).join('')}</ul>`:'<p class="none">Nenhuma atividade com data neste mês.</p>'}</section>`;
+      cal+=`<span class="d${di.length?' on':''}${isH?' hoje':''}" ${di.length?`title="${esc(di.map(a=>(a.horario?a.horario+' ':'')+a.nome).join(' · '))}"`:''}>${d}<span class="ds">${di.slice(0,4).map(a=>`<i class="o-${a.org}"></i>`).join('')}</span></span>`}
+    return `<section class="mes${l.length?'':' vazio'}" aria-label="${nm} de ${ANO}"><div class="mh"><h2>${nm}</h2><span>${l.length?plural(l.length,'atividade','atividades'):'sem atividades'}</span></div><div class="cal" aria-hidden="true">${cal}</div>${l.length?`<ul>${l.map(a=>`<li><span class="bd"><b>${a.dia}</b><small>${wd(a.mes,a.dia)}</small></span><div><div class="nm">${esc(a.nome)}</div><span class="dot o-${a.org}">${ORG[a.org].n}${a.horario?` · <b class="hr">${a.horario}</b>`:''}</span>${a.detalhes?`<p class="dt">${esc(a.detalhes)}</p>`:''}</div></li>`).join('')}</ul>`:'<p class="none">Nenhuma atividade com data neste mês.</p>'}</section>`;
   }).join('');
 }
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filtro=b.dataset.f;
@@ -146,7 +148,7 @@ $('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if
 async function carregar(){
   if(!sb){$('#upd span').textContent='Calendário indisponível no momento.';$('#msg').innerHTML='<div class="msg">O site ainda não foi configurado (config.js).</div>';return}
   try{const{data,error}=await sb.rpc('calendario_publico');if(error)throw error;
-    acts=(data||[]).map(clean).filter(Boolean).sort((a,b)=>a.mes-b.mes||a.dia-b.dia);carregou=true;
+    acts=(data||[]).map(clean).filter(Boolean).sort((a,b)=>a.mes-b.mes||a.dia-b.dia||(a.horario||'99').localeCompare(b.horario||'99'));carregou=true;
     $('#upd span').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});render();
   }catch(e){$('#upd span').textContent='Não foi possível atualizar agora. Tentando de novo…';
     if(/calendario_publico|function/i.test(String(e&&e.message)))$('#msg').innerHTML='<div class="msg">O calendário público ainda não foi ativado no banco de dados.</div>'}
