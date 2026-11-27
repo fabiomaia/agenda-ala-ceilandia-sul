@@ -79,6 +79,37 @@ footer a{color:var(--pri);font-weight:600}
 .tema svg{display:none;flex:none}.tema[data-t=light] .i-light,.tema[data-t=dark] .i-dark{display:block}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 .hr{font-variant-numeric:tabular-nums;color:var(--ink)}
+.hbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hb{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;font:600 14px Inter,system-ui,sans-serif;cursor:pointer}
+.hb:hover{background:rgba(255,255,255,.18)}.hb:focus-visible{outline:3px solid #7fa8ec;outline-offset:2px}
+dialog{width:min(460px,calc(100% - 32px));border:1px solid var(--line);border-radius:18px;background:var(--paper);color:var(--ink);padding:22px}
+dialog::backdrop{background:rgba(8,20,18,.55)}
+dialog h2{font-size:21px;margin:0 0 6px}dialog p{margin:0 0 12px;color:var(--mute);font-size:14.5px}
+dialog label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+dialog select{width:100%;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:500 15px Inter,sans-serif;padding:0 10px}
+.abtns{display:grid;gap:8px;margin:14px 0 12px}
+.ab{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:600 15px Inter,sans-serif;text-decoration:none;cursor:pointer}
+.ab.pri{background:var(--pine);border-color:var(--pine);color:#fff}
+.small{font-size:13px}
+.cal .d.fer{color:#b4471b;font-weight:700}
+.ferl{margin:0;font-size:13px;color:#b4471b}
+:root[data-theme=dark] .cal .d.fer,:root[data-theme=dark] .ferl{color:#f19a66}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .cal .d.fer,:root:not([data-theme=light]) .ferl{color:#f19a66}}
+.ponly{display:none}
+@media print{
+  :root,:root[data-theme=dark]{--bg:#fff;--paper:#fff;--ink:#111;--mute:#555;--line:#ccc;--pri:#163f3a;--o-primaria:#c98f00;--o-socorro:#8a4fa3;--o-elderes:#2d62b3;--o-rapazes:#2b8452;--o-mocas:#c8436f;--o-escola:#c25a24;--o-estaca:#0e7490;--o-geral:#475569}
+  body{background:#fff;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  header{background:#fff;color:#111;padding:0 0 8px;border-bottom:3px solid #163f3a}
+  header .tema,.hbtns,#nextw,.upd,.lead,#chips,dialog{display:none!important}
+  h1{font-size:24px;margin:0;color:#163f3a}
+  .grid{grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 0}
+  .mes{break-inside:avoid;padding:10px;border-radius:10px;gap:8px;animation:none}
+  .mh h2{font-size:16px}.cal{font-size:10px}.bd{width:36px;height:36px}.bd b{font-size:14px}li{grid-template-columns:36px 1fr;gap:8px}ul{gap:6px}
+  .nm{font-size:12px}.dt,.dot{font-size:10.5px}
+  .ponly{display:flex;gap:14px;align-items:center;break-inside:avoid;margin:10px max(4vw,16px);padding:10px;border:1px solid #ccc;border-radius:10px}
+  .pqr{width:100px;height:100px;flex:none}.pqr svg{width:100%;height:100%}.ponly p{margin:0;font-size:12px;color:#333}
+  footer{padding:6px 0;border:0}
+}
 </style>
 </head>
 <body>
@@ -88,6 +119,7 @@ footer a{color:var(--pri);font-weight:600}
     <h1 id="ptit">Calendário de Atividades Ala Ceilândia Sul 2027</h1>
     <p class="lead">Atividades das organizações da ala com data já definida. Esta página se atualiza sozinha.</p>
     <div class="upd" id="upd"><i></i><span>Carregando…</span></div>
+    <div class="hbtns"><button type="button" class="hb" id="bassinar">📲 Agenda no celular</button><button type="button" class="hb" id="bimprimir">🖨️ Imprimir ou salvar PDF</button></div>
     <div id="nextw"></div>
   </div>
 </header>
@@ -96,6 +128,16 @@ footer a{color:var(--pri);font-weight:600}
   <div id="msg"></div>
   <div class="grid" id="grid"></div>
 </main>
+<div class="ponly"><div class="pqr"><svg viewBox="0 0 41 41" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="M4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM7 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM17 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM23 4h1v1h-1zM24 4h1v1h-1zM25 4h1v1h-1zM27 4h1v1h-1zM30 4h1v1h-1zM31 4h1v1h-1zM32 4h1v1h-1zM33 4h1v1h-1zM34 4h1v1h-1zM35 4h1v1h-1zM36 4h1v1h-1zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM17 5h1v1h-1zM21 5h1v1h-1zM24 5h1v1h-1zM27 5h1v1h-1zM30 5h1v1h-1zM36 5h1v1h-1zM4 6h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM13 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM19 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM27 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM32 6h1v1h-1zM33 6h1v1h-1zM34 6h1v1h-1zM36 6h1v1h-1zM4 7h1v1h-1zM6 7h1v1h-1zM7 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM14 7h1v1h-1zM15 7h1v1h-1zM16 7h1v1h-1zM18 7h1v1h-1zM20 7h1v1h-1zM21 7h1v1h-1zM23 7h1v1h-1zM26 7h1v1h-1zM27 7h1v1h-1zM28 7h1v1h-1zM30 7h1v1h-1zM32 7h1v1h-1zM33 7h1v1h-1zM34 7h1v1h-1zM36 7h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM15 8h1v1h-1zM18 8h1v1h-1zM21 8h1v1h-1zM23 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM30 8h1v1h-1zM32 8h1v1h-1zM33 8h1v1h-1zM34 8h1v1h-1zM36 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM14 9h1v1h-1zM15 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM18 9h1v1h-1zM23 9h1v1h-1zM30 9h1v1h-1zM36 9h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h1v1h-1zM31 10h1v1h-1zM32 10h1v1h-1zM33 10h1v1h-1zM34 10h1v1h-1zM35 10h1v1h-1zM36 10h1v1h-1zM12 11h1v1h-1zM16 11h1v1h-1zM18 11h1v1h-1zM21 11h1v1h-1zM22 11h1v1h-1zM28 11h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM11 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM21 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM30 12h1v1h-1zM33 12h1v1h-1zM35 12h1v1h-1zM36 12h1v1h-1zM5 13h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM8 13h1v1h-1zM13 13h1v1h-1zM16 13h1v1h-1zM20 13h1v1h-1zM22 13h1v1h-1zM23 13h1v1h-1zM24 13h1v1h-1zM25 13h1v1h-1zM27 13h1v1h-1zM30 13h1v1h-1zM31 13h1v1h-1zM33 13h1v1h-1zM34 13h1v1h-1zM35 13h1v1h-1zM36 13h1v1h-1zM6 14h1v1h-1zM8 14h1v1h-1zM10 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM18 14h1v1h-1zM20 14h1v1h-1zM27 14h1v1h-1zM28 14h1v1h-1zM29 14h1v1h-1zM30 14h1v1h-1zM31 14h1v1h-1zM32 14h1v1h-1zM33 14h1v1h-1zM35 14h1v1h-1zM36 14h1v1h-1zM4 15h1v1h-1zM6 15h1v1h-1zM8 15h1v1h-1zM14 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM20 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM26 15h1v1h-1zM28 15h1v1h-1zM31 15h1v1h-1zM33 15h1v1h-1zM4 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM9 16h1v1h-1zM10 16h1v1h-1zM11 16h1v1h-1zM19 16h1v1h-1zM21 16h1v1h-1zM26 16h1v1h-1zM28 16h1v1h-1zM29 16h1v1h-1zM31 16h1v1h-1zM32 16h1v1h-1zM33 16h1v1h-1zM35 16h1v1h-1zM36 16h1v1h-1zM4 17h1v1h-1zM5 17h1v1h-1zM6 17h1v1h-1zM8 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM14 17h1v1h-1zM17 17h1v1h-1zM20 17h1v1h-1zM23 17h1v1h-1zM26 17h1v1h-1zM29 17h1v1h-1zM31 17h1v1h-1zM33 17h1v1h-1zM35 17h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM8 18h1v1h-1zM10 18h1v1h-1zM11 18h1v1h-1zM15 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM23 18h1v1h-1zM26 18h1v1h-1zM30 18h1v1h-1zM33 18h1v1h-1zM34 18h1v1h-1zM4 19h1v1h-1zM5 19h1v1h-1zM6 19h1v1h-1zM7 19h1v1h-1zM9 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM20 19h1v1h-1zM23 19h1v1h-1zM25 19h1v1h-1zM26 19h1v1h-1zM29 19h1v1h-1zM30 19h1v1h-1zM33 19h1v1h-1zM34 19h1v1h-1zM4 20h1v1h-1zM5 20h1v1h-1zM7 20h1v1h-1zM10 20h1v1h-1zM11 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM22 20h1v1h-1zM24 20h1v1h-1zM25 20h1v1h-1zM26 20h1v1h-1zM29 20h1v1h-1zM30 20h1v1h-1zM32 20h1v1h-1zM34 20h1v1h-1zM5 21h1v1h-1zM7 21h1v1h-1zM9 21h1v1h-1zM11 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM15 21h1v1h-1zM16 21h1v1h-1zM17 21h1v1h-1zM18 21h1v1h-1zM19 21h1v1h-1zM21 21h1v1h-1zM24 21h1v1h-1zM27 21h1v1h-1zM28 21h1v1h-1zM29 21h1v1h-1zM30 21h1v1h-1zM32 21h1v1h-1zM33 21h1v1h-1zM35 21h1v1h-1zM36 21h1v1h-1zM4 22h1v1h-1zM9 22h1v1h-1zM10 22h1v1h-1zM12 22h1v1h-1zM13 22h1v1h-1zM14 22h1v1h-1zM15 22h1v1h-1zM17 22h1v1h-1zM19 22h1v1h-1zM21 22h1v1h-1zM24 22h1v1h-1zM25 22h1v1h-1zM28 22h1v1h-1zM31 22h1v1h-1zM32 22h1v1h-1zM34 22h1v1h-1zM6 23h1v1h-1zM8 23h1v1h-1zM12 23h1v1h-1zM15 23h1v1h-1zM17 23h1v1h-1zM20 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM27 23h1v1h-1zM28 23h1v1h-1zM32 23h1v1h-1zM35 23h1v1h-1zM36 23h1v1h-1zM10 24h1v1h-1zM14 24h1v1h-1zM18 24h1v1h-1zM19 24h1v1h-1zM21 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM27 24h1v1h-1zM31 24h1v1h-1zM33 24h1v1h-1zM34 24h1v1h-1zM35 24h1v1h-1zM4 25h1v1h-1zM5 25h1v1h-1zM9 25h1v1h-1zM11 25h1v1h-1zM12 25h1v1h-1zM13 25h1v1h-1zM14 25h1v1h-1zM15 25h1v1h-1zM17 25h1v1h-1zM19 25h1v1h-1zM22 25h1v1h-1zM23 25h1v1h-1zM24 25h1v1h-1zM25 25h1v1h-1zM27 25h1v1h-1zM30 25h1v1h-1zM33 25h1v1h-1zM34 25h1v1h-1zM36 25h1v1h-1zM6 26h1v1h-1zM9 26h1v1h-1zM10 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM16 26h1v1h-1zM17 26h1v1h-1zM20 26h1v1h-1zM25 26h1v1h-1zM27 26h1v1h-1zM28 26h1v1h-1zM30 26h1v1h-1zM32 26h1v1h-1zM35 26h1v1h-1zM36 26h1v1h-1zM5 27h1v1h-1zM6 27h1v1h-1zM7 27h1v1h-1zM9 27h1v1h-1zM11 27h1v1h-1zM13 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM18 27h1v1h-1zM20 27h1v1h-1zM22 27h1v1h-1zM23 27h1v1h-1zM24 27h1v1h-1zM26 27h1v1h-1zM28 27h1v1h-1zM30 27h1v1h-1zM31 27h1v1h-1zM33 27h1v1h-1zM35 27h1v1h-1zM4 28h1v1h-1zM6 28h1v1h-1zM7 28h1v1h-1zM9 28h1v1h-1zM10 28h1v1h-1zM12 28h1v1h-1zM14 28h1v1h-1zM15 28h1v1h-1zM16 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM29 28h1v1h-1zM30 28h1v1h-1zM31 28h1v1h-1zM32 28h1v1h-1zM36 28h1v1h-1zM12 29h1v1h-1zM13 29h1v1h-1zM16 29h1v1h-1zM17 29h1v1h-1zM18 29h1v1h-1zM19 29h1v1h-1zM20 29h1v1h-1zM23 29h1v1h-1zM24 29h1v1h-1zM25 29h1v1h-1zM27 29h1v1h-1zM28 29h1v1h-1zM32 29h1v1h-1zM33 29h1v1h-1zM4 30h1v1h-1zM5 30h1v1h-1zM6 30h1v1h-1zM7 30h1v1h-1zM8 30h1v1h-1zM9 30h1v1h-1zM10 30h1v1h-1zM12 30h1v1h-1zM13 30h1v1h-1zM14 30h1v1h-1zM21 30h1v1h-1zM22 30h1v1h-1zM23 30h1v1h-1zM24 30h1v1h-1zM25 30h1v1h-1zM27 30h1v1h-1zM28 30h1v1h-1zM30 30h1v1h-1zM32 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM14 31h1v1h-1zM16 31h1v1h-1zM17 31h1v1h-1zM18 31h1v1h-1zM19 31h1v1h-1zM23 31h1v1h-1zM24 31h1v1h-1zM25 31h1v1h-1zM26 31h1v1h-1zM27 31h1v1h-1zM28 31h1v1h-1zM32 31h1v1h-1zM33 31h1v1h-1zM34 31h1v1h-1zM35 31h1v1h-1zM4 32h1v1h-1zM6 32h1v1h-1zM7 32h1v1h-1zM8 32h1v1h-1zM10 32h1v1h-1zM19 32h1v1h-1zM21 32h1v1h-1zM23 32h1v1h-1zM25 32h1v1h-1zM26 32h1v1h-1zM27 32h1v1h-1zM28 32h1v1h-1zM29 32h1v1h-1zM30 32h1v1h-1zM31 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM4 33h1v1h-1zM6 33h1v1h-1zM7 33h1v1h-1zM8 33h1v1h-1zM10 33h1v1h-1zM12 33h1v1h-1zM13 33h1v1h-1zM14 33h1v1h-1zM18 33h1v1h-1zM24 33h1v1h-1zM25 33h1v1h-1zM27 33h1v1h-1zM31 33h1v1h-1zM33 33h1v1h-1zM34 33h1v1h-1zM36 33h1v1h-1zM4 34h1v1h-1zM6 34h1v1h-1zM7 34h1v1h-1zM8 34h1v1h-1zM10 34h1v1h-1zM12 34h1v1h-1zM13 34h1v1h-1zM14 34h1v1h-1zM16 34h1v1h-1zM18 34h1v1h-1zM25 34h1v1h-1zM28 34h1v1h-1zM30 34h1v1h-1zM31 34h1v1h-1zM34 34h1v1h-1zM4 35h1v1h-1zM10 35h1v1h-1zM19 35h1v1h-1zM20 35h1v1h-1zM21 35h1v1h-1zM22 35h1v1h-1zM24 35h1v1h-1zM26 35h1v1h-1zM27 35h1v1h-1zM28 35h1v1h-1zM30 35h1v1h-1zM31 35h1v1h-1zM32 35h1v1h-1zM33 35h1v1h-1zM36 35h1v1h-1zM4 36h1v1h-1zM5 36h1v1h-1zM6 36h1v1h-1zM7 36h1v1h-1zM8 36h1v1h-1zM9 36h1v1h-1zM10 36h1v1h-1zM12 36h1v1h-1zM13 36h1v1h-1zM16 36h1v1h-1zM17 36h1v1h-1zM19 36h1v1h-1zM20 36h1v1h-1zM21 36h1v1h-1zM22 36h1v1h-1zM23 36h1v1h-1zM25 36h1v1h-1zM27 36h1v1h-1zM30 36h1v1h-1zM32 36h1v1h-1zM34 36h1v1h-1z" fill="#111"/></svg></div><p><b>Calendário sempre atualizado</b><br>Aponte a câmera do celular para o código ou acesse<br>calendario-ala-ceilandia-sul.vercel.app/publico</p></div>
+<dialog id="dass" aria-labelledby="dasst">
+  <h2 id="dasst">📲 Agenda no celular</h2>
+  <p>Assine e as atividades com data aparecem no calendário do seu celular. Quando algo mudar, ele se atualiza sozinho.</p>
+  <label for="aorg">Quais atividades?</label>
+  <select id="aorg"></select>
+  <div class="abtns"><a class="ab pri" id="agoog" target="_blank" rel="noopener">Google Agenda (Android)</a><a class="ab" id="aical">iPhone, iPad ou Outlook</a><button type="button" class="ab" id="acop">Copiar link da agenda</button></div>
+  <p class="small" id="aok">No Google Agenda, confirme em “Adicionar”. No iPhone, toque em “Assinar”. Escolhendo uma organização, a Estaca e a Igreja Geral também aparecem.</p>
+  <div style="text-align:right"><button type="button" class="ab" id="afechar">Fechar</button></div>
+</dialog>
 <footer>
   <div class="wrap">
     <div class="legend" id="legend"></div>
@@ -120,6 +162,25 @@ const ok=typeof CFG.SUPABASE_URL==='string'&&/^https:\/\/[a-z0-9]{15,}\.supabase
 const sb=ok&&window.supabase?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}):null;
 let acts=[],carregou=false,filtro=new URLSearchParams(location.search).get('org');if(!ORG[filtro])filtro='todas';
 $('#legend').innerHTML=ORGS.map(o=>`<span class="leg o-${o.k}"><i></i>${o.n}</span>`).join('');
+const ferCache={};
+function feriados(y){
+  if(ferCache[y])return ferCache[y];
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,mm=Math.floor((a+11*h+22*l)/451);
+  const pascoa=new Date(y,Math.floor((h+l-7*mm+114)/31)-1,((h+l-7*mm+114)%31)+1),rel=n=>new Date(y,pascoa.getMonth(),pascoa.getDate()+n),out={};
+  const add=(dt,n,fac)=>{out[dt.getMonth()+'-'+dt.getDate()]={n,f:!!fac}};
+  [[0,1,'Confraternização Universal'],[3,21,'Tiradentes e Fundação de Brasília'],[4,1,'Dia do Trabalho'],[8,7,'Independência do Brasil'],[9,12,'Nossa Senhora Aparecida'],[10,2,'Finados'],[10,15,'Proclamação da República'],[10,20,'Consciência Negra'],[10,30,'Dia do Evangélico (DF)'],[11,25,'Natal']].forEach(([m,dd,n])=>add(new Date(y,m,dd),n));
+  add(rel(-48),'Carnaval',1);add(rel(-47),'Carnaval',1);add(rel(-46),'Quarta-feira de Cinzas',1);add(rel(-2),'Sexta-feira Santa');add(rel(60),'Corpus Christi',1);
+  return ferCache[y]=out}
+const feriado=(m,d)=>feriados(ANO)[m+'-'+d]||null;
+const icsUrl=org=>location.origin+(org?'/agenda/'+org+'.ics':'/agenda.ics');
+$('#aorg').innerHTML='<option value="">Todas as organizações</option>'+ORGS.filter(o=>o.k!=='estaca'&&o.k!=='geral').map(o=>`<option value="${o.k}">${o.n}</option>`).join('');
+function pintaAss(){const w=icsUrl($('#aorg').value).replace(/^https?:/,'webcal:');$('#aical').href=w;$('#agoog').href='https://calendar.google.com/calendar/render?cid='+encodeURIComponent(w)}
+$('#aorg').addEventListener('change',pintaAss);
+$('#bassinar').addEventListener('click',()=>{$('#aorg').value=filtro!=='todas'&&filtro!=='estaca'&&filtro!=='geral'?filtro:'';pintaAss();const d=$('#dass');if(d.showModal)d.showModal();else d.setAttribute('open','')});
+$('#afechar').addEventListener('click',()=>$('#dass').close());
+$('#dass').addEventListener('click',e=>{if(e.target===$('#dass'))$('#dass').close()});
+$('#acop').addEventListener('click',async()=>{const u=icsUrl($('#aorg').value);try{await navigator.clipboard.writeText(u);$('#acop').textContent='Link copiado ✓'}catch(e){prompt('Copie o link:',u)}setTimeout(()=>$('#acop').textContent='Copiar link da agenda',2500)});
+$('#bimprimir').addEventListener('click',()=>window.print());
 
 function clean(r){const m=Number(r.mes),d=Number(r.dia),org=ORG[r.org],nome=String(r.nome??'').trim().slice(0,140);
   if(!Number.isInteger(m)||m<0||m>11||!Number.isInteger(d)||d<1||d>dim(m)||!org||!nome)return null;
@@ -140,9 +201,9 @@ function render(){
     const l=v.filter(a=>a.mes===m),first=new Date(ANO,m,1).getDay(),n=dim(m);
     let cal=SEM.map(s=>`<span class="w">${s[0]}</span>`).join('');
     for(let i=0;i<first;i++)cal+='<span></span>';
-    for(let d=1;d<=n;d++){const di=l.filter(a=>a.dia===d),isH=now.getFullYear()===ANO&&now.getMonth()===m&&now.getDate()===d;
-      cal+=`<span class="d${di.length?' on':''}${isH?' hoje':''}" ${di.length?`title="${esc(di.map(a=>(a.horario?a.horario+' ':'')+a.nome).join(' · '))}"`:''}>${d}<span class="ds">${di.slice(0,4).map(a=>`<i class="o-${a.org}"></i>`).join('')}</span></span>`}
-    return `<section class="mes${l.length?'':' vazio'}" aria-label="${nm} de ${ANO}"><div class="mh"><h2>${nm}</h2><span>${l.length?plural(l.length,'atividade','atividades'):'sem atividades'}</span></div><div class="cal" aria-hidden="true">${cal}</div>${l.length?`<ul>${l.map(a=>`<li><span class="bd"><b>${a.dia}</b><small>${wd(a.mes,a.dia)}</small></span><div><div class="nm">${esc(a.nome)}</div><span class="dot o-${a.org}">${ORG[a.org].n}${a.horario?` · <b class="hr">${a.horario}</b>`:''}</span>${a.detalhes?`<p class="dt">${esc(a.detalhes)}</p>`:''}</div></li>`).join('')}</ul>`:'<p class="none">Nenhuma atividade com data neste mês.</p>'}</section>`;
+    const fl=[];for(let d=1;d<=n;d++){const di=l.filter(a=>a.dia===d),isH=now.getFullYear()===ANO&&now.getMonth()===m&&now.getDate()===d,fe=feriado(m,d);if(fe)fl.push(`${d} · ${fe.n}${fe.f?' (ponto facultativo)':''}`);const tt=[fe?'🎉 '+fe.n:'',...di.map(a=>(a.horario?a.horario+' ':'')+a.nome)].filter(Boolean).join(' · ');
+      cal+=`<span class="d${di.length?' on':''}${isH?' hoje':''}${fe?' fer':''}" ${tt?`title="${esc(tt)}"`:''}>${d}<span class="ds">${di.slice(0,4).map(a=>`<i class="o-${a.org}"></i>`).join('')}</span></span>`}
+    return `<section class="mes${l.length?'':' vazio'}" aria-label="${nm} de ${ANO}"><div class="mh"><h2>${nm}</h2><span>${l.length?plural(l.length,'atividade','atividades'):'sem atividades'}</span></div><div class="cal" aria-hidden="true">${cal}</div>${l.length?`<ul>${l.map(a=>`<li><span class="bd"><b>${a.dia}</b><small>${wd(a.mes,a.dia)}</small></span><div><div class="nm">${esc(a.nome)}</div><span class="dot o-${a.org}">${ORG[a.org].n}${a.horario?` · <b class="hr">${a.horario}</b>`:''}</span>${a.detalhes?`<p class="dt">${esc(a.detalhes)}</p>`:''}</div></li>`).join('')}</ul>`:'<p class="none">Nenhuma atividade com data neste mês.</p>'}${fl.length?`<p class="ferl">🎉 ${fl.map(esc).join(' · ')}</p>`:''}</section>`;
   }).join('');
 }
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filtro=b.dataset.f;
