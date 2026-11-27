@@ -9,7 +9,8 @@ Funciona com **Supabase** (banco de dados PostgreSQL + login por e-mail e Google
 | Arquivo | Para que serve |
 |---|---|
 | `index.html` | As telas do site (calendário, login, formulários). |
-| `js/app.js` | Todo o funcionamento do site dos líderes. `js/publico.js` é o da página pública; `js/tema.js` e `js/tema-inicio.js` cuidam do modo escuro. |
+| `js/app.js` | Todo o funcionamento do site dos líderes. `js/publico.js` é o da página pública; `js/tema.js` e `js/tema-inicio.js` cuidam do modo escuro e do botão **Cores**. |
+| `css/paletas.css` | As paletas que cada pessoa pode escolher no botão **Cores** (Pinho é o padrão; Terracota, Oliva, Azul-noite e Ameixa, cada uma com versão clara e escura). As cores das organizações não mudam. |
 | `vercel.json` | Cabeçalhos de segurança e endereços da agenda (.ics). Não precisa ser regerado ao mudar o site. |
 | `publico/index.html` | Calendário público (sem login) em `/publico/`, só com atividades que têm dia definido. |
 | `supabase/publico.sql` | Libera a leitura pública dessas atividades. Rode uma vez. |

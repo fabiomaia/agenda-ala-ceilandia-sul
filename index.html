@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <script src="/js/tema-inicio.js"></script>
+<link rel="stylesheet" href="/css/paletas.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calendário de Atividades Ala Ceilândia Sul 2027</title>
 <link rel="manifest" href="/manifest.webmanifest">
@@ -24,7 +25,7 @@
    LAYOUT: sidebar | header + month grid + legend | agenda and summary column; stacks on phones. */
 :root{color-scheme:light dark;
 
---sideink:#eaf3f1;
+--sideink:#eaf3f1;--acc:#f0c040;
 
 
 }
@@ -165,7 +166,7 @@ fieldset{border:0;padding:0;margin:0}
 .aviso.ok{border-color:color-mix(in srgb,var(--o-rapazes) 40%,var(--line));background:color-mix(in srgb,var(--o-rapazes) 10%,var(--paper))}
 .aviso.no{border-color:color-mix(in srgb,#c0392b 40%,var(--line));background:color-mix(in srgb,#c0392b 8%,var(--paper))}
 .aviso p{margin:0}
-.cnt{margin-left:auto;background:#f0c040;color:#1d1a0b;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px}
+.cnt{margin-left:auto;background:var(--acc);color:#1d1a0b;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px}
 .cad{max-width:640px;padding:22px;display:grid;gap:16px}
 .cad h2,.memh{font-size:20px;font-weight:800}
 .chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink);font-weight:500}
@@ -272,6 +273,11 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .topbar .tema{margin-left:auto;color:var(--ink);border-color:var(--line);background:var(--paper);min-height:40px}
 .tema-mob{display:none;color:var(--sideink);border-color:rgba(255,255,255,.35)}
 @media(max-width:820px){.tema-desk{display:none}.tema-mob{display:inline-flex;margin-left:auto;min-height:36px}}
+.topbar .paleta,.tbdir .paleta{color:var(--ink);border-color:var(--line);background:var(--paper);min-height:40px}
+.authcard .paleta{margin-left:6px;min-height:34px;padding:0 10px}
+@media(max-width:420px){.authcard .paleta span{display:none}.authcard .paleta{padding:0 9px}}
+.paleta-mob{display:none;color:var(--sideink);border-color:rgba(255,255,255,.35)}
+@media(max-width:820px){.paleta-desk{display:none}.paleta-mob{display:inline-flex;margin-left:6px;min-height:36px;padding:0 9px}.paleta-mob span{display:none}}
 .solbox{border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;border:1px solid color-mix(in srgb,var(--o-primaria) 45%,var(--line));background:color-mix(in srgb,var(--o-primaria) 10%,var(--paper))}
 .solbox b{font-weight:700}.solbox.info{border-color:color-mix(in srgb,var(--o-elderes) 40%,var(--line));background:color-mix(in srgb,var(--o-elderes) 8%,var(--paper))}
 .tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;background:color-mix(in srgb,var(--o-primaria) 18%,var(--paper));color:var(--ink);white-space:nowrap}
@@ -302,7 +308,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 @media(max-width:820px){.tbdir{width:100%;margin-left:0}.tbdir .sel{flex:1;max-width:none}}
 /* ---- boas-vindas ---- */
 .bv{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:28px;text-align:center;color:#fff;cursor:pointer;
-  background:radial-gradient(120% 90% at 25% 15%,#2a6b61 0%,#163f3a 55%,#0d2724 100%);opacity:0;transition:opacity .55s ease,transform .7s ease}
+  background:radial-gradient(120% 90% at 25% 15%,color-mix(in srgb,var(--side) 72%,#7fb8ad) 0%,var(--side) 55%,color-mix(in srgb,var(--side) 62%,#000) 100%);opacity:0;transition:opacity .55s ease,transform .7s ease}
 .bv[hidden]{display:none!important}
 .bv.on{opacity:1}
 .bv.sai{opacity:0;transform:scale(1.04);pointer-events:none}
@@ -411,9 +417,9 @@ details.respbox .sumt{font-weight:700;font-size:15.5px}
 .mbars .mb b{font-size:12.5px;font-variant-numeric:tabular-nums}.mbars .mb small{font-size:12px;color:var(--mute)}
 .ntiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .tour{position:fixed;inset:0;z-index:300}
-.tour-luz{position:fixed;left:50%;top:50%;width:0;height:0;border-radius:14px;box-shadow:0 0 0 200vmax rgba(5,16,14,.68),0 0 0 3px #f0c040,0 0 26px 6px rgba(240,192,64,.45);transition:left .38s cubic-bezier(.4,.1,.2,1),top .38s cubic-bezier(.4,.1,.2,1),width .38s cubic-bezier(.4,.1,.2,1),height .38s cubic-bezier(.4,.1,.2,1),border-radius .38s;pointer-events:none}
+.tour-luz{position:fixed;left:50%;top:50%;width:0;height:0;border-radius:14px;box-shadow:0 0 0 200vmax rgba(5,16,14,.68),0 0 0 3px var(--acc),0 0 26px 6px color-mix(in srgb,var(--acc) 45%,transparent);transition:left .38s cubic-bezier(.4,.1,.2,1),top .38s cubic-bezier(.4,.1,.2,1),width .38s cubic-bezier(.4,.1,.2,1),height .38s cubic-bezier(.4,.1,.2,1),border-radius .38s;pointer-events:none}
 .tour-luz.vazio{box-shadow:0 0 0 200vmax rgba(5,16,14,.68)}
-.tour-luz:not(.vazio)::after{content:"";position:absolute;inset:-3px;border-radius:inherit;border:2px solid #f0c040;animation:tourpulso 1.8s ease-out infinite}
+.tour-luz:not(.vazio)::after{content:"";position:absolute;inset:-3px;border-radius:inherit;border:2px solid var(--acc);animation:tourpulso 1.8s ease-out infinite}
 @keyframes tourpulso{0%{opacity:.9;transform:scale(1)}70%{opacity:0;transform:scale(1.08)}100%{opacity:0}}
 .tour-card{position:fixed;width:min(380px,calc(100vw - 24px));background:var(--paper);color:var(--ink);border-radius:18px;padding:18px 18px 16px;box-shadow:0 22px 60px rgba(0,0,0,.35);border:1px solid var(--line);transition:left .38s cubic-bezier(.4,.1,.2,1),top .38s cubic-bezier(.4,.1,.2,1),opacity .2s}
 .tour-card::before{content:"";position:absolute;width:14px;height:14px;background:var(--paper);border:1px solid var(--line);transform:rotate(45deg);left:var(--ax,50%);margin-left:-7px;display:none}

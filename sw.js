@@ -1,9 +1,9 @@
 // Service worker da Agenda da Ala: deixa o site abrir sem internet (só consulta).
 // Guarda apenas os arquivos do site. Os dados das atividades ficam no próprio
 // aparelho, salvos pelo site depois de cada carregamento.
-const VERSAO = 'agenda-v2';
+const VERSAO = 'agenda-v3';
 const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js';
-const ARQUIVOS = ['/', '/publico/', '/config.js', '/js/app.js', '/js/publico.js', '/js/tema.js', '/js/tema-inicio.js',
+const ARQUIVOS = ['/', '/publico/', '/config.js', '/js/app.js', '/js/publico.js', '/js/tema.js', '/js/tema-inicio.js', '/css/paletas.css',
   '/manifest.webmanifest', '/publico/manifest.webmanifest',
   '/icones/icon-192.png', '/icones/icon-512.png', '/icones/apple-touch-icon.png', '/google-g.svg', SUPABASE_JS];
 
