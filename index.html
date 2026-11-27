@@ -445,7 +445,7 @@ const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
 const ANO=2027,LSM='atividades-ala-2027-mes';
-const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes'];let pendOrg='todas',desigId=null,solics=[],formModo='';
+const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes'];let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
@@ -530,14 +530,17 @@ function clean(r){
 }
 function cleanSol(r){if(!r||!['alterar','cancelar'].includes(r.tipo))return null;const ob=o=>o&&typeof o==='object'?o:{};const hv=v=>typeof v==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(v)?v:'';const ad=o=>{o=ob(o);const m=Number(o.mes);return{nome:String(o.nome??'').slice(0,140),mes:Number.isInteger(m)&&m>=0&&m<12?m:0,dia:Number.isInteger(Number(o.dia))?Number(o.dia):0,horario:hv(o.horario),org:ORG[o.org]?o.org:'',detalhes:String(o.detalhes??'').slice(0,400)}};
   return{id:String(r.id),atividade:r.atividade?String(r.atividade):'',tipo:r.tipo,autor:r.autor?String(r.autor):'',autorNome:String(r.autor_nome??'').slice(0,80),antes:ad(r.antes),depois:r.depois?ad(r.depois):null,final:r.final?ad(r.final):null,motivo:String(r.motivo??'').slice(0,300),status:['pendente','aprovado','recusado'].includes(r.status)?r.status:'pendente',resposta:String(r.resposta??'').slice(0,300),criado:Date.parse(r.criado)||0,visto:!!r.visto}}
+function cleanAviso(r){if(!r||!['agendada','remarcada'].includes(r.tipo))return null;const d=r.dados&&typeof r.dados==='object'?r.dados:{};const hv=v=>typeof v==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(v)?v:'';const nm=v=>{v=Number(v);return Number.isInteger(v)?v:null};const m=nm(d.mes),di=nm(d.dia);if(m===null||m<0||m>11||!di)return null;const am=nm(d.antes_mes),ad=nm(d.antes_dia);
+  return{id:String(r.id),atividade:r.atividade?String(r.atividade):'',tipo:r.tipo,nome:String(d.nome??'').slice(0,140),mes:m,dia:di,horario:hv(d.horario),antesMes:am!==null&&am>=0&&am<=11?am:null,antesDia:ad,antesHora:hv(d.antes_horario)}}
 function cleanMembro(r){if(!r)return null;return{nome:String(r.nome??'').slice(0,80),org:ORG[r.org]?r.org:'',whats:String(r.whats??'').replace(/\D/g,'').slice(0,15),email:String(r.email??'').slice(0,120),em:Date.parse(r.criado)||0}}
 function cleanAprov(r){if(!r)return null;const st=r.status==='aprovado'||r.status==='recusado'?r.status:null;return st?{status:st,org:ORG[r.org]?r.org:''}:null}
 async function carregar(){
   if(!sb||!myId)return;
-  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado')];
+  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado'),sb.from('avisos').select('*').eq('visto',false).order('criado')];
   if(!isDono){q.push(sb.from('perfis').select('*').eq('id',myId).maybeSingle(),sb.from('aprovacoes').select('*').eq('user_id',myId).maybeSingle())}
-  const [a,ad,sl,pf,ap]=await Promise.all(q);
+  const [a,ad,sl,av,pf,ap]=await Promise.all(q);
   solics=sl&&!sl.error?(sl.data||[]).map(cleanSol).filter(Boolean):[];
+  avisosL=av&&!av.error?(av.data||[]).map(cleanAviso).filter(Boolean):[];
   if(a.error){setStatus('Erro ao carregar',true);toast(traduz(a.error));return}
   acts=(a.data||[]).map(clean).filter(Boolean);items=acts;
   const adm=ad.data||[];adminIds=adm.map(r=>String(r.user_id));
@@ -678,8 +681,12 @@ function aviso(){
       if(partes.length)h=`<p>🔔 ${partes.join(' · ')}.</p><div class="notif">${btns.join('')}</div>`;
     }else if(p==='aprovado'){
       const resp=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto),pend=solics.filter(s=>s.autor===myId&&s.status==='pendente');
-      if(resp.length){
-        h=`<div class="resp" style="width:100%"><p><b>🔔 O administrador respondeu ${resp.length===1?'ao seu pedido':'aos seus pedidos'}:</b></p>${resp.map(s=>{const nm=esc((s.final||s.depois||s.antes).nome||s.antes.nome);let t;
+      if(resp.length||avisosL.length){
+        const tit=resp.length&&avisosL.length?'Novidades nas suas atividades':resp.length?`O administrador respondeu ${resp.length===1?'ao seu pedido':'aos seus pedidos'}`:avisosL.length===1?(avisosL[0].tipo==='agendada'?'Sua atividade foi agendada pelo administrador':'Sua atividade foi remarcada pelo administrador'):'O administrador definiu a data das suas atividades';
+        h=`<div class="resp" style="width:100%"><p><b>🔔 ${tit}:</b></p>${avisosL.map(v=>{const qd=`<b>${fmtData(v.mes,v.dia)}${v.horario?' às '+v.horario:''}</b>`;let t;
+          if(v.tipo==='agendada')t=`📅 <b>Agendada</b>: “${esc(v.nome)}” será em ${qd}.`;
+          else t=`📅 <b>Remarcada</b>: “${esc(v.nome)}”${v.antesMes!==null&&v.antesDia?` saiu de ${fmtData(v.antesMes,v.antesDia)}${v.antesHora?' às '+v.antesHora:''} e`:''} agora é em ${qd}.`;
+          return `<div class="linha"><span>${t}</span><button type="button" class="btn" data-vermes="${v.mes}">Ver no calendário</button></div>`}).join('')}${resp.map(s=>{const nm=esc((s.final||s.depois||s.antes).nome||s.antes.nome);let t;
           if(s.status==='recusado')t=`❌ <b>${s.tipo==='cancelar'?'Cancelamento':'Alteração'} recusado(a)</b>: “${esc(s.antes.nome)}” continua como estava.`;
           else if(s.tipo==='cancelar')t=`✅ <b>Cancelamento aprovado</b>: “${esc(s.antes.nome)}” foi retirada do calendário.`;
           else{const f=s.final||s.depois;t=`✅ <b>Alteração aprovada</b>: “${nm}” agora em <b>${fmtData(f.mes,f.dia)}${f.horario?' às '+f.horario:''}</b>.`}
@@ -691,10 +698,10 @@ function aviso(){
 }
 $('#aviso').addEventListener('click',async e=>{
   const v=e.target.closest('[data-vermes]');if(v){mes=Number(v.dataset.vermes);persistMes();location.hash='calendario';render();return}
-  if(e.target.id==='vistoBtn'){const ids=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).map(s=>s.id);solics=solics.filter(s=>!ids.includes(s.id));render();if(ids.length)await exec(sb.from('solicitacoes').update({visto:true}).in('id',ids))}
+  if(e.target.id==='vistoBtn'){const ids=solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).map(s=>s.id),avs=avisosL.map(v=>v.id);solics=solics.filter(s=>!ids.includes(s.id));avisosL=[];render();if(ids.length)await exec(sb.from('solicitacoes').update({visto:true}).in('id',ids));if(avs.length)await exec(sb.from('avisos').update({visto:true}).in('id',avs))}
 });
 function notifs(){
-  const na=isAdmin?items.filter(i=>!i.dia).length+solics.filter(s=>s.status==='pendente').length:0,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,nr=!isAdmin?solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).length:0;
+  const na=isAdmin?items.filter(i=>!i.dia).length+solics.filter(s=>s.status==='pendente').length:0,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,nr=!isAdmin?solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).length+avisosL.length:0;
   $('#navpend').hidden=!isAdmin;$('#pendcnt').hidden=!na;$('#pendcnt').textContent=na;
   const t='Calendário de Atividades Ala Ceilândia Sul 2027',n=na+nm+nr;document.title=n?`(${n}) ${t}`:t;
 }
