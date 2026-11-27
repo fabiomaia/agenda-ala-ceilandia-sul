@@ -370,6 +370,37 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
 .prox .stt.ok{color:#1f6b3f;border-color:#9fd8b5}.prox .stt.urg{color:#6b4a00;border-color:#f0c040}.prox .stt.fim{color:#8a1f1f;border-color:#f3b4b4}
 :root[data-theme=dark] .prox .stt.ok{color:#6fdc9c}:root[data-theme=dark] .prox .stt.urg{color:#f6d27a}:root[data-theme=dark] .prox .stt.fim{color:#f3b4b4}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .prox .stt.ok{color:#6fdc9c}:root:not([data-theme=light]) .prox .stt.urg{color:#f6d27a}:root:not([data-theme=light]) .prox .stt.fim{color:#f3b4b4}}
+details.respbox>summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+details.respbox>summary::-webkit-details-marker{display:none}
+details.respbox>summary::before{content:"▸";color:var(--mute);transition:transform .15s}details.respbox[open]>summary::before{transform:rotate(90deg)}
+details.respbox .sumt{font-weight:700;font-size:15.5px}
+.pwarn{margin:8px 0 0;color:#8a4a00;font-weight:600}
+:root[data-theme=dark] .pwarn{color:#f6d27a}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .pwarn{color:#f6d27a}}
+.ck{display:grid;gap:6px;margin-top:10px}
+.ck .ci{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.ck .ci label{margin:0;flex:1;display:flex;gap:10px;align-items:center;font-weight:500;cursor:pointer}
+.ck .ci input{width:20px;height:20px;min-height:0;padding:0;margin:0;flex:none;accent-color:var(--pri)}
+.ck .ci{padding:4px 6px 4px 12px}.ck .ci label{min-height:40px;font-size:15px}
+.ck .ci.ok label span{text-decoration:line-through;color:var(--mute)}
+.ck .ci button{border:0;background:none;color:var(--mute);font-size:18px;cursor:pointer;padding:0 4px;min-height:32px}
+.ckadd{display:flex;gap:8px;margin-top:8px}.ckadd input{flex:1}
+.cell .fer{display:block;font-size:10.5px;font-weight:700;color:#b4471b;line-height:1.2;margin:-2px 0 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell.fer .d{color:#b4471b}
+:root[data-theme=dark] .cell .fer,:root[data-theme=dark] .cell.fer .d{color:#f19a66}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .cell .fer,:root:not([data-theme=light]) .cell.fer .d{color:#f19a66}}
+@media(max-width:600px){.cell .fer{display:none}}
+#dgrid button.fer span:first-child{color:#b4471b;font-weight:800}
+.qrbox{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--dim)}
+.qr{width:112px;height:112px;flex:none;background:#fff;border-radius:8px;padding:4px}.qr svg{display:block;width:100%;height:100%}
+.subs{padding:12px;border:1px solid var(--line);border-radius:14px}
+.subsb{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.num-org td,.num-org th{white-space:nowrap}.num-org td.r,.num-org th.r{text-align:right;font-variant-numeric:tabular-nums}
+.num-org input{width:110px;min-height:36px;padding:4px 8px;text-align:right}
+.mbars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:end;height:180px;margin-top:10px}
+.mbars .mb{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
+.mbars .mb i{display:block;width:min(28px,70%);background:var(--pri);border-radius:4px 4px 0 0;min-height:2px}
+.mbars .mb b{font-size:12.5px;font-variant-numeric:tabular-nums}.mbars .mb small{font-size:12px;color:var(--mute)}
+.ntiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .chavebox{display:flex;gap:8px;margin-top:8px}.chavebox input{flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js" integrity="sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ" crossorigin="anonymous"></script>
@@ -393,6 +424,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
         <div class="err" id="aerr" role="alert"></div>
         <p class="okmsg" id="aok" role="status"></p>
         <button class="btn pri" type="submit" id="asubmit">Entrar</button>
+        <button type="button" class="btn" id="alink">✉️ Entrar com link no e-mail, sem senha</button>
         <button type="button" class="lnk" id="aesqueci">Esqueci minha senha</button>
       </form>
     </div>
@@ -411,6 +443,7 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
       <a href="#pendentes" data-v="pendentes" id="navpend" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Pendentes<span class="cnt" id="pendcnt" hidden></span></a>
       <a href="#membros" data-v="membros" id="navmem" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .7 3 2.2 3.5 5"/></svg>Membros<span class="cnt" id="memcnt" hidden></span></a>
       <a href="#historico" data-v="historico" id="navhist" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Histórico</a>
+      <a href="#numeros" data-v="numeros" id="navnum" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V13M10 20V8M16 20v-5M22 20V4"/></svg>Números</a>
     </nav>
     <div class="sidefoot"><span class="role" id="role">…</span><div class="status" id="status"><i></i><span>Carregando…</span></div><div class="me"><span id="meemail"></span><button type="button" id="sair">Sair</button></div></div>
   </aside>
@@ -457,6 +490,27 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
       <div class="err" id="resperr" role="alert"></div>
       <div class="respbtns"><button type="button" class="btn pri" id="rsalvar">Salvar responsáveis</button><button type="button" class="btn" id="rdepois">Preencher depois</button><button type="button" class="btn wa" id="rajuda">🙋 Preciso de ajuda da liderança</button></div>
     </div>
+    <details class="respbox plan" id="fplan" hidden>
+      <summary><span class="sumt">📋 Planejamento</span><span class="small" id="fplanres"></span></summary>
+      <p class="lbl" style="margin:12px 0 6px">🏛️ Espaços do prédio</p>
+      <div class="chips mini" id="pesp"></div>
+      <p class="small pwarn" id="pespconf" hidden></p>
+      <label for="porc">💰 Orçamento previsto (R$)</label><input id="porc" inputmode="decimal" maxlength="12" autocomplete="off" placeholder="Ex.: 150,00" style="max-width:180px">
+      <p class="small" id="porcnota" style="margin:6px 0 0"></p>
+      <label for="pmod">✅ Checklist</label><select id="pmod"></select>
+      <div class="ck" id="pck"></div>
+      <div class="ckadd"><input id="pckn" maxlength="120" autocomplete="off" placeholder="Adicionar item à lista" aria-label="Novo item do checklist"><button type="button" class="btn" id="pckadd">Adicionar</button></div>
+      <div class="err" id="planerr" role="alert"></div>
+      <div class="respbtns"><button type="button" class="btn pri" id="psalvar">Salvar planejamento</button></div>
+    </details>
+    <details class="respbox rel" id="frel" hidden>
+      <summary><span class="sumt">📝 Relatório: como foi?</span><span class="small" id="frelres"></span></summary>
+      <div class="chips" style="margin-top:12px"><label class="chip"><input type="radio" name="rreal" value="1" checked><span>✅ Aconteceu</span></label><label class="chip"><input type="radio" name="rreal" value="0"><span>❌ Não aconteceu</span></label></div>
+      <div class="two" id="relnums"><div><label for="rpres">👥 Presença (pessoas)</label><input id="rpres" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Ex.: 35"></div><div><label for="rgasto">💰 Gasto real (R$)</label><input id="rgasto" inputmode="decimal" maxlength="12" autocomplete="off" placeholder="Ex.: 120,00"></div></div>
+      <label for="robs">💬 Observações</label><textarea id="robs" rows="3" maxlength="1000" placeholder="O que deu certo, o que melhorar, ideias para o próximo ano"></textarea>
+      <div class="err" id="relerr" role="alert"></div>
+      <div class="respbtns"><button type="button" class="btn pri" id="relsalvar">Enviar relatório</button></div>
+    </details>
     <p class="small" id="fdianote"></p>
     <p class="small" id="fprazo" hidden style="margin:-4px 0 0;color:#b7791f;font-weight:600"></p>
     <div><label for="fhora">Horário (24 horas)</label><input id="fhora" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Ex.: 19:00" style="max-width:160px"><p class="small" id="fhoranote" style="margin:6px 0 0"></p></div>
@@ -503,6 +557,10 @@ a.btn{text-decoration:none;color:var(--ink)}a.btn.pri{color:var(--priink)}
     <p class="small" style="margin:-6px 0 0">Qualquer pessoa abre este link, sem login, e vê as atividades que já têm dia definido. A página se atualiza sozinha conforme o calendário muda. O endereço é fixo: pode divulgar no grupo da ala.</p>
     <div><label for="lurl">Link</label><input id="lurl" readonly></div>
     <p class="small" style="margin:0">Dica: para divulgar só uma organização, abra o link, toque no filtro dela e copie o endereço da barra.</p>
+    <div class="qrbox"><div class="qr" id="lqr" role="img" aria-label="QR code do calendário público"></div><p class="small" style="margin:0">Aponte a câmera do celular para abrir o calendário. O QR code também sai no PDF exportado, pronto para o mural da capela.</p></div>
+    <div class="subs"><p class="lbl" style="margin:0 0 4px">📲 Agenda no celular</p><p class="small" style="margin:0 0 10px">Quem assinar vê as atividades com data no Google Agenda ou no calendário do iPhone, e as mudanças chegam sozinhas.</p>
+      <div><label for="lorg">Organização</label><select id="lorg"></select></div>
+      <div class="subsb"><a class="btn" id="lgoogle" target="_blank" rel="noopener">Google Agenda</a><a class="btn" id="lical">iPhone / Outlook</a><button class="btn" type="button" id="lcopics">Copiar link da agenda</button></div></div>
     <div class="mfoot"><button class="btn" type="button" id="lclose">Fechar</button><span class="sp"></span><a class="btn" id="labrir" target="_blank" rel="noopener">Abrir</a><button class="btn pri" type="button" id="lcopiar">Copiar link</button></div>
   </div>
 </div>
@@ -565,7 +623,7 @@ const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:
 const ORGS_LID=ORGS.filter(o=>!ehEspecial(o.k));
 const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
 let ANO=2027,PRAZO='';const LSM='atividades-ala-2027-mes';
-const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes','historico'];let resps={},WHATS_AJUDA='',abrirDepois=null,chaveCriada=null,hist=[],histLim=200,histOrg='todas',histCarregando=false,histErro='';let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
+const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes','historico','numeros'];let planos={},rels={},verbas={},espRes=[],ajudas=[],ajudasOk=false,planoTmp=null;let resps={},WHATS_AJUDA='',abrirDepois=null,chaveCriada=null,hist=[],histLim=200,histOrg='todas',histCarregando=false,histErro='';let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dim=m=>new Date(ANO,m+1,0).getDate();
@@ -596,6 +654,7 @@ function authModo(m){
   $('#asenha').autocomplete=m==='entrar'?'current-password':'new-password';
   $('#asenha').previousElementSibling.textContent=m==='nova'?'Nova senha (mínimo 8 caracteres, com letras e números)':m==='criar'?'Crie uma senha (mínimo 8 caracteres, com letras e números)':'Senha';
   $('#asubmit').textContent={entrar:'Entrar',criar:'Criar conta',esqueci:'Enviar link para redefinir',nova:'Salvar nova senha'}[m];
+  $('#alink').hidden=m!=='entrar';
   $('#aesqueci').textContent=m==='esqueci'?'Voltar para entrar':'Esqueci minha senha';$('#aesqueci').hidden=m==='nova'||m==='criar';
   $('#atop').textContent={entrar:'Entre para ver e marcar as atividades da sua organização.',criar:'Crie sua conta. Depois você preenche o cadastro de líder.',esqueci:'Informe seu e-mail e enviaremos um link para criar uma nova senha.',nova:'Escolha uma nova senha para sua conta.'}[m];
 }
@@ -638,6 +697,16 @@ $('#aform').addEventListener('submit',async ev=>{
   busy=false;$('#asubmit').disabled=false;
 });
 $('#sair').addEventListener('click',async()=>{await sb.auth.signOut()});
+$('#alink').addEventListener('click',async()=>{
+  if(busy)return;const email=$('#aemail').value.trim(),err=$('#aerr'),ok=$('#aok');err.textContent='';ok.textContent='';
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent='Digite seu e-mail acima e toque de novo em “Entrar com link”.';$('#aemail').focus();return}
+  busy=true;$('#alink').disabled=true;
+  try{const r=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:VOLTA}});
+    if(r.error&&/rate limit|security purposes/i.test(r.error.message||''))err.textContent=traduz(r.error);
+    else ok.textContent='Pronto! Se este e-mail tiver conta, enviamos um link de acesso para '+email+'. Abra o e-mail neste aparelho e toque no link para entrar.'}
+  catch(e){err.textContent=traduz(e)}
+  busy=false;$('#alink').disabled=false;
+});
 function mostrarLogin(){$('#auth').hidden=false;document.querySelector('.app').inert=true}
 function mostrarApp(){$('#auth').hidden=true;document.querySelector('.app').inert=false}
 
@@ -657,12 +726,16 @@ function cleanMembro(r){if(!r)return null;return{nome:String(r.nome??'').slice(0
 function cleanAprov(r){if(!r)return null;const st=r.status==='aprovado'||r.status==='recusado'?r.status:null;return st?{status:st,org:ORG[r.org]?r.org:''}:null}
 async function carregar(){
   if(!sb||!myId)return;
-  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado'),sb.from('avisos').select('*').eq('visto',false).order('criado'),sb.from('config').select('chave,valor'),sb.from('responsaveis').select('*'),sb.from('config_priv').select('chave,valor')];
+  const q=[sb.from('atividades').select('*').order('criado'),sb.from('admins').select('user_id,dono'),sb.from('solicitacoes').select('*').or('status.eq.pendente,visto.eq.false').order('criado'),sb.from('avisos').select('*').eq('visto',false).order('criado'),sb.from('config').select('chave,valor'),sb.from('responsaveis').select('*'),sb.from('config_priv').select('chave,valor'),sb.from('planos').select('*'),sb.from('relatorios').select('*'),sb.from('orcamento_org').select('*'),sb.rpc('espacos_reservados')];
   if(!isDono){q.push(sb.from('perfis').select('*').eq('id',myId).maybeSingle(),sb.from('aprovacoes').select('*').eq('user_id',myId).maybeSingle())}
-  const [a,ad,sl,av,cf,rsp,cpv,pf,ap]=await Promise.all(q);
+  const [a,ad,sl,av,cf,rsp,cpv,pl,rl,vb,er,pf,ap]=await Promise.all(q);
   resps={};if(rsp&&!rsp.error)(rsp.data||[]).forEach(r=>{resps[String(r.atividade)]={sacerdocio:String(r.sacerdocio||'').slice(0,120),capela:String(r.capela||'').slice(0,120),limpeza:String(r.limpeza||'').slice(0,120),porNome:String(r.por_nome||'').slice(0,80),atualizado:Date.parse(r.atualizado)||0}});
   WHATS_AJUDA='';if(cpv&&!cpv.error)(cpv.data||[]).forEach(r=>{if(r.chave==='whats_ajuda')WHATS_AJUDA=String(r.valor||'').replace(/\D/g,'')});
   if(cf&&!cf.error)aplicarConfig(cf.data);
+  planos={};if(pl&&!pl.error)(pl.data||[]).forEach(r=>{planos[String(r.atividade)]=cleanPlano(r)});
+  rels={};if(rl&&!rl.error)(rl.data||[]).forEach(r=>{const n=Number(r.presenca),g=r.gasto==null?null:Number(r.gasto);rels[String(r.atividade)]={realizada:r.realizada!==false,presenca:Number.isInteger(n)&&r.presenca!=null?n:null,gasto:Number.isFinite(g)?g:null,obs:String(r.obs||'').slice(0,1000),porNome:String(r.por_nome||'').slice(0,80),atualizado:Date.parse(r.atualizado)||0}});
+  verbas={};if(vb&&!vb.error)(vb.data||[]).forEach(r=>{if(ORG[r.org]&&Number(r.ano)===ANO&&Number.isFinite(Number(r.valor)))verbas[r.org]=Number(r.valor)});
+  espRes=er&&!er.error?(er.data||[]).map(r=>({id:String(r.atividade),mes:Number(r.mes),dia:Number(r.dia)||0,horario:typeof r.horario==='string'?r.horario.slice(0,5):'',nome:String(r.nome||'').slice(0,140),org:ORG[r.org]?r.org:'geral',espacos:(Array.isArray(r.espacos)?r.espacos:[]).filter(e=>ESP[e])})):[];
   solics=sl&&!sl.error?(sl.data||[]).map(cleanSol).filter(Boolean):[];
   avisosL=av&&!av.error?(av.data||[]).map(cleanAviso).filter(Boolean):[];
   if(a.error){setStatus('Erro ao carregar',true);toast(traduz(a.error));return}
@@ -680,6 +753,7 @@ async function carregar(){
   }
   carregado=true;setStatus('Sincronizado');render();
   if(view==='historico'&&isAdmin)carregarHist();
+  if(view==='numeros'&&isAdmin)carregarAjudas();
   if(abrirDepois){const it=items.find(i=>i.id===abrirDepois);abrirDepois=null;if(it){if(it.mes!==mes){mes=it.mes;persistMes();render()}openForm(it)}}
   if(isDono&&view==='membros'&&chaveCriada===null)sb.rpc('chave_lembretes_criada').then(r=>{chaveCriada=r&&!r.error&&r.data?Date.parse(r.data)||0:0;if(view==='membros')render()});
   if(bvEstado==='esperando')bvTexto();
@@ -741,7 +815,7 @@ function vCalendario(){
     const di=list.filter(i=>i.dia===d).sort(ord);
     const pills=di.slice(0,3).map(i=>`<button type="button" class="pill o-${i.org}" data-act="edit" data-id="${esc(i.id)}"${isAdmin?` draggable="true" data-drag="${esc(i.id)}"`:''} title="${i.horario?i.horario+' · ':''}${esc(i.nome)} · ${ORG[i.org].n}"><span>${i.horario?`<b class="hr">${i.horario}</b> `:''}${esc(i.nome)}</span></button>`).join('')+(di.length>3?`<span class="more">+${di.length-3} mais</span>`:'');
     const lab=`${d} de ${MESES[mes]}${di.length?', '+plural(di.length,'atividade','atividades'):''}`;
-    const rsv=reservas(mes,d);cells+=`<div class="cell${di.length?' has':''}${isToday(d)?' today':''}${rsv.length?' res':''}" data-dia="${d}"${rsv.length?` title="Dia reservado: ${esc(rsv.map(x=>x.nome+' ('+ORG[x.org].n+')').join(' · '))}"`:''}>${isAdmin?`<button type="button" class="dn" data-act="pick" data-d="${d}" aria-label="${lab}. Definir atividade para este dia"><span class="d">${d}</span><span class="plus" aria-hidden="true">+</span></button>`:`<span class="dn" style="pointer-events:none" aria-label="${lab}"><span class="d">${d}</span></span>`}<div class="pills">${pills}</div></div>`;
+    const rsv=reservas(mes,d),fe=feriado(mes,d),tt=[fe?(fe.f?'Ponto facultativo: ':'Feriado: ')+fe.n:'',rsv.length?'Dia reservado: '+rsv.map(x=>x.nome+' ('+ORG[x.org].n+')').join(' · '):''].filter(Boolean).join(' — ');cells+=`<div class="cell${di.length?' has':''}${isToday(d)?' today':''}${rsv.length?' res':''}${fe?' fer':''}" data-dia="${d}"${tt?` title="${esc(tt)}"`:''}>${isAdmin?`<button type="button" class="dn" data-act="pick" data-d="${d}" aria-label="${lab}. Definir atividade para este dia"><span class="d">${d}</span><span class="plus" aria-hidden="true">+</span></button>`:`<span class="dn" style="pointer-events:none" aria-label="${lab}"><span class="d">${d}</span></span>`}<div class="pills">${fe?`<span class="fer">🎉 ${esc(fe.n)}</span>`:''}${pills}</div></div>`;
   }
   const tail=(7-(first+n)%7)%7;for(let i=0;i<tail;i++)cells+='<div class="cell out"></div>';
   const all=items.filter(i=>i.mes===mes),com=all.filter(i=>i.dia),orgsCom=new Set(all.map(i=>i.org)),falta=ORGS_LID.filter(o=>!orgsCom.has(o.k));
@@ -851,7 +925,7 @@ function backupHtml(){
 async function baixarBackup(){
   if(!isDono||busy)return;busy=true;const b=$('#backupBtn');if(b){b.disabled=true;b.textContent='Preparando…'}
   try{
-    const tabs=['atividades','solicitacoes','perfis','aprovacoes','admins','config','historico','responsaveis','lembretes_enviados'],dados={};
+    const tabs=['atividades','solicitacoes','perfis','aprovacoes','admins','config','historico','responsaveis','lembretes_enviados','planos','relatorios','orcamento_org'],dados={};
     for(const t of tabs){const r=await sb.from(t).select('*').limit(5000);if(r.error)throw r.error;dados[t]=r.data||[]}
     const hoje=new Date(),d=hoje.toISOString().slice(0,10);
     const arq={site:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:ANO,gerado:hoje.toISOString(),versao:1,contagem:Object.fromEntries(tabs.map(t=>[t,dados[t].length])),tabelas:dados};
@@ -872,6 +946,7 @@ function aviso(){
       if(ns){partes.push(`<b>${plural(ns,'pedido de alteração/cancelamento','pedidos de alteração/cancelamento')}</b> dos líderes`);btns.push('<a class="btn pri" href="#pendentes">Ver pedidos</a>')}
       if(na){const ms=[...new Set(items.filter(i=>!i.dia).map(i=>i.mes))].sort((x,y)=>x-y);partes.push(`<b>${plural(na,'atividade aguarda','atividades aguardam')} dia</b> (${ms.map(m=>AB[m]).join(', ')})`);if(!ns)btns.push('<a class="btn pri" href="#pendentes">Definir dias</a>')}
       if(nm){partes.push(`<b>${plural(nm,'novo líder aguarda','novos líderes aguardam')} aprovação</b>`);btns.push(`<a class="btn${na||ns?'':' pri'}" href="#membros">Ver cadastros</a>`)}
+      const nc=conflitosFuturos().length;if(nc){partes.push(`<b>${plural(nc,'conflito','conflitos')} de espaço</b> no prédio`);if(!btns.length)btns.push('<a class="btn pri" href="#pendentes">Ver</a>')}
       const sr=semRespSemana().length;if(sr){partes.push(`<b>${plural(sr,'atividade da próxima semana está','atividades da próxima semana estão')} sem responsáveis</b>`);if(!btns.length)btns.push('<a class="btn pri" href="#pendentes">Ver</a>')}
       if(partes.length)h=`<p>🔔 ${partes.join(' · ')}.</p><div class="notif">${btns.join('')}</div>`;
     }else if(p==='aprovado'){
@@ -899,7 +974,7 @@ $('#aviso').addEventListener('click',async e=>{
 });
 function notifs(){
   const na=isAdmin?items.filter(i=>!i.dia).length+solics.filter(s=>s.status==='pendente').length:0,nm=isDono?Object.keys(membros).filter(id=>!aprovs[id]).length:0,nr=!isAdmin?solics.filter(s=>s.autor===myId&&s.status!=='pendente'&&!s.visto).length+avisosL.length:0;
-  $('#navpend').hidden=!isAdmin;$('#navhist').hidden=!isAdmin;$('#pendcnt').hidden=!na;$('#pendcnt').textContent=na;
+  $('#navpend').hidden=!isAdmin;$('#navhist').hidden=!isAdmin;$('#navnum').hidden=!isAdmin;$('#pendcnt').hidden=!na;$('#pendcnt').textContent=na;
   const t=`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,n=na+nm+nr;document.title=n?`(${n}) ${t}`:t;
 }
 function vPendentes(){
@@ -911,7 +986,10 @@ function vPendentes(){
   const sp=solics.filter(s=>s.status==='pendente');
   const sr=semRespSemana().sort((x,y)=>diasPara(x)-diasPara(y));
   const respSec=sr.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Sem responsáveis na próxima semana <span class="small">(${sr.length})</span></h3><div class="prox">${sr.map(i=>`<div class="linha"><span>📅 <b>${esc(i.nome)}</b> · <span class="dot o-${i.org}" style="display:inline-flex">${ORG[i.org].n}</span> · ${dataCurta(i)}${i.horario?' às '+i.horario:''} · ${faltamTxt(diasPara(i))} <span class="stt ${respStatus(i).c}">Falta: ${respFalta(i).map(x=>x[2]).join(' ')}</span></span><button type="button" class="btn" data-abrir="${esc(i.id)}">Abrir</button></div>`).join('')}</div></section>`:'';
-  const pedidos=respSec+(sp.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Pedidos dos líderes <span class="small">(${sp.length})</span></h3><div class="mems" style="margin:0">${sp.map(cardPedido).join('')}</div></section>`:'');
+  const rp=relPendentes(),cfs=conflitosFuturos();
+  const relSec=rp.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Relatórios pendentes <span class="small">(${rp.length})</span></h3><div class="prox">${rp.map(i=>`<div class="linha"><span>📝 <b>${esc(i.nome)}</b> · <span class="dot o-${i.org}" style="display:inline-flex">${ORG[i.org].n}</span> · ${dataCurta(i)} · foi há ${-diasPara(i)} ${-diasPara(i)===1?'dia':'dias'}</span><button type="button" class="btn" data-abrir="${esc(i.id)}">Abrir</button></div>`).join('')}</div></section>`:'';
+  const cfSec=cfs.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Conflitos de espaço <span class="small">(${cfs.length})</span></h3><div class="prox">${cfs.map(c=>`<div class="linha"><span>🏛️ <b>${ESP[c.e][1]}</b> · ${c.d} de ${MESES[c.m]}: ${c.l.map(x=>`“${esc(x.nome)}” (${ORG[x.org].n}${x.horario?', '+x.horario:''})`).join(' e ')}</span><button type="button" class="btn" data-abrir="${esc(c.l[0].id)}">Abrir</button></div>`).join('')}</div></section>`:'';
+  const pedidos=cfSec+respSec+relSec+(sp.length?`<section><h3 class="memh" style="font-size:17px;margin:0 0 10px">Pedidos dos líderes <span class="small">(${sp.length})</span></h3><div class="mems" style="margin:0">${sp.map(cardPedido).join('')}</div></section>`:'');
   if(!todos.length)return `<div class="pend">${pedidos}<div class="card cad"><h2>${sp.length?'Nenhuma atividade aguardando dia':'Tudo em dia ✓'}</h2><p class="small">Quando um líder marcar uma atividade, ela aparece aqui com o mês escolhido.</p></div></div>`;
   return `<div class="pend">${pedidos}
     <div class="ptiles"><div class="tile"><b>${todos.length}</b><span>Aguardando dia</span></div><div class="tile"><b>${new Set(todos.map(i=>i.mes)).size}</b><span>Meses</span></div><div class="tile"><b>${Object.keys(cnt).length}</b><span>Organizações</span></div></div>
@@ -939,9 +1017,9 @@ function responderPedido(id,acao){
   if(acao==='recusar')return pergunta({titulo:'Recusar pedido',html:`<p style="margin:0 0 12px">Recusar o pedido de ${s.tipo==='cancelar'?'cancelamento':'alteração'} de <b>${esc(s.antes.nome)}</b>? A atividade continua como está.</p><label for="qresp">Resposta ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off">`,ok:'Recusar pedido',acao:()=>rpc(false,null,undefined,$('#qresp').value.trim())});
   if(s.tipo==='cancelar')return pergunta({titulo:'Confirmar exclusão',html:`<p style="margin:0 0 12px">Excluir <b>${esc(s.antes.nome)}</b> (${fmtData(s.antes.mes,s.antes.dia)}${s.antes.horario?' às '+s.antes.horario:''})? Ela sai do calendário e do calendário público.</p><label for="qresp">Mensagem ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off">`,ok:'Excluir atividade',perigo:true,acao:()=>rpc(true,null,undefined,$('#qresp').value.trim())});
   const D=s.depois,m=D.mes,diaIni=m===s.antes.mes?s.antes.dia:0;
-  let ackRes=0;const ops='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1,oc=items.filter(x=>x.mes===m&&x.dia===d&&x.id!==s.atividade).length,rs=reservas(m,d,s.atividade);return `<option value="${d}"${d===diaIni?' selected':''}>${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}${rs.length?' · reservado: '+esc(rs.map(x=>x.nome).join(', ')):oc?` (${oc} já marcada${oc>1?'s':''})`:''}</option>`}).join('');
+  let ackRes=0;const ops='<option value="0">A definir</option>'+Array.from({length:dim(m)},(_,i)=>{const d=i+1,oc=items.filter(x=>x.mes===m&&x.dia===d&&x.id!==s.atividade).length,rs=reservas(m,d,s.atividade),fe=feriado(m,d);return `<option value="${d}"${d===diaIni?' selected':''}>${d} · ${SEM[new Date(ANO,m,d).getDay()].toLowerCase()}${fe?' · 🎉 '+esc(fe.n):''}${rs.length?' · reservado: '+esc(rs.map(x=>x.nome).join(', ')):oc?` (${oc} já marcada${oc>1?'s':''})`:''}</option>`}).join('');
   pergunta({titulo:'Aprovar alteração',html:`<p style="margin:0 0 12px"><b>${esc(D.nome)}</b> em <b>${MESES[m]}</b>. Confira o dia e o horário antes de aprovar.</p><div class="two"><div><label for="qdia">Dia</label><select id="qdia">${ops}</select></div><div><label for="qhora">Horário (24 horas)</label><input id="qhora" inputmode="numeric" maxlength="5" value="${esc(D.horario||'')}" placeholder="Ex.: 19:00"></div></div><div style="margin-top:12px"><label for="qresp">Mensagem ao líder (opcional)</label><input id="qresp" maxlength="300" autocomplete="off"></div>`,ok:'Aprovar alteração',
-    acao:()=>{const h=$('#qhora').value.trim();if(h&&!validaHora(h)){$('#qerr').textContent='Horário inválido: use 24 horas, de 00:00 a 23:59.';return false}const dd=Number($('#qdia').value)||0,rs=reservas(m,dd,s.atividade);if(rs.length&&ackRes!==dd){ackRes=dd;$('#qerr').innerHTML=`${dd} de ${MESES[m]} já está reservado para ${resTxt(rs)}. Toque de novo em “Aprovar alteração” para agendar mesmo assim.`;return false}return rpc(true,dd||null,h,$('#qresp').value.trim())}});
+    acao:()=>{const h=$('#qhora').value.trim();if(h&&!validaHora(h)){$('#qerr').textContent='Horário inválido: use 24 horas, de 00:00 a 23:59.';return false}const dd=Number($('#qdia').value)||0,al=alertasDia(m,dd,s.atividade);if(dd&&al.tem&&ackRes!==dd){ackRes=dd;$('#qerr').innerHTML=alertasHtml(al)+'Toque de novo em “Aprovar alteração” para agendar mesmo assim.';return false}return rpc(true,dd||null,h,$('#qresp').value.trim())}});
 }
 function openDesignar(id){
   const it=items.find(i=>i.id===id);if(!it||!isAdmin)return;desigId=id;
@@ -950,7 +1028,7 @@ function openDesignar(id){
   $('#dsub').innerHTML=`<span class="dot o-${it.org}">${ORG[it.org].n}</span> · escolha o dia em <b>${MESES[m]} de ${ANO}</b>`;
   let g=SEM.map(s=>`<span class="w">${s}</span>`).join('');for(let i=0;i<first;i++)g+='<span></span>';
   for(let d=1;d<=n;d++){const di=marcadas.filter(i=>i.dia===d),dw=new Date(ANO,m,d).getDay();
-    const rs=reservas(m,d,id);g+=`<button type="button" data-dia="${d}" class="${di.length?'tem':''}${rs.length?' res':''}" aria-label="${d} de ${MESES[m]}${rs.length?', reservado para '+esc(rs.map(x=>x.nome).join(', ')):di.length?', já tem '+plural(di.length,'atividade','atividades'):''}" title="${esc(di.map(i=>i.nome+' ('+ORG[i.org].n+')').join(' · '))}"><span class="${dw===0?'dom':''}">${d}</span><span class="ds">${di.slice(0,4).map(i=>`<i class="o-${i.org}"></i>`).join('')}</span></button>`}
+    const rs=reservas(m,d,id),fe=feriado(m,d),cf=conflitosEsp(m,d,planos[id]?planos[id].espacos:[],id);g+=`<button type="button" data-dia="${d}" class="${di.length?'tem':''}${rs.length?' res':''}${fe?' fer':''}" aria-label="${d} de ${MESES[m]}${fe?', '+esc(fe.n):''}${rs.length?', reservado para '+esc(rs.map(x=>x.nome).join(', ')):di.length?', já tem '+plural(di.length,'atividade','atividades'):''}${cf.length?', espaço já pedido':''}" title="${esc([fe?'🎉 '+fe.n:'',cf.length?'🏛️ Espaço já pedido: '+cf.map(x=>x.nome).join(', '):'',...di.map(i=>i.nome+' ('+ORG[i.org].n+')')].filter(Boolean).join(' · '))}"><span class="${dw===0?'dom':''}">${d}</span><span class="ds">${di.slice(0,4).map(i=>`<i class="o-${i.org}"></i>`).join('')}</span></button>`}
   $('#dgrid').innerHTML=g;
   $('#djam').innerHTML=marcadas.length?`<b style="color:var(--ink)">Já marcadas em ${MESES[m]}:</b>${marcadas.map(i=>`<span>${i.dia} (${SEM[new Date(ANO,m,i.dia).getDay()].toLowerCase()}) · ${esc(i.nome)} · ${ORG[i.org].n}</span>`).join('')}`:`<span>Nenhuma atividade com dia em ${MESES[m]} ainda.</span>`;
   $('#dov').classList.add('on');setTimeout(()=>{const b=$('#dgrid button');if(b)b.focus()},30);
@@ -970,23 +1048,24 @@ function render(){
   if(view==='membros'&&!isDono&&carregado)view='calendario';
   if(view==='pendentes'&&!isAdmin&&carregado)view='calendario';
   if(view==='historico'&&!isAdmin&&carregado)view='calendario';
+  if(view==='numeros'&&!isAdmin&&carregado)view='calendario';
   notifs();
   document.querySelectorAll('nav a').forEach(a=>{if(a.dataset.v===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  $('#titulo').textContent={calendario:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:`Atividades de ${ANO}`,organizacoes:'Resumo por organização',cadastro:'Meu cadastro',membros:'Membros e aprovações',pendentes:'Atividades aguardando dia',historico:'Histórico de mudanças'}[view];
+  $('#titulo').textContent={calendario:`Calendário de Atividades Ala Ceilândia Sul ${ANO}`,ano:`Atividades de ${ANO}`,organizacoes:'Resumo por organização',cadastro:'Meu cadastro',membros:'Membros e aprovações',pendentes:'Atividades aguardando dia',historico:'Histórico de mudanças',numeros:`Números de ${ANO}`}[view];
   $('#filtro').hidden=!['calendario','ano'].includes(view);
   pintaQuem();
   $('#role').textContent=p==='admin'?(isDono?'Administrador (dono)':'Administrador'):p==='aprovado'?'Líder · '+ORG[minhaOrg()].n:p==='carregando'?'…':'Líder (sem aprovação)';
-  $('#sub').textContent=view==='historico'?'Quem criou, mudou ou excluiu cada atividade, e quando. Só administradores veem esta tela.':p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades ${daOrg(minhaOrg())}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
+  $('#sub').textContent=view==='historico'?'Quem criou, mudou ou excluiu cada atividade, e quando. Só administradores veem esta tela.':view==='numeros'?'Atividades, responsáveis, relatórios e orçamento de cada organização. Só administradores veem esta tela.':p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades ${daOrg(minhaOrg())}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
   $('#novo').disabled=!podeAdicionar();$('#novo').title=prazoFechado()&&papel()==='aprovado'?'O prazo para propor atividades terminou':'';
   pintaPrazo();
   $('#meemail').textContent=meEmail;
   aviso();
-  const ae=document.activeElement,keep=ae&&((view==='cadastro'&&ae.closest('#cadform'))||(view==='membros'&&ae.closest('#cfgform')));
-  if(!keep)$('#view').innerHTML=view==='ano'?vAno():view==='organizacoes'?vOrg():view==='cadastro'?vCadastro():view==='membros'?vMembros():view==='pendentes'?vPendentes():view==='historico'?vHistorico():vCalendario();
+  const ae=document.activeElement,keep=ae&&((view==='cadastro'&&ae.closest('#cadform'))||(view==='membros'&&ae.closest('#cfgform'))||(view==='numeros'&&ae.closest('#verbaform')));
+  if(!keep)$('#view').innerHTML=view==='ano'?vAno():view==='organizacoes'?vOrg():view==='cadastro'?vCadastro():view==='membros'?vMembros():view==='pendentes'?vPendentes():view==='historico'?vHistorico():view==='numeros'?vNumeros():vCalendario();
   flash=null;
   if($('#pov').classList.contains('on'))renderPick();
 }
-function route(){let h=location.hash.slice(1);if(h.startsWith('atividade=')){abrirDepois=decodeURIComponent(h.slice(10));h='calendario';try{history.replaceState(null,'','#calendario')}catch(e){}if(carregado){const it=items.find(i=>i.id===abrirDepois);abrirDepois=null;if(it){mes=it.mes;persistMes();view='calendario';render();openForm(it);return}}}view=VIEWS.includes(h)?h:'calendario';render();if(view==='historico'&&isAdmin&&!histCarregando)carregarHist()}
+function route(){let h=location.hash.slice(1);if(h.startsWith('atividade=')){abrirDepois=decodeURIComponent(h.slice(10));h='calendario';try{history.replaceState(null,'','#calendario')}catch(e){}if(carregado){const it=items.find(i=>i.id===abrirDepois);abrirDepois=null;if(it){mes=it.mes;persistMes();view='calendario';render();openForm(it);return}}}view=VIEWS.includes(h)?h:'calendario';render();if(view==='historico'&&isAdmin&&!histCarregando)carregarHist();if(view==='numeros'&&isAdmin)carregarAjudas()}
 
 /* ================= ESCRITA ================= */
 async function exec(promise,msgErro){
@@ -996,12 +1075,18 @@ async function exec(promise,msgErro){
 async function setDia(id,dia,hora){if(!isAdmin)return false;const up={dia:dia||null};if(hora!==undefined)up.horario=hora||null;return !!await exec(sb.from('atividades').update(up).eq('id',id))}
 const reservas=(m,d,exceto)=>d?items.filter(i=>ehEspecial(i.org)&&i.mes===m&&i.dia===d&&i.id!==exceto):[];
 const resTxt=l=>l.map(i=>`<b>${esc(i.nome)}</b> (${ORG[i.org].n}${i.horario?', '+i.horario:''})`).join(', ');
-function confirmarReserva(l,m,d,seguir){
-  return pergunta({titulo:'Dia reservado',html:`<p style="margin:0 0 10px">${d} de ${MESES[m]} já está reservado para ${resTxt(l)}.</p><p class="small" style="margin:0">Atividades da Estaca e da Igreja Geral reservam o dia para as organizações da ala. Você pode agendar mesmo assim, se for o caso.</p>`,ok:'Agendar mesmo assim',acao:async()=>{await seguir();return true}});
+function alertasDia(m,d,id,esp){const r=reservas(m,d,id),f=feriado(m,d),pl=esp||(id&&planos[id]?planos[id].espacos:[]),c=conflitosEsp(m,d,pl,id);return{r,f,c,tem:!!(r.length||f||c.length)}}
+function alertasHtml(a){const p=[];
+  if(a.r.length)p.push(`📌 Dia reservado para ${resTxt(a.r)}. Atividades da Estaca e da Igreja Geral reservam o dia para as organizações da ala.`);
+  if(a.f)p.push(`🎉 É ${a.f.f?'ponto facultativo':'feriado'}: <b>${esc(a.f.n)}</b>. Muitas famílias viajam ou têm outros compromissos.`);
+  if(a.c.length)p.push(`🏛️ Espaço já pedido no mesmo dia: ${a.c.map(x=>`<b>${esc(x.comuns.map(e=>ESP[e][1]).join(', '))}</b> por “${esc(x.nome)}” (${ORG[x.org].n}${x.horario?', '+x.horario:''})`).join('; ')}.`);
+  return p.map(t=>`<p style="margin:0 0 10px">${t}</p>`).join('')}
+function confirmarDia(a,m,d,seguir){
+  return pergunta({titulo:`Atenção: ${d} de ${MESES[m]}`,html:alertasHtml(a)+'<p class="small" style="margin:0">Você pode agendar mesmo assim, se for o caso.</p>',ok:'Agendar mesmo assim',acao:async()=>{await seguir();return true}});
 }
 async function moverPara(id,dia,hora,forcar){
   const it=items.find(i=>i.id===id);if(!it)return;
-  if(dia&&!forcar&&dia!==it.dia){const r=reservas(it.mes,dia,id);if(r.length)return confirmarReserva(r,it.mes,dia,()=>moverPara(id,dia,hora,true))}
+  if(dia&&!forcar&&dia!==it.dia){const a=alertasDia(it.mes,dia,id);if(a.tem)return confirmarDia(a,it.mes,dia,()=>moverPara(id,dia,hora,true))}
   if((dia||0)===it.dia&&(hora===undefined||hora===(it.horario||'')))return;
   const tinha=it.dia;it.dia=dia||0;if(hora!==undefined)it.horario=hora;render();
   if(await setDia(id,dia,hora)){flash=id;const wa=dia&&it.autor&&it.autor!==myId?acaoWa(it.autor,msgLider(tinha?'remarcada':'agendada',it)):null;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}${it.horario?' às '+it.horario:''}`:`“${it.nome}” voltou a aguardar data`,false,wa)}
@@ -1041,7 +1126,7 @@ function openForm(it){
   document.querySelectorAll('input[name=org]').forEach(r=>{r.checked=it?r.value===it.org:mo?r.value===mo:filtro!=='todas'&&r.value===filtro;if(formModo==='pedido')r.disabled=true;else if(mo&&editavel&&!isAdmin)r.disabled=r.value!==mo});
   document.querySelectorAll('#forgs label').forEach(l=>{const v=l.querySelector('input').value;l.hidden=ehEspecial(v)&&!isAdmin&&!(it&&it.org===v)});
   $('#fmotivow').hidden=formModo!=='pedido';
-  pintaResp(it);
+  pintaResp(it);pintaPlano(it);pintaRel(it);
   $('#fdel').hidden=!['admin','pedido','direto'].includes(formModo);$('#fdel').textContent=formModo==='pedido'?'Pedir cancelamento':'Excluir';
   $('#fsave').hidden=!editavel;$('#fsave').textContent=formModo==='pedido'?'Enviar pedido':'Salvar';
   $('#fdesistir').hidden=formModo!=='pendente';
@@ -1065,7 +1150,7 @@ $('#form').addEventListener('submit',async ev=>{
   if(formModo==='pedido'&&it.mes===m&&it.nome===nome&&(it.horario||'')===hora&&it.detalhes===$('#fdet').value.trim()){$('#ferr').textContent='Nada foi alterado. Mude o mês, o horário, o nome ou o local antes de enviar o pedido.';return}
   if(!isAdmin&&mudouMes&&s==='passado'){$('#ferr').textContent='Este mês já passou. Escolha outro mês.';$('#fmes').focus();return}
   const seguir0=mm=>formModo==='pedido'?enviarPedido(mm):salvarAtividade(mm);
-  const seguir=mm=>{const d=isAdmin?Number($('#fdia').value)||0:0;if(d&&(!it||it.dia!==d||it.mes!==mm)){const r=reservas(mm,d,editId);if(r.length)return confirmarReserva(r,mm,d,()=>seguir0(mm))}return seguir0(mm)};
+  const seguir=mm=>{const d=isAdmin?Number($('#fdia').value)||0:0;if(d&&(!it||it.dia!==d||it.mes!==mm)){const a=alertasDia(mm,d,editId);if(a.tem)return confirmarDia(a,mm,d,()=>seguir0(mm))}return seguir0(mm)};
   if(!isAdmin&&mudouMes&&s==='curto'){confirmarPrazo(m,seguir);return}
   await seguir(m);
 });
@@ -1267,7 +1352,8 @@ function drawGrid(c,x,y,w,h,m,list,s){
     if(d<1||d>n){c.fillStyle='#f7f9f8';c.fillRect(cx,cy,cw,ch);continue}
     const di=list.filter(i=>i.dia===d);
     if(di.length){c.fillStyle=rgba(PINE,.035);c.fillRect(cx,cy,cw,ch)}
-    fnt(c,700,15*s);c.fillStyle=di.length?INK:'#7c8a87';c.fillText(String(d),cx+8*s,cy+20*s);
+    const fe=feriado(m,d);fnt(c,700,15*s);c.fillStyle=fe?'#b4471b':di.length?INK:'#7c8a87';c.fillText(String(d),cx+8*s,cy+20*s);
+    if(fe){const dw=c.measureText(String(d)).width;fnt(c,600,10.5*s);c.fillStyle='#b4471b';c.fillText(ellip(c,fe.n,cw-dw-22*s),cx+14*s+dw,cy+19*s)}
     const top=cy+28*s,bottom=cy+ch-6*s,px=cx+5*s,pw=cw-10*s,lhT=15*s;let py=top,shown=0;
     fnt(c,600,12.5*s);
     for(let j=0;j<di.length;j++){
@@ -1332,6 +1418,7 @@ function canvasPDFPage(sel,m){
   drawGrid(x,pad,gy,gw,gh,m,list,s);
   const lx=pad+gw+40*s;fnt(x,700,18*s);x.fillStyle=INK;x.fillText('Atividades do mês',lx,gy+18*s);
   drawList(x,lx,gy+38*s,lw,list,s,gh-40*s,false);
+  drawQR(x,W-pad-118*s,22*s,118*s,s);
   drawLegend(x,pad,H-36*s,s,legendaOrgs(sel));
   fnt(x,500,12.5*s);x.fillStyle=MUTE;x.textAlign='right';x.fillText('Só aparecem atividades com dia definido pelo administrador.',W-pad,H-36*s);x.textAlign='left';
   return c;
@@ -1345,7 +1432,7 @@ function canvasPNG(sel){
   const top=150*s,H=Math.ceil(top+rowsH.reduce((a,b)=>a+b+gap,0)+60*s);
   const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle=PINE;x.fillRect(0,0,W,12*s);
-  drawHeader(x,pad,34*s,W-2*pad,s,subtitulo(sel));drawLegend(x,pad,122*s,s,legendaOrgs(sel));
+  drawHeader(x,pad,34*s,W-2*pad,s,subtitulo(sel));drawLegend(x,pad,122*s,s,legendaOrgs(sel));drawQR(x,W-pad-104*s,18*s,104*s,s);
   let y=top;
   blocks.forEach((b,i)=>{const col=i%cols,bx=pad+col*(cw+gap);if(i&&col===0)y+=rowsH[Math.floor(i/cols)-1]+gap;
     fnt(x,800,28*s);x.fillStyle=PINE;x.fillText(MESES[b.m],bx,y+30*s);const mw=x.measureText(MESES[b.m]).width;
@@ -1392,7 +1479,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#eov').classList.
 /* ================= LINK PÚBLICO ================= */
 const LINK_PUBLICO=location.origin+'/publico/';
 $('#lurl').value=LINK_PUBLICO;$('#labrir').href=LINK_PUBLICO;
-$('#publico').addEventListener('click',()=>{$('#lov').classList.add('on');setTimeout(()=>$('#lcopiar').focus(),30)});
+$('#lorg').innerHTML='<option value="">Todas as organizações</option>'+orgOpts('',false);
+function icsUrl(org){return location.origin+(org?'/agenda/'+org+'.ics':'/agenda.ics')}
+function pintaAssinar(){const u=icsUrl($('#lorg').value),w=u.replace(/^https?:/,'webcal:');$('#lical').href=w;$('#lgoogle').href='https://calendar.google.com/calendar/render?cid='+encodeURIComponent(w)}
+pintaAssinar();$('#lorg').addEventListener('change',pintaAssinar);
+$('#lcopics').addEventListener('click',async()=>{const u=icsUrl($('#lorg').value);try{await navigator.clipboard.writeText(u);toast('Link da agenda copiado')}catch(e){toast(u)}});
+$('#publico').addEventListener('click',()=>{if(!$('#lqr').firstChild)$('#lqr').innerHTML=qrSvg();$('#lov').classList.add('on');setTimeout(()=>$('#lcopiar').focus(),30)});
 $('#lcopiar').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(LINK_PUBLICO);toast('Link copiado — cole no grupo da ala')}catch(e){$('#lurl').select();toast('Selecionei o link: copie com Ctrl+C')}});
 $('#lurl').addEventListener('focus',e=>e.target.select());
 $('#lclose').addEventListener('click',()=>$('#lov').classList.remove('on'));
@@ -1448,8 +1540,9 @@ const faltamTxt=dd=>dd===0?'é hoje':dd===1?'é amanhã':dd===7?'falta 1 semana'
 function proximasHtml(){
   if(papel()!=='aprovado')return '';
   const l=items.filter(i=>i.dia&&podeResp(i)&&(i.org===minhaOrg()||i.autor===myId)).map(i=>[i,diasPara(i)]).filter(([,d])=>d>=0&&d<=30).sort((x,y)=>x[1]-y[1]);
-  if(!l.length)return '';
-  return `<div class="prox"><p style="margin:0"><b>⏰ Suas próximas atividades</b></p>${l.map(([i,d])=>{const s=respStatus(i);return `<div class="linha"><span>📅 <b>${esc(i.nome)}</b> · ${dataCurta(i)}${i.horario?' às '+i.horario:''} · ${faltamTxt(d)} <span class="stt ${s.c}">${s.t}</span></span><button type="button" class="btn" data-abrir="${esc(i.id)}">${d<=7&&respFalta(i).length?'Designar responsáveis':'Abrir'}</button></div>`}).join('')}</div>`;
+  const rp=items.filter(i=>i.dia&&podeResp(i)&&(i.org===minhaOrg()||i.autor===myId)&&!rels[i.id]).map(i=>[i,diasPara(i)]).filter(([,d])=>d<0&&d>=-21).sort((x,y)=>y[1]-x[1]);
+  if(!l.length&&!rp.length)return '';
+  return `<div class="prox">${l.length?`<p style="margin:0"><b>⏰ Suas próximas atividades</b></p>${l.map(([i,d])=>{const s=respStatus(i),ck=ckResumo(i.id);return `<div class="linha"><span>📅 <b>${esc(i.nome)}</b> · ${dataCurta(i)}${i.horario?' às '+i.horario:''} · ${faltamTxt(d)} <span class="stt ${s.c}">${s.t}</span>${ck?` <span class="stt${ck.ok===ck.tot?' ok':''}">📋 ${ck.ok}/${ck.tot}</span>`:''}</span><button type="button" class="btn" data-abrir="${esc(i.id)}">${d<=7&&respFalta(i).length?'Designar responsáveis':'Abrir'}</button></div>`}).join('')}`:''}${rp.length?`<p style="margin:${l.length?'8px':'0'} 0 0"><b>📝 Conte como foi</b></p>${rp.map(([i,d])=>`<div class="linha"><span>✔️ <b>${esc(i.nome)}</b> · ${dataCurta(i)} · ${d===-1?'foi ontem':'foi há '+(-d)+' dias'}</span><button type="button" class="btn pri" data-abrir="${esc(i.id)}">Enviar relatório</button></div>`).join('')}`:''}</div>`;
 }
 function semRespSemana(){return items.filter(i=>i.dia&&!ehEspecial(i.org)).filter(i=>{const d=diasPara(i);return d>=0&&d<=7&&respFalta(i).length})}
 function pintaResp(it){
@@ -1479,9 +1572,9 @@ async function salvarResp(parcial){
 }
 $('#rsalvar').addEventListener('click',()=>salvarResp(false));
 $('#rdepois').addEventListener('click',()=>salvarResp(true));
-$('#rajuda').addEventListener('click',()=>{const it=items.find(i=>i.id===editId);if(!it)return;const vals={sacerdocio:$('#rsac').value.trim(),capela:$('#rcap').value.trim(),limpeza:$('#rlim').value.trim()};const f=RCAMPOS.filter(([k])=>!vals[k]),s=quemSou();
+$('#rajuda').addEventListener('click',()=>{const it=items.find(i=>i.id===editId);if(!it)return;const vals={sacerdocio:$('#rsac').value.trim(),capela:$('#rcap').value.trim(),limpeza:$('#rlim').value.trim()};const f=RCAMPOS.filter(([k])=>!vals[k]),s=quemSou();sb.rpc('registrar_ajuda',{p_atividade:it.id,p_faltam:f.map(x=>x[1]).join(', ')}).then(()=>{},()=>{});
   waAbrir(WHATS_AJUDA,`Olá! Sou ${s.nome||'líder'}${s.pres?', '+s.pres:''}.\nPreciso de ajuda da liderança para designar responsáveis da atividade “${it.nome}” (${quandoTxt(it)}):\n${f.map(([,l,e])=>`${e} ${l}`).join('\n')}\n\nObrigado!`)});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('#frespcampos')){e.preventDefault()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&(e.target.closest('#frespcampos')||((e.target.closest('#fplan')||e.target.closest('#frel'))&&e.target.tagName==='INPUT'))){e.preventDefault();if(e.target.id==='pckn')$('#pckadd').click()}});
 
 /* ================= WHATSAPP ================= */
 function waAbrir(num,txt){window.open('https://wa.me/'+String(num||'').replace(/\D/g,'')+'?text='+encodeURIComponent(txt),'_blank','noopener')}
@@ -1501,6 +1594,145 @@ function msgLider(tipo,it,extra){
 }
 function msgCompartilhar(it){return `📅 ${it.nome}${ORG[it.org]?' — '+ORG[it.org].n:''}\n${quandoTxt(it)}${it.detalhes?'\n📍 '+it.detalhes:''}\n\nCalendário da ala: ${LINK_PUBLICO}`}
 const acaoWa=(uid,txt)=>({label:'Avisar no WhatsApp',fn:()=>waAbrir(liderContato(uid).num,txt)});
+
+/* ================= FERIADOS (nacionais e do DF) ================= */
+const ferCache={};
+function feriados(y){
+  if(ferCache[y])return ferCache[y];
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,mm=Math.floor((a+11*h+22*l)/451);
+  const pascoa=new Date(y,Math.floor((h+l-7*mm+114)/31)-1,((h+l-7*mm+114)%31)+1),rel=n=>new Date(y,pascoa.getMonth(),pascoa.getDate()+n),out={};
+  const add=(dt,n,fac)=>{out[dt.getMonth()+'-'+dt.getDate()]={n,f:!!fac}};
+  [[0,1,'Confraternização Universal'],[3,21,'Tiradentes e Fundação de Brasília'],[4,1,'Dia do Trabalho'],[8,7,'Independência do Brasil'],[9,12,'Nossa Senhora Aparecida'],[10,2,'Finados'],[10,15,'Proclamação da República'],[10,20,'Consciência Negra'],[10,30,'Dia do Evangélico (DF)'],[11,25,'Natal']].forEach(([m,dd,n])=>add(new Date(y,m,dd),n));
+  add(rel(-48),'Carnaval',1);add(rel(-47),'Carnaval',1);add(rel(-46),'Quarta-feira de Cinzas',1);add(rel(-2),'Sexta-feira Santa');add(rel(60),'Corpus Christi',1);
+  return ferCache[y]=out}
+const feriado=(m,d)=>d?feriados(ANO)[m+'-'+d]||null:null;
+
+/* ================= QR CODE DO CALENDÁRIO PÚBLICO ================= */
+const QRN=33,QRM='111111101110110011111101001111111100000101101110001001001001000001101110100110100100111001101011101101110101111101011010011101011101101110100001001001010010101011101100000100011111000010000001000001111111101010101010101010101111111000000001000101001100000100000000101101110011001011000101001001011011110000100100010111101001101111001010100011001010000001111111011101010000010011010110010100101000111001110000000101000010110111011111010011010010010010010010101010001110110001001110110010001001100111101000000110010010110011001100110100110001100100101110011010100010101011011111101001001111011011100001101111010101001100100110100001010001001010011100001100010011000000100010001101000111000101110110001011111010100111101001001101001001111000110010000101101010011011101010101101010111010101101010101101101011100101000010111110001000000001100111110011101100011000111111101110000001111101101010000100000101010111100011111100011110101110100000000101010111111110100101110101110001000001101000101101101110101110101000000100101100100100000100000000111101011101111001111111101100110111110101001010100';
+function qrSvg(){let d='';for(let r=0;r<QRN;r++)for(let c=0;c<QRN;c++)if(QRM.charCodeAt(r*QRN+c)===49)d+=`M${c+4} ${r+4}h1v1h-1z`;return `<svg viewBox="0 0 ${QRN+8} ${QRN+8}" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#111"/></svg>`}
+function drawQR(c,x,y,size,s){const u=size/(QRN+8);c.fillStyle='#fff';rr(c,x,y,size,size,8*s);c.fill();c.strokeStyle=LINE;c.lineWidth=1.5*s;c.stroke();c.fillStyle='#111';
+  for(let r=0;r<QRN;r++)for(let k=0;k<QRN;k++)if(QRM.charCodeAt(r*QRN+k)===49)c.fillRect(Math.floor(x+(k+4)*u),Math.floor(y+(r+4)*u),Math.ceil(u),Math.ceil(u));
+  fnt(c,600,11*s);c.fillStyle=MUTE;c.textAlign='center';c.fillText('Calendário sempre atualizado',x+size/2,y+size+15*s);c.textAlign='left'}
+
+/* ================= PLANEJAMENTO: ESPAÇOS, ORÇAMENTO, CHECKLIST ================= */
+const ESPACOS=[['capela','Capela','⛪'],['salao','Salão cultural','🎭'],['salas','Salas de aula','🏫'],['cozinha','Cozinha','🍳'],['patio','Área externa / quadra','🌳'],['batisterio','Batistério','💧']];
+const ESP=Object.fromEntries(ESPACOS.map(e=>[e[0],e]));
+const MODELOS={
+  acampamento:{n:'Acampamento',p:/acamp/i,itens:['Autorização dos pais ou responsáveis','Ficha médica e contato de emergência','Pelo menos 2 adultos responsáveis','Local reservado e confirmado','Transporte e motoristas','Alimentação e água','Kit de primeiros socorros']},
+  batismo:{n:'Batismo',p:/batism/i,itens:['Entrevista batismal marcada','Fonte batismal limpa e cheia com antecedência','Roupas brancas e toalhas','Testemunhas designadas','Discursantes e orações designados','Programa impresso','Registro do batismo']},
+  comida:{n:'Atividade com comida',p:/lanche|jantar|almoço|almoco|churrasco|festa|confraterniz|piquenique|café|cafe|ceia|bolo/i,itens:['Cardápio definido','Quem traz o quê','Pratos, copos e talheres','Cozinha reservada','Limpeza da cozinha e do lixo']},
+  passeio:{n:'Passeio ou viagem',p:/passeio|viagem|excurs|visita|templo|trilha/i,itens:['Autorização dos pais ou responsáveis','Pelo menos 2 adultos responsáveis','Transporte e motoristas','Horário de saída e de volta divulgado','Lista de presença','Contato de emergência']},
+  servico:{n:'Projeto de serviço',p:/servi[çc]o|servir|doa[çc]|mutir|caridade/i,itens:['Instituição ou local contatado','Materiais e ferramentas','Transporte','Divulgação na ala','Fotos com autorização']},
+  esporte:{n:'Atividade esportiva',p:/futebol|v[oô]lei|basquete|esporte|olimp|gincana|jogo|corrida/i,itens:['Quadra ou local reservado','Material (bolas, coletes, apito)','Água','Kit de primeiros socorros','Adulto responsável pela segurança']},
+  devocional:{n:'Devocional, aula ou palestra',p:/devocional|aula|palestra|ser[ãa]o|workshop|oficina|treinamento/i,itens:['Orador ou professor confirmado','Oração e hinos escolhidos','Equipamento (som, projetor)','Divulgação na ala']}
+};
+const sugerirModelo=n=>Object.keys(MODELOS).find(k=>MODELOS[k].p.test(n||''))||'';
+function cleanPlano(r){const o=Number(r.orcamento);return{espacos:(Array.isArray(r.espacos)?r.espacos:[]).filter(e=>ESP[e]),orcamento:r.orcamento==null||!Number.isFinite(o)?null:o,modelo:MODELOS[r.modelo]||r.modelo==='proprio'?r.modelo:'',checklist:(Array.isArray(r.checklist)?r.checklist:[]).filter(x=>x&&typeof x.t==='string'&&x.t.trim()).slice(0,30).map(x=>({t:x.t.trim().slice(0,120),ok:x.ok===true})),atualizado:Date.parse(r.atualizado)||0}}
+const reais=v=>v==null?'—':v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmtNum=v=>v==null?'':v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function lerValor(t){t=String(t||'').replace(/R\$|\s/g,'');if(!t)return null;if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');else if((t.match(/\./g)||[]).length>1||/\.\d{3}$/.test(t))t=t.replace(/\./g,'');if(!/^\d+(\.\d{1,2})?$/.test(t))return NaN;const v=Number(t);return v>1000000?NaN:v}
+function ckResumo(id){const p=planos[id];if(!p||!p.checklist.length)return null;return{tot:p.checklist.length,ok:p.checklist.filter(x=>x.ok).length}}
+function conflitosEsp(m,d,esp,exceto){if(!d||!esp||!esp.length)return [];return espRes.filter(x=>x.id!==exceto&&x.mes===m&&x.dia===d&&x.espacos.some(e=>esp.includes(e))&&items.some(i=>i.id===x.id)).map(x=>({...x,comuns:x.espacos.filter(e=>esp.includes(e))}))}
+function conflitosFuturos(){const g={};espRes.forEach(x=>{if(!x.dia||!items.some(i=>i.id===x.id))return;const dd=Math.round((new Date(ANO,x.mes,x.dia)-hojeData())/864e5);if(dd<0)return;x.espacos.forEach(e=>{const k=x.mes+'-'+x.dia+'-'+e;(g[k]=g[k]||{m:x.mes,d:x.dia,e,l:[]}).l.push(x)})});return Object.values(g).filter(c=>c.l.length>1).sort((a,b)=>a.m-b.m||a.d-b.d)}
+function previstoOrg(org){return items.filter(i=>i.org===org&&planos[i.id]&&planos[i.id].orcamento!=null).reduce((t,i)=>t+planos[i.id].orcamento,0)}
+function comprometidoOrg(org){return items.filter(i=>i.org===org).reduce((t,i)=>{const r=rels[i.id],p=planos[i.id];return t+(r&&r.gasto!=null?r.gasto:r&&!r.realizada?0:p&&p.orcamento!=null?p.orcamento:0)},0)}
+function gastoOrg(org){return items.filter(i=>i.org===org&&rels[i.id]&&rels[i.id].gasto!=null).reduce((t,i)=>t+rels[i.id].gasto,0)}
+function planoResumo(p){const ck=p.checklist.length?`${p.checklist.filter(x=>x.ok).length}/${p.checklist.length} itens`:'';return [p.espacos.map(e=>ESP[e][1]).join(', '),p.orcamento!=null?reais(p.orcamento):'',ck].filter(Boolean).join(' · ')||'Espaços, orçamento e checklist'}
+function pintaPlano(it){
+  const P=$('#fplan');$('#planerr').textContent='';
+  if(!it||!podeResp(it)){P.hidden=true;planoTmp=null;return}
+  const p=planos[it.id]||{espacos:[],orcamento:null,modelo:'',checklist:[]};
+  planoTmp={id:it.id,espacos:[...p.espacos],modelo:p.modelo,checklist:p.checklist.map(x=>({...x})),salvo:!!planos[it.id]};
+  if(!p.modelo&&!p.checklist.length){const sg=sugerirModelo(it.nome);if(sg){planoTmp.modelo=sg;planoTmp.checklist=MODELOS[sg].itens.map(t=>({t,ok:false}))}}
+  P.hidden=false;$('#porc').value=fmtNum(p.orcamento);
+  P.querySelectorAll('input,select,button').forEach(e=>e.disabled=false);
+  const dd=diasPara(it);P.open=dd!==null&&dd>=0&&dd<=30;
+  $('#fplanres').textContent=planos[it.id]?planoResumo(p):'Espaços, orçamento e checklist';
+  pintaPlanoCorpo();
+}
+function pintaPlanoCorpo(){
+  const t=planoTmp,it=t&&items.find(i=>i.id===t.id);if(!t||!it)return;
+  $('#pesp').innerHTML=ESPACOS.map(([k,n,e])=>`<label class="chip"><input type="checkbox" data-esp="${k}"${t.espacos.includes(k)?' checked':''}><span>${e} ${n}</span></label>`).join('');
+  const cf=conflitosEsp(it.mes,it.dia,t.espacos,it.id);
+  $('#pespconf').hidden=!cf.length;$('#pespconf').innerHTML=cf.length?`⚠️ No mesmo dia: ${cf.map(x=>`<b>${esc(x.comuns.map(e=>ESP[e][1]).join(', '))}</b> já pedido por “${esc(x.nome)}” (${ORG[x.org].n}${x.horario?', '+x.horario:''})`).join('; ')}. Combine com a outra organização ou com a liderança.`:'';
+  $('#pmod').innerHTML='<option value="">Sem checklist</option>'+Object.entries(MODELOS).map(([k,m])=>`<option value="${k}"${t.modelo===k?' selected':''}>${m.n}</option>`).join('')+`<option value="proprio"${t.modelo==='proprio'?' selected':''}>Minha lista</option>`;
+  $('#pck').innerHTML=t.checklist.map((x,i)=>`<div class="ci${x.ok?' ok':''}"><label><input type="checkbox" data-ck="${i}"${x.ok?' checked':''}><span>${esc(x.t)}</span></label><button type="button" data-ckdel="${i}" aria-label="Tirar “${esc(x.t)}” da lista" title="Tirar da lista">×</button></div>`).join('')+(t.checklist.length?'':'<p class="small" style="margin:0">Escolha um modelo ou adicione seus próprios itens.</p>');
+  const v=verbas[it.org];$('#porcnota').textContent=v!=null?`Verba anual ${daOrg(it.org)}: ${reais(v)} · previsto no ano: ${reais(previstoOrg(it.org))} · saldo: ${reais(v-comprometidoOrg(it.org))}`:'Valor que a atividade deve custar. Ajuda o bispado a acompanhar o orçamento.';
+}
+$('#fplan').addEventListener('change',e=>{const t=planoTmp;if(!t)return;
+  if(e.target.dataset.esp){const k=e.target.dataset.esp;t.espacos=e.target.checked?[...new Set([...t.espacos,k])]:t.espacos.filter(x=>x!==k);pintaPlanoCorpo()}
+  else if(e.target.id==='pmod'){const k=e.target.value;t.modelo=k;if(MODELOS[k]){const ja=new Map(t.checklist.map(x=>[x.t,x.ok]));t.checklist=MODELOS[k].itens.map(x=>({t:x,ok:!!ja.get(x)}))}else if(!k)t.checklist=[];pintaPlanoCorpo()}
+  else if(e.target.dataset.ck!==undefined){const x=t.checklist[Number(e.target.dataset.ck)];if(x){x.ok=e.target.checked;e.target.closest('.ci').classList.toggle('ok',x.ok);if(t.salvo)salvarPlano(true)}}});
+$('#fplan').addEventListener('click',e=>{const t=planoTmp;if(!t)return;const del=e.target.closest('[data-ckdel]');if(del){t.checklist.splice(Number(del.dataset.ckdel),1);if(t.modelo&&t.modelo!=='proprio')t.modelo='proprio';pintaPlanoCorpo()}});
+$('#pckadd').addEventListener('click',()=>{const t=planoTmp,v=$('#pckn').value.trim();if(!t||!v)return;if(t.checklist.length>=30){$('#planerr').textContent='A lista pode ter até 30 itens.';return}t.checklist.push({t:v.slice(0,120),ok:false});if(t.modelo!=='proprio'&&MODELOS[t.modelo])t.modelo='proprio';else if(!t.modelo)t.modelo='proprio';$('#pckn').value='';pintaPlanoCorpo();$('#pckn').focus()});
+async function salvarPlano(quieto){
+  const t=planoTmp;if(!t||(busy&&!quieto))return;$('#planerr').textContent='';
+  const orc=lerValor($('#porc').value);if(Number.isNaN(orc)){if(!quieto){$('#planerr').textContent='Orçamento inválido: use só números, por exemplo 150,00.';$('#porc').focus()}return}
+  const row={atividade:t.id,espacos:t.espacos,orcamento:orc,modelo:t.modelo,checklist:t.checklist};
+  if(!quieto)busy=true;const r=await exec(sb.from('planos').upsert(row,{onConflict:'atividade'}));if(!quieto)busy=false;
+  if(!r){$('#planerr').textContent=$('#ferr').textContent;$('#ferr').textContent='';return}
+  planos[t.id]={...row,checklist:row.checklist.map(x=>({...x})),atualizado:Date.now()};t.salvo=true;
+  const ex=espRes.find(x=>x.id===t.id),it=items.find(i=>i.id===t.id);if(ex)ex.espacos=[...t.espacos];else if(it&&t.espacos.length)espRes.push({id:it.id,mes:it.mes,dia:it.dia,horario:it.horario,nome:it.nome,org:it.org,espacos:[...t.espacos]});
+  $('#fplanres').textContent=planoResumo(planos[t.id]);
+  if(!quieto){const cf=it?conflitosEsp(it.mes,it.dia,t.espacos,it.id):[];toast(cf.length?'Planejamento salvo. Atenção: há conflito de espaço no mesmo dia.':'📋 Planejamento salvo.');render()}
+}
+$('#psalvar').addEventListener('click',()=>salvarPlano(false));
+
+/* ================= RELATÓRIO PÓS-ATIVIDADE ================= */
+function pintaRel(it){
+  const R=$('#frel'),dd=diasPara(it);$('#relerr').textContent='';
+  if(!it||!podeResp(it)||dd===null||dd>=0){R.hidden=true;return}
+  const r=rels[it.id];R.hidden=false;R.open=!r;R.querySelectorAll('input,textarea,button').forEach(e=>e.disabled=false);
+  document.querySelector(`input[name=rreal][value="${!r||r.realizada?1:0}"]`).checked=true;
+  $('#rpres').value=r&&r.presenca!=null?r.presenca:'';$('#rgasto').value=r?fmtNum(r.gasto):'';$('#robs').value=r?r.obs:'';
+  $('#relnums').hidden=!!r&&!r.realizada;
+  $('#frelres').textContent=r?`✅ Enviado${r.porNome?' por '+r.porNome:''}${r.realizada?` · ${r.presenca!=null?r.presenca+' pessoas':''}${r.gasto!=null?' · '+reais(r.gasto):''}`:' · não aconteceu'}`:'⏳ Ainda não enviado';
+  $('#relsalvar').textContent=r?'Atualizar relatório':'Enviar relatório';
+}
+$('#frel').addEventListener('change',e=>{if(e.target.name==='rreal')$('#relnums').hidden=e.target.value==='0'});
+$('#relsalvar').addEventListener('click',async()=>{
+  const it=items.find(i=>i.id===editId);if(!it||busy)return;$('#relerr').textContent='';
+  const real=(document.querySelector('input[name=rreal]:checked')||{}).value!=='0',ps=$('#rpres').value.trim(),g=lerValor($('#rgasto').value);
+  if(real&&ps&&!/^\d{1,4}$/.test(ps)){$('#relerr').textContent='Presença: use só números, por exemplo 35.';$('#rpres').focus();return}
+  if(real&&Number.isNaN(g)){$('#relerr').textContent='Gasto inválido: use só números, por exemplo 120,00.';$('#rgasto').focus();return}
+  if(real&&!ps&&g===null&&!$('#robs').value.trim()){$('#relerr').textContent='Conte pelo menos a presença, o gasto ou uma observação.';$('#rpres').focus();return}
+  const row={atividade:it.id,realizada:real,presenca:real&&ps?Number(ps):null,gasto:real?g:null,obs:$('#robs').value.trim()};
+  busy=true;const r=await exec(sb.from('relatorios').upsert(row,{onConflict:'atividade'}));busy=false;
+  if(!r){$('#relerr').textContent=$('#ferr').textContent;$('#ferr').textContent='';return}
+  rels[it.id]={...row,porNome:quemSou().nome,atualizado:Date.now()};closeForm();toast('📝 Relatório enviado. Obrigado!');render();carregar();
+});
+function relPendentes(){return items.filter(i=>i.dia&&!ehEspecial(i.org)&&!rels[i.id]).filter(i=>{const d=diasPara(i);return d<0&&d>=-60}).sort((a,b)=>diasPara(b)-diasPara(a))}
+
+/* ================= NÚMEROS (painel do admin) ================= */
+async function carregarAjudas(){
+  if(!isAdmin||!sb)return;const r=await sb.from('historico').select('org,ano').eq('acao','pediu ajuda da liderança para').limit(2000);
+  ajudas=r.error?[]:(r.data||[]).filter(h=>Number(h.ano)===ANO&&ORG[h.org]);ajudasOk=true;if(view==='numeros'){const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#verbaform')))$('#view').innerHTML=vNumeros()}
+}
+function vNumeros(){
+  if(!isAdmin)return `<div class="card cad"><p class="small">Só administradores veem esta tela.</p></div>`;
+  const L=items.filter(i=>!ehEspecial(i.org)),pas=L.filter(i=>i.dia&&diasPara(i)<0),vence=L.filter(i=>i.dia&&diasPara(i)<3);
+  const noPrazo=i=>{const r=resps[i.id];if(!r||respFalta(i).length)return false;return r.atualizado<=new Date(ANO,i.mes,i.dia-3,23,59,59).getTime()};
+  const relOk=pas.filter(i=>rels[i.id]),real=relOk.filter(i=>rels[i.id].realizada),pres=real.reduce((t,i)=>t+(rels[i.id].presenca||0),0);
+  const totVerba=ORGS_LID.reduce((t,o)=>t+(verbas[o.k]||0),0),totComp=ORGS_LID.filter(o=>verbas[o.k]!=null).reduce((t,o)=>t+comprometidoOrg(o.k),0),totPrev=ORGS_LID.reduce((t,o)=>t+previstoOrg(o.k),0),totGasto=ORGS_LID.reduce((t,o)=>t+gastoOrg(o.k),0);
+  const tile=(v,l,c)=>`<div class="tile${c?' '+c:''}"><b>${v}</b><span>${l}</span></div>`;
+  const porMes=MESES.map((_,m)=>L.filter(i=>i.mes===m).length),mx=Math.max(1,...porMes);
+  const rows=ORGS_LID.map(o=>{const l=L.filter(i=>i.org===o.k),p=pas.filter(i=>i.org===o.k),vc=vence.filter(i=>i.org===o.k),v=verbas[o.k],pv=previstoOrg(o.k),gs=gastoOrg(o.k);
+    return `<tr><td><span class="dot o-${o.k}" style="color:var(--ink);font-size:14px">${o.n}</span></td><td class="r">${l.length}</td><td class="r">${l.filter(i=>i.dia).length}</td><td class="r">${vc.length?`${vc.filter(noPrazo).length}/${vc.length}`:'—'}</td><td class="r">${ajudasOk?ajudas.filter(h=>h.org===o.k).length:'…'}</td><td class="r">${p.length?`${p.filter(i=>rels[i.id]).length}/${p.length}`:'—'}</td><td class="r"><input data-verba="${o.k}" inputmode="decimal" maxlength="12" aria-label="Verba anual ${daOrg(o.k)}" value="${esc(v!=null?fmtNum(v):'')}" placeholder="0,00"></td><td class="r">${reais(pv)}</td><td class="r">${reais(gs)}</td><td class="r">${v!=null?`<b style="color:${v-comprometidoOrg(o.k)<0?'#c0392b':'inherit'}">${reais(v-comprometidoOrg(o.k))}</b>`:'—'}</td></tr>`}).join('');
+  return `<div class="pend">
+    <div class="ntiles">${tile(L.length,'Atividades da ala')}${tile(L.filter(i=>i.dia).length,'Com data','g')}${tile(`${relOk.length}/${pas.length}`,'Relatórios entregues')}${tile(pres,'Pessoas nas atividades realizadas')}${tile(ajudasOk?ajudas.length:'…','Pedidos de ajuda')}${tile(reais(totGasto),'Gasto real no ano')}</div>
+    <section class="card panel"><h3>Atividades por mês em ${ANO}</h3><div class="mbars" role="img" aria-label="Atividades por mês: ${MESES.map((m,i)=>m+' '+porMes[i]).join(', ')}">${porMes.map((n,m)=>`<div class="mb" title="${MESES[m]}: ${plural(n,'atividade','atividades')}"><b>${n||''}</b><i style="height:${Math.round(n/mx*130)}px"></i><small>${AB[m]}</small></div>`).join('')}</div></section>
+    <form class="card panel" id="verbaform" novalidate><h3>Por organização</h3><div class="scroll"><table class="num-org"><thead><tr><th>Organização</th><th class="r">Atividades</th><th class="r">Com data</th><th class="r" title="Responsáveis definidos até 3 dias antes">Responsáveis no prazo</th><th class="r">Pedidos de ajuda</th><th class="r">Relatórios</th><th class="r">Verba anual (R$)</th><th class="r">Previsto</th><th class="r">Gasto real</th><th class="r">Saldo</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td><b>Total</b></td><td class="r"><b>${L.length}</b></td><td class="r"><b>${L.filter(i=>i.dia).length}</b></td><td class="r">${vence.length?`${vence.filter(noPrazo).length}/${vence.length}`:'—'}</td><td class="r">${ajudasOk?ajudas.length:'…'}</td><td class="r">${pas.length?`${relOk.length}/${pas.length}`:'—'}</td><td class="r"><b>${reais(totVerba)}</b></td><td class="r"><b>${reais(totPrev)}</b></td><td class="r"><b>${reais(totGasto)}</b></td><td class="r"><b>${reais(totVerba-totComp)}</b></td></tr></tfoot></table></div>
+    <div class="err" id="verbaerr" role="alert"></div>
+    <div class="notif" style="justify-content:flex-start;align-items:center;gap:12px;margin-top:12px"><button type="submit" class="btn pri" id="verbasalvar">Salvar verbas</button><span class="small">“Responsáveis no prazo”: definidos até 3 dias antes. “Previsto” vem do planejamento de cada atividade e “Gasto real”, dos relatórios. “Saldo” é a verba menos o gasto real (ou o previsto, enquanto não há relatório). O líder vê a verba e o saldo da própria organização.</span></div></form>
+  </div>`;
+}
+document.addEventListener('submit',async e=>{if(e.target.id!=='verbaform')return;e.preventDefault();if(!isAdmin||busy)return;$('#verbaerr').textContent='';
+  const rows=[];for(const inp of document.querySelectorAll('[data-verba]')){const v=lerValor(inp.value);if(Number.isNaN(v)){$('#verbaerr').textContent='Valor inválido em '+ORG[inp.dataset.verba].n+': use só números, por exemplo 1.500,00.';inp.focus();return}if(v!==null||verbas[inp.dataset.verba]!=null)rows.push({org:inp.dataset.verba,ano:ANO,valor:v||0})}
+  if(!rows.length){toast('Nada para salvar.');return}
+  busy=true;const r=await exec(sb.from('orcamento_org').upsert(rows,{onConflict:'org,ano'}));busy=false;
+  if(!r){$('#verbaerr').textContent=$('#ferr').textContent;return}
+  rows.forEach(x=>verbas[x.org]=x.valor);if(document.activeElement)document.activeElement.blur();toast('💰 Verbas salvas.');render();
+});
 
 /* ================= QUEM SOU / BOAS-VINDAS ================= */
 const FEM=['primaria','socorro','mocas'];

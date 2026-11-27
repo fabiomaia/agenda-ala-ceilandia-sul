@@ -9,11 +9,16 @@ Funciona com **Supabase** (banco de dados PostgreSQL + login por e-mail e Google
 | Arquivo | Para que serve |
 |---|---|
 | `index.html` | O site inteiro (telas, calendário, login). |
+| `publico/index.html` | Calendário público (sem login) em `/publico/`, só com atividades que têm dia definido. |
+| `supabase/publico.sql` | Libera a leitura pública dessas atividades. Rode uma vez. |
 | `privacidade.html` | Política de privacidade (exigida pelo Google para o login com Google). Troque o e-mail de contato se quiser. |
 | `config.js` | Onde você cola os dados do seu projeto Supabase. **É o único arquivo que você precisa editar.** |
 | `supabase/schema.sql` | Cria as tabelas e as regras de segurança. Rode **uma vez**. |
 | `supabase/migracao.sql` | Traz a atividade que já estava marcada na versão do Claude. |
 | `supabase/tornar-dono.sql` | Torna você o administrador principal (dono). |
+| `supabase/planejamento.sql` | Planejamento, relatórios, verbas, espaços e resumo semanal. |
+| `api/agenda.js` | Agenda para assinar no celular (formato .ics). |
+| `apps-script/Lembretes.gs` | Robô de e-mails (lembretes, “Como foi?” e resumo semanal), roda na conta Google do dono. |
 
 ---
 
@@ -104,6 +109,20 @@ Edite o arquivo no GitHub (ícone de lápis) → **Commit changes**. A Vercel pu
 ## Cuidados com o plano gratuito
 - **Supabase pausa projetos gratuitos parados por cerca de uma semana.** Os dados não se perdem: você recebe um e-mail de aviso e, se pausar, basta abrir o projeto no painel e clicar em **Resume project**.
 - Para guardar uma cópia das atividades: **Table Editor → atividades → Export → CSV**.
+
+## Recursos extras (novembro de 2026)
+| Recurso | Onde fica | Observação |
+|---|---|---|
+| 📲 Agenda no celular | `api/agenda.js`, links `/agenda.ics` e `/agenda/<organização>.ics` | Botão na página pública e em **Link público**. Google Agenda e iPhone atualizam sozinhos a cada poucas horas. |
+| 🖨️ Mural com QR code | Página pública → **Imprimir ou salvar PDF**; **Exportar** no site | O QR code leva ao calendário público. |
+| 🎉 Feriados | Calendário, página pública e PDF | Nacionais e do DF, calculados para qualquer ano. O admin recebe um alerta ao agendar num feriado. |
+| 📋 Planejamento | Dentro de cada atividade | Espaços do prédio, orçamento previsto e checklist por tipo de atividade. Avisa conflito de espaço no mesmo dia. |
+| 📝 Relatório | Dentro da atividade, depois que ela acontece | Presença, gasto real e observações. O robô pede o relatório no dia seguinte. |
+| 💰 Verbas e 📊 Números | Menu **Números** (só administradores) | Verba anual de cada organização, previsto, gasto real, saldo, responsáveis no prazo, pedidos de ajuda. |
+| 🗓️ Resumo semanal | Robô de e-mails (`apps-script/Lembretes.gs`) | Domingo às 7h, para os administradores. Rode `instalar` de novo depois de atualizar o código do robô. |
+| ✉️ Entrar sem senha | Tela de login | Link de acesso por e-mail. O e-mail gratuito do Supabase tem limite baixo por hora; para mais envios, configure um SMTP próprio em Authentication → Emails. |
+
+Banco de dados: rode `supabase/planejamento.sql` uma vez (já incluído no fim do `schema.sql`).
 
 ## Problemas comuns
 | O que aparece | O que fazer |
