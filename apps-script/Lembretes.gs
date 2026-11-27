@@ -11,6 +11,8 @@
  *  1. Configurações do projeto (engrenagem) → Propriedades do script →
  *     adicionar CHAVE_LEMBRETES com a chave gerada no site (Membros → Robô de e-mails).
  *  2. Escolher a função "instalar" e clicar em Executar (autorizar com a sua conta Google).
+ *  Para a cópia de segurança: em Serviços (+), adicionar "Drive API" e mostrar o
+ *  appsscript.json (Configurações do projeto) com o conteúdo do arquivo do GitHub.
  *  3. Opcional: executar "testar" para receber os modelos no seu e-mail e
  *     "testarResumo" para receber o resumo semanal com os dados de verdade.
  */
