@@ -493,6 +493,8 @@ const AB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez
 const SEM=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const ORGS=[{k:'primaria',n:'Primária'},{k:'socorro',n:'Sociedade de Socorro'},{k:'elderes',n:'Quórum de Élderes'},{k:'rapazes',n:'Rapazes'},{k:'mocas',n:'Moças'},{k:'escola',n:'Escola Dominical'}];
 const ORG=Object.fromEntries(ORGS.map(o=>[o.k,o]));
+const ARTG={primaria:'a',socorro:'a',elderes:'o',rapazes:'os',mocas:'as',escola:'a'};
+const aOrg=k=>ARTG[k]+' '+ORG[k].n,daOrg=k=>({a:'da',o:'do',os:'dos',as:'das'})[ARTG[k]]+' '+ORG[k].n,naOrg=k=>({a:'na',o:'no',os:'nos',as:'nas'})[ARTG[k]]+' '+ORG[k].n;
 const ANO=2027,LSM='atividades-ala-2027-mes';
 const VIEWS=['calendario','ano','organizacoes','cadastro','membros','pendentes'];let pendOrg='todas',desigId=null,solics=[],avisosL=[],formModo='';
 const $=s=>document.querySelector(s);
@@ -696,7 +698,7 @@ function vCadastro(){
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between"><h2>${meuCad?'Meu cadastro':'Cadastro de líder'}</h2>${stPill()}</div>
     <p class="small">${meuCad?(p==='aprovado'?'Você já pode marcar atividades da sua organização.':p==='recusado'?'O administrador recusou este cadastro. Corrija os dados e envie de novo, ou fale com ele.':'O administrador vai conferir seus dados e liberar seu acesso.'):'Preencha uma vez. Depois que o administrador aprovar, você poderá marcar atividades da sua organização.'}</p>
     <div><label for="cnome">Nome completo</label><input id="cnome" maxlength="80" autocomplete="name" value="${esc(c.nome)}"></div>
-    <div><label for="corg">Organização que você lidera</label><select id="corg"><option value="">Escolha…</option>${orgOpts(c.org)}</select>${mudou?`<p class="small" style="margin-top:6px">Pedido de mudança para ${ORG[c.org].n} enviado. Até o administrador aceitar, você continua em ${ORG[minhaOrg()].n}.</p>`:''}</div>
+    <div><label for="corg">Organização que você lidera</label><select id="corg"><option value="">Escolha…</option>${orgOpts(c.org)}</select>${mudou?`<p class="small" style="margin-top:6px">Pedido de mudança para ${aOrg(c.org)} enviado. Até o administrador aceitar, você continua ${naOrg(minhaOrg())}.</p>`:''}</div>
     <div><label for="cwhats">WhatsApp</label><input id="cwhats" type="tel" inputmode="tel" autocomplete="tel" placeholder="(61) 99999-9999" value="${esc(c.whats?fmtWhats(c.whats):'')}"><p class="small" style="margin-top:6px">Use o número com DDD. Para número de outro país, comece com + e o código do país.</p></div>
     <label class="chk"><input type="checkbox" id="cok"${meuCad?' checked':''}><span>Autorizo que o administrador da ala veja meu nome, e-mail e WhatsApp para falar comigo sobre as atividades.</span></label>
     <div class="err" id="cerr" role="alert"></div>
@@ -713,7 +715,7 @@ function vMembros(){
   const info=id=>{const m=membros[id];return `<div><b>${esc(m.nome||'Sem nome')}${adminIds.includes(id)?' <span class="st ok" style="margin-left:6px">Administrador</span>':''}</b><p class="small">${m.email?esc(m.email)+' · ':''}${m.whats?`<a href="https://wa.me/${esc(m.whats)}" target="_blank" rel="noopener">WhatsApp ${esc(fmtWhats(m.whats))}</a>`:'sem WhatsApp'}</p></div>`};
   const sec=(t,arr,f,vazio)=>`<h3 class="memh" style="font-size:17px;margin-top:6px">${t} <span class="small">(${arr.length})</span></h3><div class="mems">${arr.length?arr.map(f).join(''):`<p class="empty">${vazio}</p>`}</div>`;
   return sec('Aguardando aprovação',pend,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Pediu: <b style="display:inline;font-size:14px">${membros[id].org?ORG[membros[id].org].n:'—'}</b></div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(membros[id].org)}</select><button class="btn" type="button" data-mem="recusar">Recusar</button><button class="btn pri" type="button" data-mem="aprovar">Aprovar</button></div></div>`,'Nenhum pedido novo.')
-   +(mud.length?sec('Pedidos de mudança de organização',mud,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">De ${ORG[aprovs[id].org].n} para <b style="display:inline;font-size:14px">${ORG[membros[id].org].n}</b></div><div class="ctl"><button class="btn pri" type="button" data-mem="mudar">Aceitar mudança</button></div></div>`,''):'')
+   +(mud.length?sec('Pedidos de mudança de organização',mud,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Quer mudar ${daOrg(aprovs[id].org)} para <b style="display:inline;font-size:14px">${aOrg(membros[id].org)}</b></div><div class="ctl"><button class="btn pri" type="button" data-mem="mudar">Aceitar mudança</button></div></div>`,''):'')
    +sec('Líderes aprovados',apr,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div><span class="dot o-${aprovs[id].org}" style="color:var(--ink);font-size:14px">${ORG[aprovs[id].org].n}</span></div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(aprovs[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Salvar</button><button class="btn" type="button" data-mem="${adminIds.includes(id)?'desadmin':'admin'}">${adminIds.includes(id)?'Tirar de administrador':'Tornar administrador'}</button><button class="btn danger" type="button" data-mem="remover">Remover</button></div></div>`,'Ninguém aprovado ainda.')
    +(rec.length?sec('Recusados',rec,id=>`<div class="card mem" data-uid="${esc(id)}">${info(id)}<div class="small">Pediu: ${membros[id].org?ORG[membros[id].org].n:'—'}</div><div class="ctl"><select aria-label="Organização" data-org>${orgOpts(membros[id].org)}</select><button class="btn" type="button" data-mem="aprovar">Aprovar</button><button class="btn danger" type="button" data-mem="remover">Apagar</button></div></div>`,''):'')
    +`<p class="small">Administradores definem os dias e editam qualquer atividade; só você aprova cadastros e vê os contatos. “Remover” apaga o cadastro e a aprovação: a pessoa continua com a conta de login, mas precisa se cadastrar de novo e ser aprovada para marcar atividades.</p>`
@@ -843,7 +845,7 @@ function render(){
   $('#filtro').hidden=!['calendario','ano'].includes(view);
   pintaQuem();
   $('#role').textContent=p==='admin'?(isDono?'Administrador (dono)':'Administrador'):p==='aprovado'?'Líder · '+ORG[minhaOrg()].n:p==='carregando'?'…':'Líder (sem aprovação)';
-  $('#sub').textContent=p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades da ${ORG[minhaOrg()].n}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
+  $('#sub').textContent=p==='admin'?(isDono?'Os líderes escolhem o mês e a atividade. Você define o dia e aprova os cadastros.':'Os líderes escolhem o mês e a atividade. Você define o dia de cada uma.'):p==='aprovado'?`Marque as atividades ${daOrg(minhaOrg())}. O administrador define o dia.`:'Líderes escolhem o mês e a atividade; o administrador define o dia.';
   $('#novo').disabled=!podeAdicionar();
   $('#meemail').textContent=meEmail;
   aviso();
@@ -864,7 +866,7 @@ async function moverPara(id,dia,hora){
   const it=items.find(i=>i.id===id);if(!it)return;
   if((dia||0)===it.dia&&(hora===undefined||hora===(it.horario||'')))return;
   it.dia=dia||0;if(hora!==undefined)it.horario=hora;render();
-  if(await setDia(id,dia,hora)){flash=id;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}${it.horario?' às '+it.horario:''}`:`“${it.nome}” voltou para aguardando data`)}
+  if(await setDia(id,dia,hora)){flash=id;toast(dia?`“${it.nome}” em ${dia} de ${MESES[it.mes]}${it.horario?' às '+it.horario:''}`:`“${it.nome}” voltou a aguardar data`)}
   agendar();
 }
 
@@ -1001,7 +1003,7 @@ $('#view').addEventListener('input',ev=>{if(ev.target.id!=='cwhats')return;if(ev
 async function acaoMembro(btn){
   const card=btn.closest('[data-uid]'),id=card.dataset.uid,m=btn.dataset.mem,sel=card.querySelector('[data-org]');
   const nome=(membros[id]&&membros[id].nome)||'Líder';btn.disabled=true;let ok=true;
-  if(m==='aprovar'||m==='mudar'){const org=m==='mudar'?membros[id].org:sel.value;ok=!!await exec(sb.from('aprovacoes').upsert({user_id:id,status:'aprovado',org,por:myId}));if(ok)toast(`${nome} aprovado(a) na ${ORG[org].n}`)}
+  if(m==='aprovar'||m==='mudar'){const org=m==='mudar'?membros[id].org:sel.value;ok=!!await exec(sb.from('aprovacoes').upsert({user_id:id,status:'aprovado',org,por:myId}));if(ok)toast(`${nome} aprovado(a) ${naOrg(org)}`)}
   if(m==='recusar'){ok=!!await exec(sb.from('aprovacoes').upsert({user_id:id,status:'recusado',org:null,por:myId}));if(ok)toast(`Cadastro de ${nome} recusado`)}
   if(m==='admin'){ok=!!await exec(sb.from('admins').insert({user_id:id}));if(ok)toast(`${nome} agora é administrador(a)`)}
   if(m==='desadmin'){ok=!!await exec(sb.from('admins').delete().eq('user_id',id));if(ok)toast(`${nome} voltou a ser só líder`)}
@@ -1013,7 +1015,7 @@ async function acaoMembro(btn){
 function renderPick(){
   const d=pickDia,list=items.filter(i=>i.mes===mes);
   const wait=list.filter(i=>!i.dia).sort(ord),here=list.filter(i=>i.dia===d).sort(ord),other=list.filter(i=>i.dia&&i.dia!==d).sort(ord);
-  const row=(i,act,extra)=>`<li><button type="button" class="o-${i.org}" data-pk="${act}" data-id="${esc(i.id)}"><span class="o"></span><span>${esc(i.nome)}<br><small style="color:var(--mute);font-weight:500">${ORG[i.org].n}${i.dia&&act==='set'?` · hoje no dia ${i.dia}`:''}</small></span>${extra||''}</button></li>`;
+  const row=(i,act,extra)=>`<li><button type="button" class="o-${i.org}" data-pk="${act}" data-id="${esc(i.id)}"><span class="o"></span><span>${esc(i.nome)}<br><small style="color:var(--mute);font-weight:500">${ORG[i.org].n}${i.dia&&act==='set'?` · agora no dia ${i.dia}`:''}</small></span>${extra||''}</button></li>`;
   $('#pt').textContent=`${d} de ${MESES[mes]} (${SEM[new Date(ANO,mes,d).getDay()].toLowerCase()})`;
   $('#pbody').innerHTML=
     (here.length?`<p class="sub">Neste dia</p><ul class="pk" style="margin:10px 0 14px">${here.map(i=>row(i,'clear','<span class="x">Tirar data</span>')).join('')}</ul>`:'')+
@@ -1083,7 +1085,7 @@ function exInfo(){
   const s=exSel();$('#emesesw').hidden=s.per!=='meses';$('#eerr').textContent='';
   let h;
   if(!s.meses.length)h='Escolha pelo menos um mês.';
-  else if(!s.com.length)h=`<b>Nenhuma atividade com dia definido</b> nesse período${s.org!=='todas'?' para '+ORG[s.org].n:''}.${s.sem?` ${plural(s.sem,'atividade ainda aguarda','atividades ainda aguardam')} o administrador definir o dia.`:''}`;
+  else if(!s.com.length)h=`<b>Nenhuma atividade com dia definido</b> nesse período${s.org!=='todas'?' para '+aOrg(s.org):''}.${s.sem?` ${plural(s.sem,'atividade ainda aguarda','atividades ainda aguardam')} o administrador definir o dia.`:''}`;
   else h=`<b>${plural(s.com.length,'atividade será exportada','atividades serão exportadas')}</b>${s.fmt==='pdf'?` em ${plural(s.meses.length,'página','páginas')}`:''}.${s.sem?` ${plural(s.sem,'atividade sem dia definido não aparece','atividades sem dia definido não aparecem')}.`:''}`;
   $('#einfo').innerHTML=h;$('#egerar').disabled=!s.meses.length||!s.com.length;
 }
@@ -1249,14 +1251,13 @@ $('#lov').addEventListener('click',e=>{if(e.target===$('#lov'))$('#lov').classLi
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lov').classList.remove('on')});
 
 /* ================= QUEM SOU / BOAS-VINDAS ================= */
-const ART={primaria:'da',socorro:'da',elderes:'do',rapazes:'dos',mocas:'das',escola:'da'};
 const FEM=['primaria','socorro','mocas'];
 function nomeCurto(n){const w=String(n||'').trim().split(/\s+/).filter(Boolean);return w.length>1?w[0]+' '+w[w.length-1]:(w[0]||'')}
 function quemSou(){
   const p=papel(),org=minhaAprov&&minhaAprov.status==='aprovado'&&ORG[minhaAprov.org]?minhaAprov.org:'';
   const completo=(meuCad&&meuCad.nome)||(membros[myId]&&membros[myId].nome)||meNome||(meEmail?meEmail.split('@')[0]:'');
   const nome=nomeCurto(completo);
-  const pres=org?`Presidente ${ART[org]} ${ORG[org].n}`:'';
+  const pres=org?`Presidente ${daOrg(org)}`:'';
   let tit;
   if(p==='admin')tit=pres?pres+' · Administrador':(isDono?'Administrador da agenda':'Administrador');
   else if(p==='aprovado')tit=pres;
