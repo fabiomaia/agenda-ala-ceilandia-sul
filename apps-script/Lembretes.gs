@@ -4,7 +4,8 @@
  * Todo dia às 8h (horário de Brasília) envia aos líderes os lembretes de
  * 1 mês, 1 semana e 1 dia antes de cada atividade da organização, e o
  * "Como foi?" no dia seguinte. Todo domingo às 7h envia o resumo da semana
- * aos administradores (bispado).
+ * aos administradores (bispado) e às 6h salva uma cópia de segurança dos dados
+ * no Google Drive (pasta "Agenda da Ala - cópias de segurança", guarda as 12 últimas).
  *
  * Instalação (uma vez):
  *  1. Configurações do projeto (engrenagem) → Propriedades do script →
@@ -53,12 +54,70 @@ function enviarLembretes() {
 /** Cria (ou recria) os agendamentos: lembretes todo dia às 8h e resumo aos domingos às 7h. */
 function instalar() {
   ScriptApp.getProjectTriggers()
-    .filter(function (t) { return ['enviarLembretes', 'enviarResumo'].indexOf(t.getHandlerFunction()) >= 0; })
+    .filter(function (t) { return ['enviarLembretes', 'enviarResumo', 'fazerBackup'].indexOf(t.getHandlerFunction()) >= 0; })
     .forEach(function (t) { ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('enviarLembretes').timeBased().everyDays(1).atHour(8).inTimezone('America/Sao_Paulo').create();
   ScriptApp.newTrigger('enviarResumo').timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).atHour(7).inTimezone('America/Sao_Paulo').create();
+  ScriptApp.newTrigger('fazerBackup').timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).atHour(6).inTimezone('America/Sao_Paulo').create();
   const n = (rpc_(config_(), 'lembretes_pendentes', {p_chave: chave_()}) || []).length;
-  console.log('Pronto! Lembretes todo dia às 8h e resumo aos domingos às 7h. Lembretes para enviar hoje: ' + n);
+  console.log('Pronto! Lembretes todo dia às 8h, cópia de segurança aos domingos às 6h e resumo às 7h. Lembretes para enviar hoje: ' + n);
+}
+
+/* ---------------- cópia de segurança no Google Drive ---------------- */
+// Usa a API do Drive com a permissão mínima (drive.file): o robô só enxerga
+// a pasta e os arquivos que ele mesmo criou.
+
+const PASTA_BACKUP = 'Agenda da Ala - cópias de segurança';
+const MANTER_BACKUPS = 12;
+
+/** Todo domingo: salva todos os dados da agenda num arquivo .json no seu Drive. */
+function fazerBackup() {
+  try {
+    const dados = rpc_(config_(), 'backup_dados', {p_chave: chave_()});
+    const pasta = pastaBackup_();
+    const nome = 'backup-agenda-ala-' + Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'yyyy-MM-dd-HHmm') + '.json';
+    const limite = 'agenda' + Date.now();
+    const corpo = '--' + limite + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'
+      + JSON.stringify({name: nome, parents: [pasta], mimeType: 'application/json'})
+      + '\r\n--' + limite + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'
+      + JSON.stringify(dados, null, 1) + '\r\n--' + limite + '--';
+    drive_('post', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', corpo, 'multipart/related; boundary=' + limite);
+    const lista = drive_('get', 'https://www.googleapis.com/drive/v3/files?pageSize=200&orderBy=createdTime%20desc&fields=files(id,name)&q='
+      + encodeURIComponent("'" + pasta + "' in parents and trashed = false")).files || [];
+    const antigos = lista.filter(function (f) { return /^backup-agenda-ala-/.test(f.name); }).slice(MANTER_BACKUPS);
+    antigos.forEach(function (f) { drive_('patch', 'https://www.googleapis.com/drive/v3/files/' + f.id, JSON.stringify({trashed: true}), 'application/json'); });
+    const n = (dados.tabelas && dados.tabelas.atividades || []).length;
+    console.log('Cópia salva no Drive: ' + nome + ' (' + n + ' atividades). Cópias antigas apagadas: ' + antigos.length);
+  } catch (e) {
+    MailApp.sendEmail(Session.getEffectiveUser().getEmail(), '⚠️ Robô da agenda: cópia de segurança falhou',
+      'Não foi possível salvar a cópia de segurança semanal no Google Drive.\n\nErro: ' + e.message
+      + '\n\nVocê pode baixar uma cópia manual no site: Membros → Cópia de segurança.');
+    throw e;
+  }
+}
+
+function pastaBackup_() {
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('PASTA_BACKUP');
+  if (id) {
+    try {
+      const f = drive_('get', 'https://www.googleapis.com/drive/v3/files/' + id + '?fields=id,trashed');
+      if (f && !f.trashed) return id;
+    } catch (e) { /* pasta apagada: cria outra */ }
+  }
+  const nova = drive_('post', 'https://www.googleapis.com/drive/v3/files?fields=id',
+    JSON.stringify({name: PASTA_BACKUP, mimeType: 'application/vnd.google-apps.folder'}), 'application/json');
+  props.setProperty('PASTA_BACKUP', nova.id);
+  return nova.id;
+}
+
+function drive_(metodo, url, corpo, tipo) {
+  const op = {method: metodo, muteHttpExceptions: true, headers: {Authorization: 'Bearer ' + ScriptApp.getOAuthToken()}};
+  if (corpo !== undefined) { op.payload = Utilities.newBlob(corpo).getBytes(); op.contentType = tipo; }  // UTF-8 (acentos)
+  const r = UrlFetchApp.fetch(url, op);
+  const t = r.getContentText();
+  if (r.getResponseCode() >= 300) throw new Error('Google Drive respondeu ' + r.getResponseCode() + ': ' + t.slice(0, 300));
+  return t ? JSON.parse(t) : null;
 }
 
 /* ---------------- resumo semanal ---------------- */
